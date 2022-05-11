@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Thoughts.Interfaces\Thoughts.Interfaces.csproj" />
+  </ItemGroup>
+
 </Project>
