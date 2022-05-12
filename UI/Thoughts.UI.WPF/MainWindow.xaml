@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Thoughts.UI.WPF"
+        xmlns:views="clr-namespace:Thoughts.UI.WPF.Views"
         mc:Ignorable="d"
         Height="450" Width="800"
         Background="Transparent"
@@ -45,10 +46,13 @@
                     <Setter Property="FontWeight" Value="Medium"/>
                 </Style>
             </StackPanel.Resources>
-            <RadioButton Content="Пользователи"/>
+            <RadioButton Content="Пользователи"
+                         x:Name="UsersViewRadioButton"/>
             <RadioButton Content="Записи"/>
             <RadioButton Content="Файлы"/>
             <RadioButton Content="Сервис"/>
         </StackPanel>
+        <ContentControl Grid.Row="1" 
+                        Grid.Column="1"/>
     </Grid>
 </Window>
