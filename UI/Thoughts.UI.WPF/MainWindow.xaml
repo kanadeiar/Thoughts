@@ -5,8 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Thoughts.UI.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
+        Height="450" Width="800"
+        Background="Transparent"
+        Foreground="Black"
+        FontFamily="Helvetica">
+    <Window.Resources>
+        <LinearGradientBrush x:Key="BackGroundBrush"
+                             StartPoint="0, 0"
+                             EndPoint="1, 1"
+                             >
+            <GradientStop Color="#FFB0E0E6" Offset="0.0"/>
+            <GradientStop Color="#F887CEEB" Offset="1.0"/>
+        </LinearGradientBrush>
+    </Window.Resources>
+    <Grid Background="{StaticResource BackGroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200">
+            </ColumnDefinition>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0"
+                   Text="Thoughts.AdminPanel"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Left"
+                   Margin="20 0 0 0"/>
+        <StackPanel Grid.Row="1" Grid.Column="0"
+                    Margin="0 15 0 0">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type RadioButton}"
+                           BasedOn="{StaticResource MenuRadioButton}">
+                    <Setter Property="Height" Value="50"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="FontFamily" Value="Helvetica"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="FontWeight" Value="Medium"/>
+                </Style>
+            </StackPanel.Resources>
+            <RadioButton Content="Пользователи"/>
+            <RadioButton Content="Записи"/>
+            <RadioButton Content="Файлы"/>
+            <RadioButton Content="Сервис"/>
+        </StackPanel>
     </Grid>
 </Window>
