@@ -26,8 +26,13 @@
         <GroupBox Grid.Column="1"
                   Header="Редактор">
             <StackPanel>
-                <Image Width="100" Height="100" Margin="5 5"
-                   Source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2C5B1G-yVcQuuqiK2spfS9wPGbo0Y-oe8fYVesPsn0Rotkx7Vj-qVq2AtYNPE6Gjp3vA&amp;usqp=CAU"/>
+                <Border BorderBrush="Black" BorderThickness="1"
+                        Width="105"
+                        Height="105">
+                    <Image Width="100" Height="100"
+                           Source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2C5B1G-yVcQuuqiK2spfS9wPGbo0Y-oe8fYVesPsn0Rotkx7Vj-qVq2AtYNPE6Gjp3vA&amp;usqp=CAU"/>
+                </Border>
+                
                 <TextBox Margin="5 5 5 0"/>
                 <DatePicker Margin="5 10 5 0"/>
                 <ComboBox Margin="5 10 5 0"/>
