@@ -49,6 +49,7 @@
             <RadioButton Content="Пользователи"
                          x:Name="UsersViewRadioButton"/>
             <RadioButton Content="Записи"/>
+            <RadioButton Content="Комментарии"/>
             <RadioButton Content="Файлы"/>
             <RadioButton Content="Сервис"/>
         </StackPanel>
