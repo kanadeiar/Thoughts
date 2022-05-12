@@ -16,10 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Infrastructure\Commands\Base\" />
     <Folder Include="Models\" />
+    <Folder Include="ViewModels\Base\" />
     <Folder Include="Views\" />
-    <Folder Include="ViewModels\" />
-    <Folder Include="Infrastructure\" />
   </ItemGroup>
 
 </Project>
