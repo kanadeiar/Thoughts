@@ -6,10 +6,11 @@ namespace Thoughts.DAL.Entities.Base
     /// Тег
     /// </summary>
     [Index(nameof(Name), IsUnique =true, Name = "NameIndex")]
-    public abstract class Tag:Entity
+    public class Tag:Entity
     {
         /// <summary>Название тега</summary>
         public string Name { get; set; } = null!;
+        public ICollection<Post> Posts { get; set; }
 
         protected Tag() { }
 

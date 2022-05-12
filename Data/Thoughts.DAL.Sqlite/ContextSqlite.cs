@@ -15,7 +15,7 @@ namespace Thoughts.DAL.Sqlite
         #region DbSet
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Role> Roles { get; set; } = null!;
-        public DbSet<Status> Statuss { get; set; } = null!;
+        public DbSet<Status> Statuses { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Comment> Comments { get; set; } = null!;
         public DbSet<Post> Posts { get; set; } = null!;
@@ -23,11 +23,11 @@ namespace Thoughts.DAL.Sqlite
         #endregion
 
         private string connectionString= "Filename=ThoughtsData.db";
-        public ContextSqlite()
+        public ContextSqlite() 
         {
-            //Database.EnsureDeleted();
+            Database.EnsureDeleted();
             Database.EnsureCreated();
-            //Database.Migrate();
+            //Database.Migrate(); 
         }
 
         public ContextSqlite(string connectionString) : base()
@@ -35,13 +35,21 @@ namespace Thoughts.DAL.Sqlite
             this.connectionString = connectionString;
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-          
+        {         
             optionsBuilder              
             .UseSqlite(connectionString);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        { 
+        {
+            //modelBuilder.Entity<User>();
+            //modelBuilder.Entity<Role>();
+            //modelBuilder.Entity<Status>();
+            //modelBuilder.Entity<Category>();
+            //modelBuilder.Entity<Comment>();
+            //modelBuilder.Entity<Post>();
+            //modelBuilder.Entity<Tag>();
+
+            base.OnModelCreating(modelBuilder);
         }
 
 

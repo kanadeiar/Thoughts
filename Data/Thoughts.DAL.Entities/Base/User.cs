@@ -6,7 +6,7 @@ namespace Thoughts.DAL.Entities.Base;
 /// </summary>
 
 [Index(nameof(LastName), nameof(FirstName), nameof(Patronymic), IsUnique = true, Name = "NameIndex")]
-public abstract class User : Entity
+public class User : Entity
 {
     /// <summary>Фамилия</summary>
     public string LastName { get; set; } = null!;

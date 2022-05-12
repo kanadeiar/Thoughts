@@ -8,15 +8,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Thoughts.DAL.Entities.Base
 {
-    [Index(nameof(Name), IsUnique =true, Name ="NameIndex")]
-    public abstract class Role:Entity
+    [Index(nameof(Name), IsUnique = true, Name = "NameIndex")]
+    public class Role : Entity
     {
         public string Name { get; set; } = null!;
 
+        public ICollection<User> Users { get; set; } = null!;
         protected Role() { }
 
-        protected Role(string name)=>Name = name;
+        protected Role(string name) => Name = name;
 
         public override string ToString() => Name;
+
     }
 }

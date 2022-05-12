@@ -1,6 +1,6 @@
 ﻿namespace Thoughts.DAL.Entities.Base
 {
-    public abstract class Post : Entity
+    public  class Post : Entity
     {
         /// <summary>Статус записи</summary>
         public Status Status { get; set; } = null!;

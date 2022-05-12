@@ -6,7 +6,7 @@ namespace Thoughts.DAL.Entities.Base
     /// Категория (раздел)
     /// </summary>
     [Index(nameof(Name),IsUnique =true, Name ="NameIndex")]
-    public abstract class Category:Entity
+    public class Category:Entity
     {
         /// <summary>Наименование категории (раздела)</summary>      
         public string Name { get; set; } = null!;

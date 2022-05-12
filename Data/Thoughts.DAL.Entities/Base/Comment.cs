@@ -6,7 +6,7 @@ namespace Thoughts.DAL.Entities.Base
     /// <summary>
     /// Комментарий
     /// </summary>    
-    public abstract class Comment:Entity
+    public class Comment:Entity
     {
         /// <summary>Дата комментария</summary>
         public DateTime Date { get; set; }
