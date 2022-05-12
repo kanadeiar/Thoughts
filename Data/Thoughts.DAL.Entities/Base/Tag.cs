@@ -10,11 +10,11 @@ namespace Thoughts.DAL.Entities.Base
     {
         /// <summary>Название тега</summary>
         public string Name { get; set; } = null!;
-        public ICollection<Post> Posts { get; set; }
+        public ICollection<Post> Posts { get; set; }=null!;
 
-        protected Tag() { }
+        public Tag() { }
 
-        protected Tag(string Name)=>this.Name = Name;
+        public Tag(string Name)=>this.Name = Name;
 
         public override string ToString() => Name;
     }

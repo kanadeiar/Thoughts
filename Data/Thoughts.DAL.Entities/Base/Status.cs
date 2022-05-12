@@ -9,9 +9,9 @@ namespace Thoughts.DAL.Entities.Base
         /// <summary>Наименование статуса</summary>
         public string Name { get; set; }= null!;
 
-        protected Status() { }
+        public Status() { }
 
-        protected Status(string name) => Name = name;
+        public Status(string name) => Name = name;
         public override string ToString() => Name;
     }
 }

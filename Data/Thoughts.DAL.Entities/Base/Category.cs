@@ -14,8 +14,8 @@ namespace Thoughts.DAL.Entities.Base
         /// <summary>Список постов входящих в категорию</summary>
         public ICollection<Post> Posts { get; set; }=null!;
 
-        protected Category() { }
-        protected Category(string Name)=>this.Name = Name;
+        public Category() { }
+        public Category(string Name)=>this.Name = Name;
         public override string ToString() => Name;
     }
 }

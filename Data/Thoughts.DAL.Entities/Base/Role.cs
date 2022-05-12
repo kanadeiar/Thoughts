@@ -14,9 +14,9 @@ namespace Thoughts.DAL.Entities.Base
         public string Name { get; set; } = null!;
 
         public ICollection<User> Users { get; set; } = null!;
-        protected Role() { }
+        public Role() { }
 
-        protected Role(string name) => Name = name;
+        public Role(string name) => Name = name;
 
         public override string ToString() => Name;
 

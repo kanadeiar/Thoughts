@@ -29,9 +29,9 @@ namespace Thoughts.DAL.Entities.Base
         /// <summary>Признак удалённой записи</summary>
         public bool IsDeleted { get; set; }=false;
 
-        protected Comment() { }
+        public Comment() { }
 
-        protected Comment(DateTime date, Post post, User user, Comment parentComment,string body, bool isdeleted ) 
+        public Comment(DateTime date, Post post, User user, Comment parentComment,string body, bool isdeleted ) 
         {
             Date = date;
             Post = post;

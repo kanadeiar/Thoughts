@@ -26,9 +26,9 @@ public class User : Entity
     /// <summary>Роли пользователя</summary>
     public ICollection<Role> Roles { get; set; }=null!;
 
-    protected User() { }
+    public User() { }
 
-    protected User(string LastName, string FirstName, string Patronymic, DateTime Birthday, string NikName)
+    public User(string LastName, string FirstName, string Patronymic, DateTime Birthday, string NikName)
     {
         this.LastName = LastName;
         this.FirstName = FirstName;

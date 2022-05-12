@@ -28,9 +28,9 @@
         /// <summary>Признак удалённой записи</summary>
         public bool IsDeleted { get; set; }=false;
 
-        protected Post () { }
+        public Post () { }
 
-        protected Post (Status status, DateTime date, User user, 
+        public Post (Status status, DateTime date, User user, 
             string title, string body, Category category, bool isDeleted ) 
         { 
             Status = status;

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 using Thoughts.DAL.Entities.Base;
+using Thoughts.DAL.Entities.DefaultData;
 
 namespace Thoughts.DAL.Sqlite
 {
@@ -41,15 +42,9 @@ namespace Thoughts.DAL.Sqlite
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<User>();
-            //modelBuilder.Entity<Role>();
-            //modelBuilder.Entity<Status>();
-            //modelBuilder.Entity<Category>();
-            //modelBuilder.Entity<Comment>();
-            //modelBuilder.Entity<Post>();
-            //modelBuilder.Entity<Tag>();
+            modelBuilder.Entity<Status>().HasData(GetDefaultData.DefaultStatus());
+            modelBuilder.Entity<Status>().HasData(GetDefaultData.DefaultRole());
 
-            base.OnModelCreating(modelBuilder);
         }
 
 
