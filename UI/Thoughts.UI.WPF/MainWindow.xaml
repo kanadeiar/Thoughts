@@ -25,7 +25,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200">
+            <ColumnDefinition Width="140">
             </ColumnDefinition>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
@@ -33,7 +33,7 @@
                    Text="Thoughts.AdminPanel"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Left"
-                   Margin="20 0 0 0"/>
+                   Margin="10 0 0 0"/>
         <StackPanel Grid.Row="1" Grid.Column="0"
                     Margin="0 15 0 0">
             <StackPanel.Resources>
@@ -46,10 +46,7 @@
                     <Setter Property="FontWeight" Value="Medium"/>
                 </Style>
             </StackPanel.Resources>
-            <RadioButton Content="Пользователи"
-                         x:Name="UsersViewRadioButton"/>
             <RadioButton Content="Записи"/>
-            <RadioButton Content="Комментарии"/>
             <RadioButton Content="Файлы"/>
             <RadioButton Content="Сервис"/>
         </StackPanel>
