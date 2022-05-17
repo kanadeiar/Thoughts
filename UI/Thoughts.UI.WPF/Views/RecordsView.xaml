@@ -8,7 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="RecordsView">
 
-    <Grid Background="White">
+    <Grid Background="White"> <!--Set this property to transparient later!!!!!-->
         <Grid.Resources>
             <Style TargetType="{x:Type Button}"
                    BasedOn="{StaticResource ButtonStyle}">
@@ -65,7 +65,8 @@
             <TextBox AcceptsTab="True"
                      AcceptsReturn="True"
                       Height="300"/>
-            <WrapPanel HorizontalAlignment="Center">
+            <WrapPanel HorizontalAlignment="Center"
+                       Margin="0 15 0 0">
                 <Button Content="Apply"/>
                 <Button Content="Discard"/>
             </WrapPanel>
