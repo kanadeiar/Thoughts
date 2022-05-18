@@ -10,8 +10,4 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Thoughts.DAL.Entities\Thoughts.DAL.Entities.csproj" />
-  </ItemGroup>
-
 </Project>
