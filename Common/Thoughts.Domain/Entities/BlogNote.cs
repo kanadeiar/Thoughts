@@ -2,6 +2,8 @@
 
 namespace Thoughts.Domain.Entities
 {
+    ///<summary>Сущность записи блога</summary>
+    /// <typeparam name="TKey">Тип первичного ключа</typeparam>
     public class BlogNote<TKey> : IBlogNote<TKey>
     {
         public string Title { get; set; }
@@ -14,5 +16,6 @@ namespace Thoughts.Domain.Entities
         public DateTime? EditDate { get; set; }
         public TKey Id { get; set; }
     }
+    ///<summary>Сущность записи блога</summary>
     public class BlogNote : BlogNote<int>, IBlogNote { }
 }
