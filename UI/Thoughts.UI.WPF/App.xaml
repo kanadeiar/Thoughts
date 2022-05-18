@@ -5,6 +5,13 @@
              xmlns:vm="clr-namespace:Thoughts.UI.WPF.ViewModels"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles\RadioButtonMenuStyle.xaml"/>
+                <ResourceDictionary Source="Styles\ButtonStyle.xaml"/>
+                <ResourceDictionary Source="Styles\TextBoxStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
         <vm:ViewModelLocator x:Key="Locator"/>
     </Application.Resources>
 </Application>
