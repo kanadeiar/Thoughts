@@ -5,7 +5,7 @@ namespace Thoughts.Domain.Base.Entities
 {
     public interface INote<TKey> : IEntity<TKey>
     {
-        public IUser User { get; set; }
+        public IUser<TKey> Creator { get; set; }
         public string Text { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime? EditDate { get; set; }
