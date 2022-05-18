@@ -7,5 +7,5 @@ namespace Thoughts.Domain.Base.Entities
         public int NotesCount { get; }
         public IEnumerable<INote> Notes { get; set; }
     }
-    public interface IUser : IUser<int> { }
+    public interface IUser : IUser<int>, IPerson, INamedEntity { }
 }

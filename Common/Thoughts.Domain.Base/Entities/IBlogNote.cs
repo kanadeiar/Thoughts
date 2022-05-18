@@ -7,5 +7,5 @@
         public IEnumerable<ITag<TKey>> Tags { get; set; }
         public IEnumerable<IComment<TKey>> Comments { get; set; }
     }
-    public interface IBlogNote : IBlogNote<int> { }
+    public interface IBlogNote : IBlogNote<int>, INote { }
 }

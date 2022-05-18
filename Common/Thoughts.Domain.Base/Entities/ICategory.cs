@@ -7,5 +7,5 @@ namespace Thoughts.Domain.Base.Entities
     {
 
     }
-    public interface ICategory : ICategory<int> { }
+    public interface ICategory : ICategory<int>, INamedEntity { }
 }

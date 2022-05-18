@@ -7,5 +7,5 @@ namespace Thoughts.Domain.Base.Entities
     {
 
     }
-    public interface ITag : ITag<int> { }
+    public interface ITag : ITag<int>, INamedEntity { }
 }

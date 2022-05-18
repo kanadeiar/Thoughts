@@ -4,5 +4,5 @@
     {
         public IEnumerable<IComment<TKey>> Answers { get; set; }
     }
-    public interface IComment : IComment<int> { }
+    public interface IComment : IComment<int>, INote { }
 }
