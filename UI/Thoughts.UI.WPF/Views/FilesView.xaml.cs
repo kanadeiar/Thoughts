@@ -3,11 +3,11 @@
 namespace Thoughts.UI.WPF.Views
 {
     /// <summary>
-    /// Логика взаимодействия для UsersView.xaml
+    /// Логика взаимодействия для FilesView.xaml
     /// </summary>
-    public partial class UsersView : UserControl
+    public partial class FilesView : UserControl
     {
-        public UsersView()
+        public FilesView()
         {
             InitializeComponent();
         }

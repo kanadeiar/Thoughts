@@ -50,7 +50,8 @@
             <RadioButton Content="Файлы"/>
             <RadioButton Content="Сервис"/>
         </StackPanel>
-        <ContentControl Grid.Row="1" 
-                        Grid.Column="1"/>
+        <ContentControl Grid.Row="1" Grid.Column="1">
+            <views:RecordsView Margin="0 0"/>
+        </ContentControl>        
     </Grid>
 </Window>

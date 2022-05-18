@@ -10,9 +10,11 @@
                         <Border CornerRadius="10"
                                 BorderThickness="1"
                                 BorderBrush="CadetBlue"
-                                MinHeight="20">
+                                MinHeight="20"
+                                Background="#f5fdff">
                             <ContentPresenter
-                                ContentSource="{TemplateBinding Text}"/>
+                                ContentSource="{TemplateBinding Text}"
+                                />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
