@@ -15,4 +15,5 @@ namespace Thoughts.Domain.Entities
         public string Name { get; set; }
         public TKey Id { get; set; }
     }
+    public class User : User<int>, IUser { }
 }
