@@ -1,27 +1,13 @@
-var builder = WebApplication.CreateBuilder(args);
+using Serilog;
+namespace Thoughts.WebAPI;
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+public static class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
+    private static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .UseSerilog((context, loggerConfiguration) => 
+                loggerConfiguration.ReadFrom.Configuration(context.Configuration))
+            .ConfigureWebHostDefaults(webHostBuilder => 
+                webHostBuilder.UseStartup<Startup>());
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-    //endpoints.MapControllerRoute(
-    //    name: "default",
-    //    pattern: "{controller=Home}/{action=Index}/{id?}");
-});
-
-app.Run();

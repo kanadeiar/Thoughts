@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Data\Thoughts.DAL.Sqlite\Thoughts.DAL.Sqlite.csproj" />
     <ProjectReference Include="..\Thoughts.Interfaces\Thoughts.Interfaces.csproj" />
   </ItemGroup>
 
