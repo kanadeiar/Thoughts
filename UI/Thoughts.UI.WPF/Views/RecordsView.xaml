@@ -25,27 +25,50 @@
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0"
                     Margin="5 5">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type ListBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBox">
+                                <Border BorderBrush="CadetBlue"
+                                        BorderThickness="1"
+                                        Background="#f5fdff"
+                                        CornerRadius="10">
+                                    <ScrollViewer>
+                                        <StackPanel
+                                            IsItemsHost="True"
+                                            />
+                                    </ScrollViewer>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </StackPanel.Resources>
             <WrapPanel HorizontalAlignment="Center"
-                       Margin="0 10 0 0">
+                       Margin="0 25 0 0">
                 <Button Content="Add"/>
                 <Button Content="Edit"/>
                 <Button Content="Remove"/>
             </WrapPanel>
-            <ListBox Margin="5 10 5 50"
-                     VerticalAlignment="Stretch">
+            <ListBox Margin="5 15 5 5"
+                     >                
                 <ListBox.ItemTemplate>
                     <ItemContainerTemplate>
                         <WrapPanel>
-                            <TextBlock x:Name="RecordSubject" FontSize="12"/>
+                            <TextBlock x:Name="RecordSubject" FontSize="12"
+                                       />
                             <WrapPanel HorizontalAlignment="Right">
                                 <WrapPanel.Resources>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="FontSize" Value="5"/>
                                     </Style>
                                 </WrapPanel.Resources>
-                                <TextBlock x:Name="RecordOwner"/>
+                                <TextBlock x:Name="RecordOwner"
+                                           />
                                 <DatePickerTextBox x:Name="RecordPublished" Margin="5 0"
-                                               IsEnabled="False"/>
+                                               IsEnabled="False"
+                                               />
                             </WrapPanel>
                         </WrapPanel>
                     </ItemContainerTemplate>
@@ -53,24 +76,23 @@
             </ListBox>
         </StackPanel>
         <DockPanel Grid.Column="1"
-                    Margin="5 0 5 10"
+                    Margin="10 0 5 10"
                     >
             <StackPanel DockPanel.Dock="Top">
                 <Grid>
                     <TextBlock Text="Автор:" 
-                           HorizontalAlignment="Left"/>
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"/>
                     <TextBox Width="200" 
                          HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
                          IsEnabled="False"/>
                 </Grid>
                 <Grid>
-                    <TextBlock Text="Тема:" HorizontalAlignment="Left"/>
-                    <TextBox Width="250" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Тема:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Width="250" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
             </StackPanel>
-            <Grid>
-                
-            </Grid>            
             <WrapPanel HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        Margin="0 0 0 5"
@@ -79,7 +101,8 @@
                 <Button Content="Discard"/>
             </WrapPanel>
             <TextBox AcceptsTab="True"
-                     AcceptsReturn="True"/>
+                     AcceptsReturn="True"
+                     Margin="0 10 5 10"/>
         </DockPanel>
     </Grid>
 </UserControl>
