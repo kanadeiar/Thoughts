@@ -10,5 +10,7 @@ namespace Thoughts.Domain.Base.Entities
         public string Details { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime? EditDate { get; set; }
+        public ICategory Category { get; set; }
     }
+    public interface INote : INote<int> { }
 }
