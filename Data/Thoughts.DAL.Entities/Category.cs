@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Thoughts.DAL.Entities.Base
+using Thoughts.DAL.Entities.Base;
+
+namespace Thoughts.DAL.Entities
 {
     /// <summary>
     /// Категория (раздел)
@@ -15,7 +17,9 @@ namespace Thoughts.DAL.Entities.Base
         public ICollection<Post> Posts { get; set; }=null!;
 
         public Category() { }
+
         public Category(string Name)=>this.Name = Name;
+
         public override string ToString() => Name;
     }
 }
