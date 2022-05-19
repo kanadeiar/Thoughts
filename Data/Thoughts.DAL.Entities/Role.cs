@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +9,7 @@ namespace Thoughts.DAL.Entities;
 [Index(nameof(Name), IsUnique = true, Name = "NameIndex")]
 public class Role : Entity
 {
+    [Required]
     public string Name { get; set; } = null!;
 
     public ICollection<User> Users { get; set; } = new HashSet<User>();

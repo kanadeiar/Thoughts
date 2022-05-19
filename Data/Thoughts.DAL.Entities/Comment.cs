@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 using Microsoft.EntityFrameworkCore;
 
 using Thoughts.DAL.Entities.Base;
@@ -14,16 +16,19 @@ public class Comment:Entity
     public DateTime Date { get; set; }
 
     /// <summary>Запись к которой принадлежит комментарий</summary>
+    [Required]
     public Post Post { get; set; } = null!;
 
     /// <summary>Автор комментария</summary>
+    [Required] 
     public User User { get; set; }=null!;
 
     /// <summary>Текст комментария</summary>
+    [Required] 
     public string Body { get; set; } = null!;
 
     /// <summary>Родительский комментарий</summary>
-    public Comment ParentComment { get; set; } = null!;
+    public Comment? ParentComment { get; set; } = null!;
 
     /// <summary>Список дочерних комментариев</summary>
     public ICollection<Comment> ChildrenComment { get; set; } = new HashSet<Comment>();

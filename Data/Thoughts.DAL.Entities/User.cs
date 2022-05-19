@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Microsoft.EntityFrameworkCore;
 
 using Thoughts.DAL.Entities.Base;
 
@@ -10,19 +12,25 @@ namespace Thoughts.DAL.Entities;
 [Index(nameof(LastName), nameof(FirstName), nameof(Patronymic), IsUnique = true, Name = "NameIndex")]
 public class User : Entity
 {
+    /// <summary>Статус пользователя</summary>
+    [Required] 
+    public Status Status { get; set; } = null!;
     /// <summary>Фамилия</summary>
+    [Required, MinLength(2)]
     public string LastName { get; set; } = null!;
 
     /// <summary>Имя</summary>
+    [Required, MinLength(2)]
     public string FirstName { get; set; } = null!;
 
     /// <summary>Отчество</summary>
-    public string Patronymic { get; set; } = null!;
+    public string? Patronymic { get; set; } = null!;
 
     /// <summary>Дата рождения</summary>
     public DateTime Birthday { get; set; }
 
     /// <summary>Псевдоним (отображаемое имя автора)</summary>
+    [Required]
     public string NikName { get; set; } = null!;
 
     /// <summary>Роли пользователя</summary>
