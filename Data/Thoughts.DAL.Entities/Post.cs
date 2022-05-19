@@ -20,13 +20,13 @@
         public Category Category { get; set; } = null!;
 
         /// <summary>Список тегов относящихся к записи</summary>
-        public ICollection<Tag> Tags { get; set; }= null!;
+        public ICollection<Tag> Tags { get; set; }= new HashSet<Tag>();
 
         /// <summary>Список комментариев относящихся к записи</summary>
-        public ICollection<Comment> Comments { get; set; }= null!;
+        public ICollection<Comment> Comments { get; set; }= new HashSet<Comment>();
 
         /// <summary>Признак удалённой записи</summary>
-        public bool IsDeleted { get; set; }=false;
+        public bool IsDeleted { get; set; }
 
         public Post () { }
 

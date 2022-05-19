@@ -26,10 +26,10 @@ namespace Thoughts.DAL.Entities
         public Comment ParentComment { get; set; } = null!;
 
         /// <summary>Список дочерних комментариев</summary>
-        public ICollection<Comment> ChildrenComment { get; set; }=null!;
+        public ICollection<Comment> ChildrenComment { get; set; } = new HashSet<Comment>();
 
         /// <summary>Признак удалённой записи</summary>
-        public bool IsDeleted { get; set; }=false;
+        public bool IsDeleted { get; set; }
 
         public Comment() { }
 

@@ -10,7 +10,7 @@ namespace Thoughts.DAL.Entities.Base
     {
         /// <summary>Название тега</summary>
         public string Name { get; set; } = null!;
-        public ICollection<Post> Posts { get; set; }=null!;
+        public ICollection<Post> Posts { get; set; }= new HashSet<Post>();
 
         public Tag() { }
 

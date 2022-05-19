@@ -14,7 +14,7 @@ namespace Thoughts.DAL.Entities
         public string Name { get; set; } = null!;
 
         /// <summary>Список постов входящих в категорию</summary>
-        public ICollection<Post> Posts { get; set; }=null!;
+        public ICollection<Post> Posts { get; set; }=new HashSet<Post>();
 
         public Category() { }
 

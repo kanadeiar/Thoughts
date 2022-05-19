@@ -24,7 +24,7 @@ public class User : Entity
     public string NikName { get; set; } = null!;
 
     /// <summary>Роли пользователя</summary>
-    public ICollection<Role> Roles { get; set; }=null!;
+    public ICollection<Role> Roles { get; set; } = new HashSet<Role>();
 
     public User() { }
 

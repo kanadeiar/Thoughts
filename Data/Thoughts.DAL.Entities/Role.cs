@@ -13,7 +13,7 @@ namespace Thoughts.DAL.Entities.Base
     {
         public string Name { get; set; } = null!;
 
-        public ICollection<User> Users { get; set; } = null!;
+        public ICollection<User> Users { get; set; } = new HashSet<User>();
         public Role() { }
 
         public Role(string name) => Name = name;
