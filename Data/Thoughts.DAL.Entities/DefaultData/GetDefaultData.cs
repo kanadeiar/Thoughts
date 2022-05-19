@@ -10,24 +10,18 @@ namespace Thoughts.DAL.Entities.DefaultData
 {
     public static class GetDefaultData
     {
-        public static Status[] DefaultStatus()
-        {
-            return new Status[]
+        public static Status[] DefaultStatus() => new Status[]
             {
-                new Status(){ Id=1, Name="Черновик"},
-                new Status(){ Id=2, Name="Опубликовано"},
-                new Status(){ Id=2, Name="Зблакировано"}
+                new (){ Id=1, Name="Черновик"},
+                new (){ Id=2, Name="Опубликовано"},
+                new (){ Id=3, Name="Зблакировано"}
             };
-        }
 
-        public static Role[] DefaultRole()
-        {
-           return new Role[]
-            {
-              new Role(){ Id=1, Name="Администратор"},
-              new Role(){ Id=1, Name="Модератор"},
-              new Role(){ Id=1, Name="Автор"},
-            };
-         }
-   }
+        public static Role[] DefaultRole() => new Role[]
+             {
+              new (){ Id=1, Name="Администратор"},
+              new (){ Id=2, Name="Модератор"},
+              new (){ Id=3, Name="Автор"},
+             };
+    }
 }

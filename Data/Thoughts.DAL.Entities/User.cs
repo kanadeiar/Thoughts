@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Thoughts.DAL.Entities.Base;
+using Thoughts.DAL.Entities.Base;
+
+namespace Thoughts.DAL.Entities;
 /// <summary>
 /// Пользователь (автор)
 /// </summary>
