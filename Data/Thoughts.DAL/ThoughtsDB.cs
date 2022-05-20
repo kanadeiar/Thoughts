@@ -23,14 +23,11 @@ public class ThoughtsDB:DbContext
     public DbSet<Tag> Tags { get; set; } = null!;
     #endregion
 
-    public ThoughtsDB(DbContextOptions<ThoughtsDB> options) : base(options)
-    {
-
-    }
+    public ThoughtsDB(DbContextOptions<ThoughtsDB> options) : base(options){ }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Status>().HasData(GetDefaultData.DefaultStatus());
-        modelBuilder.Entity<Status>().HasData(GetDefaultData.DefaultRole());
+        modelBuilder.Entity<Role>().HasData(GetDefaultData.DefaultRole());
     }
 
 
