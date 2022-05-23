@@ -22,7 +22,7 @@ public class FileModel : NamedEntityModel
 
     public FileModel(string fileName, string? fileDescription, byte[] fileBody)
     {
-        FileName = fileName;
+        Name = fileName;
         FileDescription = fileDescription;
         FileBody = fileBody;
     }

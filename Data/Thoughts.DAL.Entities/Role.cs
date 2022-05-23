@@ -7,11 +7,8 @@ using Thoughts.DAL.Entities.Base;
 namespace Thoughts.DAL.Entities;
 
 [Index(nameof(Name), IsUnique = true, Name = "NameIndex")]
-public class Role : Entity
+public class Role : NamedEntity
 {
-    [Required]
-    public string Name { get; set; } = null!;
-
     public ICollection<User> Users { get; set; } = new HashSet<User>();
     public Role() { }
 

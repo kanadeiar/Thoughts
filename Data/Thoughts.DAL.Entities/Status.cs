@@ -8,12 +8,8 @@ using Thoughts.DAL.Entities.Base;
 namespace Thoughts.DAL.Entities;
 
 [Index(nameof(Name), IsUnique = true, Name = "NameIndex")]
-public class Status:Entity
+public class Status: NamedEntity
 {
-    /// <summary>Наименование статуса</summary>
-    [Required, MinLength(5)]
-    public string Name { get; set; }= null!;
-
     public Status() { }
 
     public Status(string name) => Name = name;
