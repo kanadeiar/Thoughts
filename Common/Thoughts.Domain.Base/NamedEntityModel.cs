@@ -29,20 +29,20 @@ public abstract class NamedEntityModel<TKey> : EntityModel<TKey>, INamedEntity<T
 }
 
 /// <summary>Именованная сущность</summary>
-public abstract class NamedEntity : NamedEntityModel<int>, INamedEntity
+public abstract class NamedEntityModel : NamedEntityModel<int>, INamedEntity
 {
     /// <summary>Инициализация новой именованной сущности</summary>
-    protected NamedEntity() { }
+    protected NamedEntityModel() { }
 
     /// <summary>Инициализация новой именованной сущности</summary>
     /// <param name="Name">Имя</param>
-    protected NamedEntity(string Name) : base(Name) { }
+    protected NamedEntityModel(string Name) : base(Name) { }
 
     /// <summary>Инициализация новой именованной сущности</summary>
     /// <param name="Id">Идентификатор</param>
-    protected NamedEntity(int Id) : base(Id) { }
+    protected NamedEntityModel(int Id) : base(Id) { }
 
     /// <summary>Инициализация новой именованной сущности</summary>
     /// <param name="Id">Идентификатор</param><param name="Name">Имя</param>
-    protected NamedEntity(int Id, string Name) : base(Id, Name) { }
+    protected NamedEntityModel(int Id, string Name) : base(Id, Name) { }
 }

@@ -4,18 +4,18 @@ using Thoughts.Domain.Base;
 
 namespace Thoughts.Domain;
 
-public  class Post : Entity
+public  class PostModel : EntityModel
 {
     /// <summary>Статус записи</summary>
     [Required]
-    public Status Status { get; set; } = null!;
+    public StatusModel Status { get; set; } = null!;
 
     /// <summary>Дата записи</summary>
     public DateTime Date { get; set; }
 
     /// <summary>Автор</summary>
     [Required]
-    public User User { get; set; }=null!;
+    public UserModel User { get; set; }=null!;
 
     /// <summary>Заголовок записи</summary>
     [Required]
@@ -26,21 +26,21 @@ public  class Post : Entity
     public string Body { get; set; } = null!;
     /// <summary>Категория к которой относится запись</summary>
     [Required] 
-    public Category Category { get; set; } = null!;
+    public CategoryModel Category { get; set; } = null!;
 
     /// <summary>Список тегов относящихся к записи</summary>
-    public ICollection<Tag> Tags { get; set; }= new HashSet<Tag>();
+    public ICollection<TagModel> Tags { get; set; }= new HashSet<TagModel>();
 
     /// <summary>Список комментариев относящихся к записи</summary>
-    public ICollection<Comment> Comments { get; set; }= new HashSet<Comment>();
+    public ICollection<CommentModel> Comments { get; set; }= new HashSet<CommentModel>();
 
     /// <summary>Признак удалённой записи</summary>
     public bool IsDeleted { get; set; }
 
-    public Post () { }
+    public PostModel () { }
 
-    public Post (Status status, DateTime date, User user, 
-        string title, string body, Category category, bool isDeleted ) 
+    public PostModel (StatusModel status, DateTime date, UserModel user, 
+        string title, string body, CategoryModel category, bool isDeleted ) 
     { 
         Status = status;
         Date = date;

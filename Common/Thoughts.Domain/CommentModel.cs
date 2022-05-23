@@ -9,35 +9,35 @@ namespace Thoughts.Domain;
 /// <summary>
 /// Комментарий
 /// </summary>    
-public class Comment:Entity
+public class CommentModel: EntityModel
 {
     /// <summary>Дата комментария</summary>
     public DateTime Date { get; set; }
 
     /// <summary>Запись к которой принадлежит комментарий</summary>
     [Required]
-    public Post Post { get; set; } = null!;
+    public PostModel Post { get; set; } = null!;
 
     /// <summary>Автор комментария</summary>
     [Required] 
-    public User User { get; set; }=null!;
+    public UserModel User { get; set; }=null!;
 
     /// <summary>Текст комментария</summary>
     [Required] 
     public string Body { get; set; } = null!;
 
     /// <summary>Родительский комментарий</summary>
-    public Comment? ParentComment { get; set; } = null!;
+    public CommentModel? ParentComment { get; set; } = null!;
 
     /// <summary>Список дочерних комментариев</summary>
-    public ICollection<Comment> ChildrenComment { get; set; } = new HashSet<Comment>();
+    public ICollection<CommentModel> ChildrenComment { get; set; } = new HashSet<CommentModel>();
 
     /// <summary>Признак удалённой записи</summary>
     public bool IsDeleted { get; set; }
 
-    public Comment() { }
+    public CommentModel() { }
 
-    public Comment(DateTime date, Post post, User user, Comment parentComment,string body, bool isdeleted ) 
+    public CommentModel(DateTime date, PostModel post, UserModel user, CommentModel parentComment,string body, bool isdeleted ) 
     {
         Date = date;
         Post = post;

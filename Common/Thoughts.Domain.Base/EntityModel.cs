@@ -47,9 +47,9 @@ public abstract class EntityModel<TKey> : IEntity<TKey>, IEquatable<EntityModel<
 }
 
 /// <summary>Сущность</summary>
-public abstract class Entity : EntityModel<int>, IEntity
+public abstract class EntityModel : EntityModel<int>, IEntity
 {
-    protected Entity() { }
+    protected EntityModel() { }
 
-    protected Entity(int Id) : base(Id) { }
+    protected EntityModel(int Id) : base(Id) { }
 }

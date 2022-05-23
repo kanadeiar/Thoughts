@@ -6,11 +6,11 @@ namespace Thoughts.Domain;
 /// <summary>
 /// Пользователь (автор)
 /// </summary>
-public class User : Entity
+public class UserModel : EntityModel
 {
     /// <summary>Статус пользователя</summary>
     [Required] 
-    public Status Status { get; set; } = null!;
+    public StatusModel Status { get; set; } = null!;
     /// <summary>Фамилия</summary>
     [Required, MinLength(2)]
     public string LastName { get; set; } = null!;
@@ -30,11 +30,11 @@ public class User : Entity
     public string NikName { get; set; } = null!;
 
     /// <summary>Роли пользователя</summary>
-    public ICollection<Role> Roles { get; set; } = new HashSet<Role>();
+    public ICollection<RoleModel> Roles { get; set; } = new HashSet<RoleModel>();
 
-    public User() { }
+    public UserModel() { }
 
-    public User(string LastName, string FirstName, string Patronymic, DateTime Birthday, string NikName)
+    public UserModel(string LastName, string FirstName, string Patronymic, DateTime Birthday, string NikName)
     {
         this.LastName = LastName;
         this.FirstName = FirstName;
