@@ -1,4 +1,6 @@
-﻿namespace Thoughts.Interfaces.Base.Entities;
+﻿using Thoughts.Interfaces.Base.Entities;
+
+namespace Thoughts.Interfaces;
 
 public interface ITag<TKye>:INamedEntity<TKye>
 {

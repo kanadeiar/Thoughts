@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Thoughts.Interfaces.Base.Entities;
+using Thoughts.Interfaces.Base.Entities;
+
+namespace Thoughts.Interfaces;
 /// <summary>
 /// Категория
 /// </summary>

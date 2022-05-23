@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Thoughts.Interfaces.Base.Entities;
 
-namespace Thoughts.Interfaces.Base.Entities;
+namespace Thoughts.Interfaces;
 
 /// <summary>
 /// Пользователь
