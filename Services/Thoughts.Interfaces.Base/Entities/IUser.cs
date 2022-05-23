@@ -1,26 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Thoughts.Interfaces.Base.Entities
+
+namespace Thoughts.Interfaces.Base.Entities;
+
+/// <summary>
+/// Пользователь
+/// <typeparam name="TKye"></typeparam>
+public interface IUser<TKye>:IEntity<TKye>
 {
-    internal interface IUser<TKye>:IEntity<TKye>
-    {
-        /// <summary>Фамилия</summary>
-        public string LastName { get; set; }
+    /// <summary>Статус пользователя</summary>
+    [Required]
+    public IStatus<TKye> Status { get; set; }
+    [Required, MinLength(2)]
+    public string LastName { get; set; }
 
-        /// <summary>Имя</summary>
-        public string FirstName { get; set; }
+    /// <summary>Имя</summary>
+    [Required, MinLength(2)]
+    public string FirstName { get; set; }
 
-        /// <summary>Отчество</summary>
-        public string Patronymic { get; set; }
+    /// <summary>Отчество</summary>
+    public string? Patronymic { get; set; }
 
-        /// <summary>Дата рождения</summary>
-        public DateTime Birthday { get; set; }
+    /// <summary>Дата рождения</summary>
+    public DateTime Birthday { get; set; }
 
-        /// <summary>Псевдоним (отображаемое имя автора)</summary>
-        public string NikName { get; set; }
-    }
+    /// <summary>Псевдоним (отображаемое имя автора)</summary>
+    [Required]
+    public string NikName { get; set; }
+
+    /// <summary>Роли пользователя</summary>
+    public ICollection<IRole<TKye>> Roles { get; set; }
 }
