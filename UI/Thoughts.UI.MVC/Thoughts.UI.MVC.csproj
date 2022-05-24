@@ -10,4 +10,8 @@
     <None Include="Views\Shared\Partial\_Styles.cshtml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\" />
+  </ItemGroup>
+
 </Project>
