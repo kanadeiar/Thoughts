@@ -3905,3 +3905,9 @@ button:disabled,
 .page-wrapper-top {
     flex-grow: 1;
 }
+
+.tag {
+    font-size: 1.1em;
+    font-family: "Roboto Slab", serif;
+    font-weight: normal;
+}
