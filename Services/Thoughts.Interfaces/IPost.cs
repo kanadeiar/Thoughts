@@ -46,5 +46,5 @@ public interface IPost<TKye> : IEntity<TKye>
 
     /// <summary>Адрес эл. почты</summary>
     [EmailAddress]
-    public string Email { get; set; } = null!;
+    public string Email { get; set; }
 }
