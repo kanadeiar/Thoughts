@@ -7,7 +7,7 @@ namespace Thoughts.Domain.Base;
 public abstract class EntityModel<TKey> : IEntity<TKey>, IEquatable<EntityModel<TKey>> where TKey : IEquatable<TKey>
 {
     /// <summary>Первичный ключ</summary>
-    public TKey Id { get; set; }
+    public TKey Id { get; set; } = default!;
 
     protected EntityModel() { }
 

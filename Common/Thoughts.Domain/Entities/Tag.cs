@@ -7,9 +7,11 @@ namespace Thoughts.Domain.Entities
     /// <typeparam name="TKey">Тип первичного ключа</typeparam>
     public class Tag<TKey> : ITag<TKey>
     {
-        public string Name { get; set; }
-        public TKey Id { get; set; }
+        public TKey Id { get; set; } = default!;
+
+        public string Name { get; set; } = null!;
     }
+
     /// <summary>Сущность тэга</summary>
     public class Tag : Tag<int>, ITag { }
 }
