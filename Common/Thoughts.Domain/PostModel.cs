@@ -40,11 +40,14 @@ public  class PostModel : EntityModel
     /// <summary>Приложенные файлы</summary>
     public ICollection<FileModel> Files { get; set; } = new HashSet<FileModel>();
 
+    /// <summary>Адрес эл. почты</summary>
+    [EmailAddress]
+    public string Email { get; set; } = null!;
     public PostModel () { }
 
     public PostModel(StatusModel status, DateTime date, UserModel user,
         string title, string body, CategoryModel category, DateTime datePublicatione,
-        ICollection<TagModel> tags, ICollection<CommentModel> comments, ICollection<FileModel> files)
+        ICollection<TagModel> tags, ICollection<CommentModel> comments, ICollection<FileModel> files, string email)
     {
         Status = status;
         Date = date;
@@ -56,6 +59,7 @@ public  class PostModel : EntityModel
         Comments = comments;
         DatePublicatione = datePublicatione;
         Files = files;
+        Email = email;
     }
 
     public override string ToString() => $"{Date}, {User.NikName}: {Title}";

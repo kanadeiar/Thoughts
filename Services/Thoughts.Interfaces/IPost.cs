@@ -8,7 +8,7 @@ namespace Thoughts.Interfaces;
 /// Запись (Пост)
 /// </summary>
 /// <typeparam name="TKye"></typeparam>
-public interface IPost<TKye>:IEntity<TKye>
+public interface IPost<TKye> : IEntity<TKye>
 {
     /// <summary>Статус записи</summary>
     [Required]
@@ -23,7 +23,7 @@ public interface IPost<TKye>:IEntity<TKye>
 
     /// <summary>Заголовок записи</summary>
     [Required]
-    public string Title { get; set; } 
+    public string Title { get; set; }
 
     /// <summary>Текст (тело) записи</summary>
     [Required, MinLength(20)]
@@ -43,4 +43,8 @@ public interface IPost<TKye>:IEntity<TKye>
 
     /// <summary>Приложенные файлы</summary>
     public ICollection<IFile<TKye>> Files { get; set; }
+
+    /// <summary>Адрес эл. почты</summary>
+    [EmailAddress]
+    public string Email { get; set; } = null!;
 }
