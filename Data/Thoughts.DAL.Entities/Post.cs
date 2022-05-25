@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 using Thoughts.DAL.Entities.Base;
 
@@ -6,8 +7,11 @@ namespace Thoughts.DAL.Entities;
 
 public class Post : Entity
 {
+    public int StatusId { get; set; }
+
     /// <summary>Статус записи</summary>
     [Required]
+    [ForeignKey(nameof(StatusId))]
     public Status Status { get; set; } = null!;
 
     /// <summary>Дата записи</summary>

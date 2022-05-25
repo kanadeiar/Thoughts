@@ -34,7 +34,7 @@ namespace Thoughts.DAL.SqlServer.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("PostTag");
+                    b.ToTable("PostTag", (string)null);
                 });
 
             modelBuilder.Entity("RoleUser", b =>
@@ -49,7 +49,7 @@ namespace Thoughts.DAL.SqlServer.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("RoleUser");
+                    b.ToTable("RoleUser", (string)null);
                 });
 
             modelBuilder.Entity("Thoughts.DAL.Entities.Category", b =>
@@ -74,7 +74,7 @@ namespace Thoughts.DAL.SqlServer.Migrations
                     b.HasIndex(new[] { "Name" }, "NameIndex")
                         .IsUnique();
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Thoughts.DAL.Entities.Comment", b =>
@@ -112,7 +112,45 @@ namespace Thoughts.DAL.SqlServer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
+                });
+
+            modelBuilder.Entity("Thoughts.DAL.Entities.File", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<byte[]>("FileBody")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("FileDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("FileHash")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("varbinary(16)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PostId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex(new[] { "FileHash" }, "NameIndex")
+                        .IsUnique()
+                        .HasDatabaseName("NameIndex1");
+
+                    b.ToTable("File", (string)null);
                 });
 
             modelBuilder.Entity("Thoughts.DAL.Entities.Post", b =>
@@ -133,8 +171,12 @@ namespace Thoughts.DAL.SqlServer.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                    b.Property<DateTime>("DatePublicatione")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -154,7 +196,7 @@ namespace Thoughts.DAL.SqlServer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("Thoughts.DAL.Entities.Role", b =>
@@ -173,9 +215,9 @@ namespace Thoughts.DAL.SqlServer.Migrations
 
                     b.HasIndex(new[] { "Name" }, "NameIndex")
                         .IsUnique()
-                        .HasDatabaseName("NameIndex1");
+                        .HasDatabaseName("NameIndex2");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
@@ -192,6 +234,11 @@ namespace Thoughts.DAL.SqlServer.Migrations
                         {
                             Id = 3,
                             Name = "Автор"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Гость"
                         });
                 });
 
@@ -211,9 +258,9 @@ namespace Thoughts.DAL.SqlServer.Migrations
 
                     b.HasIndex(new[] { "Name" }, "NameIndex")
                         .IsUnique()
-                        .HasDatabaseName("NameIndex2");
+                        .HasDatabaseName("NameIndex3");
 
-                    b.ToTable("Statuses");
+                    b.ToTable("Statuses", (string)null);
 
                     b.HasData(
                         new
@@ -229,7 +276,12 @@ namespace Thoughts.DAL.SqlServer.Migrations
                         new
                         {
                             Id = 3,
-                            Name = "Зблакировано"
+                            Name = "На модерации"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Заблокировано"
                         });
                 });
 
@@ -243,16 +295,15 @@ namespace Thoughts.DAL.SqlServer.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex(new[] { "Name" }, "NameIndex")
                         .IsUnique()
-                        .HasDatabaseName("NameIndex3");
+                        .HasDatabaseName("NameIndex4");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("Thoughts.DAL.Entities.User", b =>
@@ -290,10 +341,10 @@ namespace Thoughts.DAL.SqlServer.Migrations
 
                     b.HasIndex(new[] { "LastName", "FirstName", "Patronymic" }, "NameIndex")
                         .IsUnique()
-                        .HasDatabaseName("NameIndex4")
+                        .HasDatabaseName("NameIndex5")
                         .HasFilter("[Patronymic] IS NOT NULL");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("PostTag", b =>
@@ -362,6 +413,13 @@ namespace Thoughts.DAL.SqlServer.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Thoughts.DAL.Entities.File", b =>
+                {
+                    b.HasOne("Thoughts.DAL.Entities.Post", null)
+                        .WithMany("Files")
+                        .HasForeignKey("PostId");
+                });
+
             modelBuilder.Entity("Thoughts.DAL.Entities.Post", b =>
                 {
                     b.HasOne("Thoughts.DAL.Entities.Category", "Category")
@@ -413,6 +471,8 @@ namespace Thoughts.DAL.SqlServer.Migrations
             modelBuilder.Entity("Thoughts.DAL.Entities.Post", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Files");
                 });
 #pragma warning restore 612, 618
         }

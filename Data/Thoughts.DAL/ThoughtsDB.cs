@@ -30,5 +30,10 @@ public class ThoughtsDB:DbContext
     {
         db.Entity<Status>().HasData(GetDefaultData.DefaultStatus());
         db.Entity<Role>().HasData(GetDefaultData.DefaultRole());
+
+        db.Entity<Status>()
+           .HasMany(s => s.Posts)
+           .WithOne(p => p.Status)
+           .OnDelete(DeleteBehavior.Cascade);
     }
 }

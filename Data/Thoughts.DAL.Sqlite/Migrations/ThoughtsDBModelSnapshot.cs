@@ -106,6 +106,42 @@ namespace Thoughts.DAL.Sqlite.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("Thoughts.DAL.Entities.File", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("FileBody")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("FileDescription")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("FileHash")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("PostId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex(new[] { "FileHash" }, "NameIndex")
+                        .IsUnique()
+                        .HasDatabaseName("NameIndex1");
+
+                    b.ToTable("File");
+                });
+
             modelBuilder.Entity("Thoughts.DAL.Entities.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -122,8 +158,12 @@ namespace Thoughts.DAL.Sqlite.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
+                    b.Property<DateTime>("DatePublicatione")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("INTEGER");
@@ -160,7 +200,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
 
                     b.HasIndex(new[] { "Name" }, "NameIndex")
                         .IsUnique()
-                        .HasDatabaseName("NameIndex1");
+                        .HasDatabaseName("NameIndex2");
 
                     b.ToTable("Roles");
 
@@ -179,6 +219,11 @@ namespace Thoughts.DAL.Sqlite.Migrations
                         {
                             Id = 3,
                             Name = "Автор"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Гость"
                         });
                 });
 
@@ -196,7 +241,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
 
                     b.HasIndex(new[] { "Name" }, "NameIndex")
                         .IsUnique()
-                        .HasDatabaseName("NameIndex2");
+                        .HasDatabaseName("NameIndex3");
 
                     b.ToTable("Statuses");
 
@@ -214,7 +259,12 @@ namespace Thoughts.DAL.Sqlite.Migrations
                         new
                         {
                             Id = 3,
-                            Name = "Зблакировано"
+                            Name = "На модерации"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Заблокировано"
                         });
                 });
 
@@ -226,14 +276,13 @@ namespace Thoughts.DAL.Sqlite.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(60)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex(new[] { "Name" }, "NameIndex")
                         .IsUnique()
-                        .HasDatabaseName("NameIndex3");
+                        .HasDatabaseName("NameIndex4");
 
                     b.ToTable("Tags");
                 });
@@ -271,7 +320,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
 
                     b.HasIndex(new[] { "LastName", "FirstName", "Patronymic" }, "NameIndex")
                         .IsUnique()
-                        .HasDatabaseName("NameIndex4");
+                        .HasDatabaseName("NameIndex5");
 
                     b.ToTable("Users");
                 });
@@ -342,6 +391,13 @@ namespace Thoughts.DAL.Sqlite.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Thoughts.DAL.Entities.File", b =>
+                {
+                    b.HasOne("Thoughts.DAL.Entities.Post", null)
+                        .WithMany("Files")
+                        .HasForeignKey("PostId");
+                });
+
             modelBuilder.Entity("Thoughts.DAL.Entities.Post", b =>
                 {
                     b.HasOne("Thoughts.DAL.Entities.Category", "Category")
@@ -393,6 +449,8 @@ namespace Thoughts.DAL.Sqlite.Migrations
             modelBuilder.Entity("Thoughts.DAL.Entities.Post", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Files");
                 });
 #pragma warning restore 612, 618
         }

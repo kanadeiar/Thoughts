@@ -28,15 +28,20 @@ switch (db_type)
 
 var app = builder.Build();
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    //var db = scope.ServiceProvider.GetRequiredService<ThoughtsDB>();
-//    var db_factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ThoughtsDB>>();
-//    using (var db = db_factory.CreateDbContext())
-//    {
-//        // выполнение операций над БД и его уничтожение
-//    }
-//}
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ThoughtsDB>();
+    await db.Database.MigrateAsync();
+
+    var statuses = await db.Statuses.ToArrayAsync();
+    var roles = await db.Roles.ToArrayAsync();
+
+    //var db_factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ThoughtsDB>>();
+    //using (var db = db_factory.CreateDbContext())
+    //{
+    //    // выполнение операций над БД и его уничтожение
+    //}
+}
 
 if (!app.Environment.IsDevelopment())
 {
