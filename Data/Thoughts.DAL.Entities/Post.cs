@@ -33,14 +33,18 @@ public  class Post : Entity
 
     /// <summary>Список комментариев относящихся к записи</summary>
     public ICollection<Comment> Comments { get; set; }= new HashSet<Comment>();
+    
+    /// <summary>Дата публикации</summary>
+    public DateTime DatePublicatione { get; set; }
 
-    /// <summary>Признак удалённой записи</summary>
-    public bool IsDeleted { get; set; }
+    /// <summary>Приложенные файлы</summary>
+    public ICollection<File> Files { get; set; }= new HashSet<File>();
 
     public Post () { }
 
     public Post (Status status, DateTime date, User user, 
-        string title, string body, Category category, bool isDeleted ) 
+        string title, string body, Category category, DateTime datePublicatione, 
+        ICollection<Tag> tags, ICollection<Comment> comments) 
     { 
         Status = status;
         Date = date;
@@ -48,7 +52,9 @@ public  class Post : Entity
         Title = title;
         Body = body;
         Category = category;
-        IsDeleted = isDeleted;           
+        Tags = tags;
+        Comments = comments;
+        DatePublicatione= datePublicatione;           
     }
 
     public override string ToString() => $"{Date}, {User.NikName}: {Title}";
