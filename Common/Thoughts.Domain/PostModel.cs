@@ -34,21 +34,28 @@ public  class PostModel : EntityModel
     /// <summary>Список комментариев относящихся к записи</summary>
     public ICollection<CommentModel> Comments { get; set; }= new HashSet<CommentModel>();
 
-    /// <summary>Признак удалённой записи</summary>
-    public bool IsDeleted { get; set; }
+    /// <summary>Дата публикации</summary>
+    public DateTime DatePublicatione { get; set; }
+
+    /// <summary>Приложенные файлы</summary>
+    public ICollection<FileModel> Files { get; set; } = new HashSet<FileModel>();
 
     public PostModel () { }
 
-    public PostModel (StatusModel status, DateTime date, UserModel user, 
-        string title, string body, CategoryModel category, bool isDeleted ) 
-    { 
+    public PostModel(StatusModel status, DateTime date, UserModel user,
+        string title, string body, CategoryModel category, DateTime datePublicatione,
+        ICollection<TagModel> tags, ICollection<CommentModel> comments, ICollection<FileModel> files)
+    {
         Status = status;
         Date = date;
         User = user;
         Title = title;
         Body = body;
         Category = category;
-        IsDeleted = isDeleted;           
+        Tags = tags;
+        Comments = comments;
+        DatePublicatione = datePublicatione;
+        Files = files;
     }
 
     public override string ToString() => $"{Date}, {User.NikName}: {Title}";

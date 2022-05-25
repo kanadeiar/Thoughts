@@ -38,6 +38,9 @@ public interface IPost<TKye>:IEntity<TKye>
     /// <summary>Список комментариев относящихся к записи</summary>
     public ICollection<IComment<TKye>> Comments { get; set; }
 
-    /// <summary>Признак удалённой записи</summary>
-    public bool IsDeleted { get; set; }
+    /// <summary>Дата публикации</summary>
+    public DateTime DatePublicatione { get; set; }
+
+    /// <summary>Приложенные файлы</summary>
+    public ICollection<IFile<TKye>> Files { get; set; }
 }

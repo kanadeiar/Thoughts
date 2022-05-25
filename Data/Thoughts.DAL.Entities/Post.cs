@@ -44,7 +44,7 @@ public  class Post : Entity
 
     public Post (Status status, DateTime date, User user, 
         string title, string body, Category category, DateTime datePublicatione, 
-        ICollection<Tag> tags, ICollection<Comment> comments) 
+        ICollection<Tag> tags, ICollection<Comment> comments, ICollection<File> files) 
     { 
         Status = status;
         Date = date;
@@ -54,7 +54,8 @@ public  class Post : Entity
         Category = category;
         Tags = tags;
         Comments = comments;
-        DatePublicatione= datePublicatione;           
+        DatePublicatione= datePublicatione;
+        Files = files;
     }
 
     public override string ToString() => $"{Date}, {User.NikName}: {Title}";
