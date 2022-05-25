@@ -17,5 +17,10 @@
     <ProjectReference Include="..\..\Data\Thoughts.DAL.Sqlite\Thoughts.DAL.Sqlite.csproj" />
     <ProjectReference Include="..\..\Data\Thoughts.DAL.SqlServer\Thoughts.DAL.SqlServer.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="Views\Shared\Partial\_Styles.cshtml" />
+    <Folder Include="wwwroot\lib\" />
+  </ItemGroup>
 
 </Project>
