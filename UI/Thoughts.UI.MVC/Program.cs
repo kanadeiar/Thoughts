@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+
+using Thoughts.DAL;
 using Thoughts.DAL.Sqlite;
 using Thoughts.DAL.SqlServer;
 
@@ -24,6 +27,16 @@ switch (db_type)
 }
 
 var app = builder.Build();
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    //var db = scope.ServiceProvider.GetRequiredService<ThoughtsDB>();
+//    var db_factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ThoughtsDB>>();
+//    using (var db = db_factory.CreateDbContext())
+//    {
+//        // выполнение операций над БД и его уничтожение
+//    }
+//}
 
 if (!app.Environment.IsDevelopment())
 {
