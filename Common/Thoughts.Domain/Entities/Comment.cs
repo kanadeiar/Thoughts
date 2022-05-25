@@ -7,13 +7,19 @@ namespace Thoughts.Domain.Entities
     /// <typeparam name="TKey">Тип первичного ключа</typeparam>
     public class Comment<TKey> : IComment<TKey>
     {
-        public IEnumerable<IComment<TKey>> Answers { get; set; } = Enumerable.Empty<IComment<TKey>>();
-        public IUser<TKey> Creator { get; set; }
-        public string Text { get; set; }
+        public TKey Id { get; set; } = default!;
+
+        public string Text { get; set; } = null!;
+
+        public IUser<TKey> Creator { get; set; } = default!;
+
         public DateTime CreationDate { get; set; }
+
         public DateTime? EditDate { get; set; }
-        public TKey Id { get; set; }
+
+        public ICollection<IComment<TKey>> Answers { get; set; } = new HashSet<IComment<TKey>>();
     }
+
     /// <summary>Сущность комментария</summary>
     public class Comment : Comment<int>, IComment { }
 }
