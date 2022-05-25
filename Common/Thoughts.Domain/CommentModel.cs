@@ -9,7 +9,7 @@ namespace Thoughts.Domain;
 /// <summary>
 /// Комментарий
 /// </summary>    
-public class CommentModel: EntityModel
+public class CommentModel : EntityModel
 {
     /// <summary>Дата комментария</summary>
     public DateTime Date { get; set; }
@@ -19,11 +19,11 @@ public class CommentModel: EntityModel
     public PostModel Post { get; set; } = null!;
 
     /// <summary>Автор комментария</summary>
-    [Required] 
-    public UserModel User { get; set; }=null!;
+    [Required]
+    public UserModel User { get; set; } = null!;
 
     /// <summary>Текст комментария</summary>
-    [Required] 
+    [Required]
     public string Body { get; set; } = null!;
 
     /// <summary>Родительский комментарий</summary>
@@ -37,7 +37,7 @@ public class CommentModel: EntityModel
 
     public CommentModel() { }
 
-    public CommentModel(DateTime date, PostModel post, UserModel user, CommentModel parentComment,string body, bool isdeleted ) 
+    public CommentModel(DateTime date, PostModel post, UserModel user, CommentModel parentComment, string body, bool isdeleted)
     {
         Date = date;
         Post = post;

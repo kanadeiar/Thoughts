@@ -9,7 +9,7 @@ namespace Thoughts.Interfaces;
 /// Комментарий
 /// </summary>
 /// <typeparam name="TKye"></typeparam>
-public interface IComment<TKye>:IEntity<TKye>
+public interface IComment<TKye> : IEntity<TKye>
 {
     /// <summary>Дата комментария</summary>
     public DateTime Date { get; set; }

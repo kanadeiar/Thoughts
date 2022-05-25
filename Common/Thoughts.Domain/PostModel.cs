@@ -4,7 +4,7 @@ using Thoughts.Domain.Base;
 
 namespace Thoughts.Domain;
 
-public  class PostModel : EntityModel
+public class PostModel : EntityModel
 {
     /// <summary>Статус записи</summary>
     [Required]
@@ -15,7 +15,7 @@ public  class PostModel : EntityModel
 
     /// <summary>Автор</summary>
     [Required]
-    public UserModel User { get; set; }=null!;
+    public UserModel User { get; set; } = null!;
 
     /// <summary>Заголовок записи</summary>
     [Required]
@@ -25,14 +25,14 @@ public  class PostModel : EntityModel
     [Required, MinLength(20)]
     public string Body { get; set; } = null!;
     /// <summary>Категория к которой относится запись</summary>
-    [Required] 
+    [Required]
     public CategoryModel Category { get; set; } = null!;
 
     /// <summary>Список тегов относящихся к записи</summary>
-    public ICollection<TagModel> Tags { get; set; }= new HashSet<TagModel>();
+    public ICollection<TagModel> Tags { get; set; } = new HashSet<TagModel>();
 
     /// <summary>Список комментариев относящихся к записи</summary>
-    public ICollection<CommentModel> Comments { get; set; }= new HashSet<CommentModel>();
+    public ICollection<CommentModel> Comments { get; set; } = new HashSet<CommentModel>();
 
     /// <summary>Дата публикации</summary>
     public DateTime DatePublicatione { get; set; }
@@ -43,7 +43,7 @@ public  class PostModel : EntityModel
     /// <summary>Адрес эл. почты</summary>
     [EmailAddress]
     public string Email { get; set; } = null!;
-    public PostModel () { }
+    public PostModel() { }
 
     public PostModel(StatusModel status, DateTime date, UserModel user,
         string title, string body, CategoryModel category, DateTime datePublicatione,

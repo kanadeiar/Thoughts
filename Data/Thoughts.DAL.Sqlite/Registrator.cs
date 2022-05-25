@@ -9,8 +9,8 @@ public static class Registrator
 {
     public static IServiceCollection AddThoughtsDbSqlite(this IServiceCollection services, string ConnectionString)
     {
-        services.AddDbContext<ThoughtsDB>(opt => opt        
-        .UseSqlite(ConnectionString, o=>o
+        services.AddDbContext<ThoughtsDB>(opt => opt
+        .UseSqlite(ConnectionString, o => o
         .MigrationsAssembly(typeof(Registrator).Assembly.FullName)));
 
         return services;

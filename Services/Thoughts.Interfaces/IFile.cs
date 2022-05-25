@@ -10,7 +10,7 @@ namespace Thoughts.Interfaces;
 /// Файл
 /// </summary>
 /// <typeparam name="TKye"></typeparam>
-public interface IFile<TKye>:INamedEntity<TKye>
+public interface IFile<TKye> : INamedEntity<TKye>
 {
     /// <summary>Описание файла (при необходимости)</summary>
     public string? FileDescription { get; set; }

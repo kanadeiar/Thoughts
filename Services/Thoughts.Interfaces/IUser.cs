@@ -7,7 +7,7 @@ namespace Thoughts.Interfaces;
 /// <summary>
 /// Пользователь
 /// <typeparam name="TKye"></typeparam>
-public interface IUser<TKye>:IEntity<TKye>
+public interface IUser<TKye> : IEntity<TKye>
 {
     /// <summary>Статус пользователя</summary>
     [Required]

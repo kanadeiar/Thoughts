@@ -13,7 +13,7 @@ namespace Thoughts.DAL.Entities;
 public class User : Entity
 {
     /// <summary>Статус пользователя</summary>
-    [Required] 
+    [Required]
     public Status Status { get; set; } = null!;
     /// <summary>Фамилия</summary>
     [Required, MinLength(2)]

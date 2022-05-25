@@ -5,7 +5,7 @@ using Thoughts.Domain.Base;
 
 namespace Thoughts.Domain;
 
-public class StatusModel: NamedEntityModel
+public class StatusModel : NamedEntityModel
 {
     public StatusModel() { }
 

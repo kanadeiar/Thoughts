@@ -8,7 +8,7 @@ using Thoughts.DAL.Entities.Base;
 namespace Thoughts.DAL.Entities;
 
 [Index(nameof(Name), IsUnique = true, Name = "NameIndex")]
-public class Status: NamedEntity
+public class Status : NamedEntity
 {
     public Status() { }
 

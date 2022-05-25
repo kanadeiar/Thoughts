@@ -7,7 +7,7 @@ namespace Thoughts.Interfaces;
 /// Категория
 /// </summary>
 /// <typeparam name="TKye"></typeparam>
-public interface ICategory<TKye>:INamedEntity<TKye>
+public interface ICategory<TKye> : INamedEntity<TKye>
 {
     /// <summary>Статус категории</summary>
     [Required]

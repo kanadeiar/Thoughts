@@ -9,7 +9,7 @@ namespace Thoughts.Domain;
 public class UserModel : EntityModel
 {
     /// <summary>Статус пользователя</summary>
-    [Required] 
+    [Required]
     public StatusModel Status { get; set; } = null!;
     /// <summary>Фамилия</summary>
     [Required, MinLength(2)]
