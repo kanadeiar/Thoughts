@@ -27,7 +27,7 @@ public interface IUser<TKye> : IEntity<TKye>
 
     /// <summary>Псевдоним (отображаемое имя автора)</summary>
     [Required]
-    public string NikName { get; set; }
+    public string NickName { get; set; }
 
     /// <summary>Роли пользователя</summary>
     public ICollection<IRole<TKye>> Roles { get; set; }

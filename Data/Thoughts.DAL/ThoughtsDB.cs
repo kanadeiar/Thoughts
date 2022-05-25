@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Thoughts.DAL.Entities;
 using Thoughts.DAL.Entities.DefaultData;
 
@@ -8,6 +7,7 @@ namespace Thoughts.DAL;
 public class ThoughtsDB:DbContext
 {
     #region DbSet
+
     public DbSet<User> Users { get; set; } = null!;
 
     public DbSet<Role> Roles { get; set; } = null!;
@@ -21,15 +21,14 @@ public class ThoughtsDB:DbContext
     public DbSet<Post> Posts { get; set; } = null!;
 
     public DbSet<Tag> Tags { get; set; } = null!;
+
     #endregion
 
     public ThoughtsDB(DbContextOptions<ThoughtsDB> options) : base(options){ }
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+    protected override void OnModelCreating(ModelBuilder db)
     {
-        modelBuilder.Entity<Status>().HasData(GetDefaultData.DefaultStatus());
-        modelBuilder.Entity<Role>().HasData(GetDefaultData.DefaultRole());
+        db.Entity<Status>().HasData(GetDefaultData.DefaultStatus());
+        db.Entity<Role>().HasData(GetDefaultData.DefaultRole());
     }
-
-
-
 }

@@ -27,20 +27,20 @@ public class UserModel : EntityModel
 
     /// <summary>Псевдоним (отображаемое имя автора)</summary>
     [Required]
-    public string NikName { get; set; } = null!;
+    public string NickName { get; set; } = null!;
 
     /// <summary>Роли пользователя</summary>
     public ICollection<RoleModel> Roles { get; set; } = new HashSet<RoleModel>();
 
     public UserModel() { }
 
-    public UserModel(string LastName, string FirstName, string Patronymic, DateTime Birthday, string NikName)
+    public UserModel(string LastName, string FirstName, string Patronymic, DateTime Birthday, string NickName)
     {
         this.LastName = LastName;
         this.FirstName = FirstName;
         this.Patronymic = Patronymic;
         this.Birthday = Birthday;
-        this.NikName = NikName;
+        this.NickName = NickName;
     }
 
     public override string ToString() => $"[id:{Id}] {string.Join(' ', LastName, FirstName, Patronymic)}";

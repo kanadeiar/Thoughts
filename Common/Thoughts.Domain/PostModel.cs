@@ -62,6 +62,6 @@ public class PostModel : EntityModel
         Email = email;
     }
 
-    public override string ToString() => $"{Date}, {User.NikName}: {Title}";
+    public override string ToString() => $"{Date}, {User.NickName}: {Title}";
 
 }

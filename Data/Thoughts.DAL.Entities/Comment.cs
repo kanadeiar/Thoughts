@@ -9,7 +9,7 @@ namespace Thoughts.DAL.Entities;
 
 /// <summary>
 /// Комментарий
-/// </summary>    
+/// </summary>
 public class Comment : Entity
 {
     /// <summary>Дата комментария</summary>
@@ -48,6 +48,6 @@ public class Comment : Entity
         ParentComment = parentComment;
     }
 
-    public override string ToString() => $"{Date}, {User.NikName}: {Body}";
+    public override string ToString() => $"{Date}, {User.NickName}: {Body}";
 
 }

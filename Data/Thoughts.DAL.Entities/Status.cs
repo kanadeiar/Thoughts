@@ -1,7 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 using Thoughts.DAL.Entities.Base;
 
@@ -13,5 +10,6 @@ public class Status : NamedEntity
     public Status() { }
 
     public Status(string name) => Name = name;
+
     public override string ToString() => Name;
 }

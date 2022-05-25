@@ -11,7 +11,7 @@ public class Post : Entity
     public Status Status { get; set; } = null!;
 
     /// <summary>Дата записи</summary>
-    public DateTime Date { get; set; }
+    public DateTime Date { get; set; } = DateTime.Now;
 
     /// <summary>Автор</summary>
     [Required]
@@ -24,6 +24,7 @@ public class Post : Entity
     /// <summary>Текст (тело) записи</summary>
     [Required, MinLength(20)]
     public string Body { get; set; } = null!;
+
     /// <summary>Категория к которой относится запись</summary>
     [Required]
     public Category Category { get; set; } = null!;
@@ -63,6 +64,6 @@ public class Post : Entity
         Email = email;
     }
 
-    public override string ToString() => $"{Date}, {User.NikName}: {Title}";
+    public override string ToString() => $"{Date}, {User.NickName}: {Title}";
 
 }

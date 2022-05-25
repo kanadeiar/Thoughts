@@ -1,6 +1,4 @@
-﻿
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -11,12 +9,11 @@ namespace Thoughts.DAL.Entities;
 /// <summary>
 /// Класс для хранения Файла
 /// </summary>
-
 [Index(nameof(FileHash), IsUnique = true, Name = "NameIndex")]
 public class File : NamedEntity
 {
     /// <summary>Описание файла (при необходимости)</summary>
-    public string? FileDescription { get; set; } = null!;
+    public string? FileDescription { get; set; }
 
     /// <summary>Файл преобразованный в массив байт</summary>
     [Required]

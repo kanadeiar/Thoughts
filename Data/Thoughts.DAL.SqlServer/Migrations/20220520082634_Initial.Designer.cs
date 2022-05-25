@@ -276,7 +276,7 @@ namespace Thoughts.DAL.SqlServer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("NikName")
+                    b.Property<string>("NickName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

@@ -47,6 +47,6 @@ public class CommentModel : EntityModel
         ParentComment = parentComment;
     }
 
-    public override string ToString() => $"{Date}, {User.NikName}: {Body}";
+    public override string ToString() => $"{Date}, {User.NickName}: {Body}";
 
 }

@@ -257,7 +257,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("NikName")
+                    b.Property<string>("NickName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

@@ -79,7 +79,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
                     FirstName = table.Column<string>(type: "TEXT", nullable: false),
                     Patronymic = table.Column<string>(type: "TEXT", nullable: true),
                     Birthday = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    NikName = table.Column<string>(type: "TEXT", nullable: false)
+                    NickName = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

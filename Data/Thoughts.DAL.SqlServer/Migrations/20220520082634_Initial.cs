@@ -79,7 +79,7 @@ namespace Thoughts.DAL.SqlServer.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Patronymic = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NikName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    NickName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

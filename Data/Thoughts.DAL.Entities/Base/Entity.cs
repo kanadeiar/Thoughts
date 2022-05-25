@@ -7,7 +7,7 @@ namespace Thoughts.DAL.Entities.Base;
 public abstract class Entity<TKey> : IEntity<TKey>, IEquatable<Entity<TKey>> where TKey : IEquatable<TKey>
 {
     /// <summary>Первичный ключ</summary>
-    public TKey Id { get; set; }
+    public TKey Id { get; set; } = default!;
 
     protected Entity() { }
 
