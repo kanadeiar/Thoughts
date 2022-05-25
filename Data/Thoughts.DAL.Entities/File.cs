@@ -12,7 +12,7 @@ namespace Thoughts.DAL.Entities;
 /// Класс для хранения Файла
 /// </summary>
 
-[Index(nameof(Name), IsUnique = true, Name = "NameIndex")]
+[Index(nameof(FileHash), IsUnique = true, Name = "NameIndex")]
 public class File : NamedEntity
 {
     /// <summary>Описание файла (при необходимости)</summary>
@@ -22,13 +22,18 @@ public class File : NamedEntity
     [Required]
     public byte[] FileBody { get; set; } = null!;
 
+    /// <summary>MD-5 Hash файла</summary>
+    [MaxLength(16)]
+    public byte[] FileHash { get; set; } = null!;
+
     public File() { }
 
-    public File(string fileName, string? fileDescription, byte[] fileBody)
+    public File(string fileName, string? fileDescription, byte[] fileBody, byte[] fileHash)
     {
         Name = fileName;
         FileDescription = fileDescription;
         FileBody = fileBody;
+        FileHash = fileHash;
     }
 }
 

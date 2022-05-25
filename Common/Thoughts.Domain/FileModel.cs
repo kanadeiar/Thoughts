@@ -18,13 +18,18 @@ public class FileModel : NamedEntityModel
     [Required]
     public byte[] FileBody { get; set; } = null!;
 
+    /// <summary>MD-5 Hash файла</summary>
+    [MaxLength(16)]
+    public byte[] FileHash { get; set; } = null!;
+
     public FileModel() { }
 
-    public FileModel(string fileName, string? fileDescription, byte[] fileBody)
+    public FileModel(string fileName, string? fileDescription, byte[] fileBody, byte[] fileHash)
     {
         Name = fileName;
         FileDescription = fileDescription;
         FileBody = fileBody;
+        FileHash = fileHash;
     }
 }
 

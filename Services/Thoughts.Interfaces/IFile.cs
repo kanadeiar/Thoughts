@@ -19,4 +19,8 @@ public interface IFile<TKye> : INamedEntity<TKye>
     [Required]
     public byte[] FileBody { get; set; }
 
+    /// <summary>MD-5 Hash файла</summary>
+    [MaxLength(16)]
+    public byte[] FileHash { get; set; }
+
 }
