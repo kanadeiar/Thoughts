@@ -2,7 +2,7 @@
 
 namespace Thoughts.Interfaces;
 
-public interface ITag<TKye> : INamedEntity<TKye>
+public interface ITag : INamedEntity
 {
-    public ICollection<IPost<TKye>> Posts { get; set; }
+    public ICollection<IPost> Posts { get; set; }
 }
