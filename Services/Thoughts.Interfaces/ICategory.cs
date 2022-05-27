@@ -3,16 +3,16 @@
 using Thoughts.Interfaces.Base.Entities;
 
 namespace Thoughts.Interfaces;
+
 /// <summary>
 /// Категория
 /// </summary>
-/// <typeparam name="TKye"></typeparam>
-public interface ICategory<TKye> : INamedEntity<TKye>
+public interface ICategory : INamedEntity
 {
     /// <summary>Статус категории</summary>
     [Required]
-    public IStatus<TKye> Status { get; set; }
+    public IStatus Status { get; set; }
 
     /// <summary>Список постов входящих в категорию</summary>
-    public ICollection<IPost<TKye>> Posts { get; set; }
+    public ICollection<IPost> Posts { get; set; }
 }

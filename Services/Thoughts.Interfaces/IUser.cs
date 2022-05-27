@@ -6,12 +6,13 @@ namespace Thoughts.Interfaces;
 
 /// <summary>
 /// Пользователь
-/// <typeparam name="TKye"></typeparam>
-public interface IUser<TKye> : IEntity<TKye>
+/// </summary>
+public interface IUser : IEntity<string>
 {
     /// <summary>Статус пользователя</summary>
     [Required]
-    public IStatus<TKye> Status { get; set; }
+    public IStatus Status { get; set; }
+
     [Required, MinLength(2)]
     public string LastName { get; set; }
 
@@ -30,5 +31,5 @@ public interface IUser<TKye> : IEntity<TKye>
     public string NickName { get; set; }
 
     /// <summary>Роли пользователя</summary>
-    public ICollection<IRole<TKye>> Roles { get; set; }
+    public ICollection<IRole> Roles { get; set; }
 }

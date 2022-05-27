@@ -9,8 +9,7 @@ namespace Thoughts.Interfaces;
 /// <summary>
 /// Файл
 /// </summary>
-/// <typeparam name="TKye"></typeparam>
-public interface IFile<TKye> : INamedEntity<TKye>
+public interface IFile : INamedEntity<string>
 {
     /// <summary>Описание файла (при необходимости)</summary>
     public string? FileDescription { get; set; }
@@ -22,5 +21,4 @@ public interface IFile<TKye> : INamedEntity<TKye>
     /// <summary>MD-5 Hash файла</summary>
     [MaxLength(16)]
     public byte[] FileHash { get; set; }
-
 }
