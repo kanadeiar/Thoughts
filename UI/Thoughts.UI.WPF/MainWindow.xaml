@@ -9,17 +9,20 @@
         Height="450" Width="800"
         Background="Transparent"
         Foreground="Black"
-        FontFamily="Helvetica">
+        FontFamily="Helvetica"
+        AllowsTransparency="True"
+        WindowStyle="None">
     <Window.Resources>
         <LinearGradientBrush x:Key="BackGroundBrush"
                              StartPoint="0, 0"
                              EndPoint="1, 1"
                              >
-            <GradientStop Color="#FFB0E0E6" Offset="0.0"/>
-            <GradientStop Color="#F887CEEB" Offset="1.0"/>
+            <GradientStop Color="#30B0E0E6" Offset="0.0"/>
+            <GradientStop Color="#3887CEEB" Offset="1.0"/>
         </LinearGradientBrush>
     </Window.Resources>
-    <Grid Background="{StaticResource BackGroundBrush}">
+    <Grid Background="{StaticResource BackGroundBrush}"
+          >
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition/>
@@ -51,7 +54,7 @@
             <RadioButton Content="Сервис"/>
         </StackPanel>
         <ContentControl Grid.Row="1" Grid.Column="1">
-            <views:RecordsView Margin="0 0"/>
+            <views:FilesView Margin="5 5"/>
         </ContentControl>        
     </Grid>
 </Window>

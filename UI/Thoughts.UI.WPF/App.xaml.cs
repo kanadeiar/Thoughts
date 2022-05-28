@@ -4,6 +4,8 @@ using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using Thoughts.UI.WPF.ViewModels;
+
 namespace Thoughts.UI.WPF
 {
     /// <summary>
@@ -19,7 +21,7 @@ namespace Thoughts.UI.WPF
         
         private static void ConfigureServices(HostBuilderContext host, IServiceCollection services)
         {
-
+            services.AddSingleton<FilesViewModel>();
         }
     }
 }
