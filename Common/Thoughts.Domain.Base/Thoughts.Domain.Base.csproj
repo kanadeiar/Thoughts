@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Data\Thoughts.DAL.Entities\Thoughts.DAL.Entities.csproj" />
     <ProjectReference Include="..\..\Services\Thoughts.Interfaces.Base\Thoughts.Interfaces.Base.csproj" />
   </ItemGroup>
 

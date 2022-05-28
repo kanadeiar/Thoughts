@@ -7,12 +7,12 @@ namespace Thoughts.Domain.Base.Entities
     /// <typeparam name="TKey">Тип первичного ключа</typeparam>
     public interface INote<TKey> : IEntity<TKey>
     {
+        /// <summary>Текст записи</summary>
+        public string Text { get; set; }
+
         /// <summary>Автор записи</summary>
         /// <typeparam name="TKey">Тип первичного ключа</typeparam>
         public IUser<TKey> Creator { get; set; }
-
-        /// <summary>Текст записи</summary>
-        public string Text { get; set; }
 
         /// <summary>Дата создания</summary>
         public DateTime CreationDate { get; set; }

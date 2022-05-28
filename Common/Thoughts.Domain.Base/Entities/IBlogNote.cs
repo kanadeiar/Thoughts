@@ -13,12 +13,13 @@
 
         ///<summary>Перечисление тэгов записи блога</summary>
         /// <typeparam name="TKey">Тип первичного ключа</typeparam>
-        public IEnumerable<ITag<TKey>> Tags { get; set; }
+        public ICollection<ITag<TKey>> Tags { get; set; }
 
         ///<summary>Перечисление комментариев записи блога</summary>
         /// <typeparam name="TKey">Тип первичного ключа</typeparam>
-        public IEnumerable<IComment<TKey>> Comments { get; set; }
+        public ICollection<IComment<TKey>> Comments { get; set; }
     }
+
     ///<summary>Интерфейс сущности записи блога</summary>
     public interface IBlogNote : IBlogNote<int>, INote { }
 }
