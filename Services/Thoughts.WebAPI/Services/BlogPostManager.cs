@@ -247,7 +247,7 @@ namespace Thoughts.WebAPI.Services
         /// <param name="UserId">Идентификатор пользователя</param>
         /// <param name="Skip">Количество пропускаемых элементов</param>
         /// <param name="Take">Количество получаемых элементов</param>
-        /// <param name="Cancel"></param>
+        /// <param name="Cancel">Токен отмены</param>
         /// <returns>Перечисление постов пользователя</returns>
         public Task<IEnumerable<IPost>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default)
         {
@@ -276,8 +276,19 @@ namespace Thoughts.WebAPI.Services
             return _repo.GetPage(PageIndex, PageSize, Cancel);
         }
 
-
-        public Task<IEnumerable<IPost>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default) => throw new NotImplementedException();
+        /// <summary>Получить определённое количество постов из всех</summary>
+        /// <param name="Skip">Количество пропускаемых элементов</param>
+        /// <param name="Take">Количество получаемых элементов</param>
+        /// <param name="Cancel">Токен отмены</param>
+        /// <returns>Перечисление постов</returns>
+        public Task<IEnumerable<IPost>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default)
+        {
+            var task = new Task<IEnumerable<IPost>>(() =>
+            {
+                return GetAllPostsAsync(Cancel).Result.Skip(Skip).Take(Take);
+            });
+            return task;
+        }
         public Task<IEnumerable<ITag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IPost?> GetPostAsync(int Id, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IEnumerable<IPost>> GetPostsByTag(string Tag, CancellationToken Cancel = default) => throw new NotImplementedException();
