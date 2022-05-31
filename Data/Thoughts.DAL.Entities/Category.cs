@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,11 @@ public class Category : NamedEntity
 {
     /// <summary>Статус категории</summary>
     [Required]
+    [ForeignKey(nameof(StatusId))]
     public Status Status { get; set; } = null!;
+
+    /// <summary> Внешний ключ статуса категории </summary>
+    public int StatusId { get; set; }
 
     /// <summary>Список постов входящих в категорию</summary>
     public ICollection<Post> Posts { get; set; } = new HashSet<Post>();
