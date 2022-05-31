@@ -175,8 +175,27 @@ namespace Thoughts.WebAPI.Services
             return _repo.Add((IPost)newPost, Cancel);
         }
 
-
-        public Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default) => throw new NotImplementedException();
+        /// <summary>Удаление поста</summary>
+        /// <param name="Id">Идентификатор поста</param>
+        /// <param name="Cancel">Токен отмены</param>
+        /// <returns>Истина, если пост был удалён успешно</returns>
+        public Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default)
+        {
+            var result = new Task<bool>(() =>
+            {
+                var existTask = _repo.ExistId(Id, Cancel);
+                if (existTask.Result is true)
+                {
+                    var delete = _repo.DeleteById(Id);
+                    if (delete.Result is not null)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            });
+            return result;
+        }
         public Task<IEnumerable<IPost>> GetAllPostsAsync(CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IEnumerable<IPost>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IPage<IPost>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default) => throw new NotImplementedException();
