@@ -265,7 +265,18 @@ namespace Thoughts.WebAPI.Services
         {
             return _repo.GetCount(Cancel);
         }
-        public Task<IPage<IPost>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default) => throw new NotImplementedException();
+
+        /// <summary>Получить страницу со всеми постами</summary>
+        /// <param name="PageIndex">Номер страницы</param>
+        /// <param name="PageSize">Размер страницы</param>
+        /// <param name="Cancel">Токен отмены</param>
+        /// <returns>Страница с постами</returns>
+        public Task<IPage<IPost>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default)
+        {
+            return _repo.GetPage(PageIndex, PageSize, Cancel);
+        }
+
+
         public Task<IEnumerable<IPost>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IEnumerable<ITag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IPost?> GetPostAsync(int Id, CancellationToken Cancel = default) => throw new NotImplementedException();
