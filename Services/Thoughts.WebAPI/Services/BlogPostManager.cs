@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 using Thoughts.Interfaces;
 using Thoughts.Interfaces.Base.Repositories;
 using Thoughts.DAL.Entities;
@@ -157,7 +152,30 @@ namespace Thoughts.WebAPI.Services
             });
             return result;
         }
-        public Task<IPost> CreatePostAsync(string Title, string Body, string UserId, string Category, CancellationToken Cancel = default) => throw new NotImplementedException();
+
+        /// <summary>Создание нового поста (есть TODO блок)</summary>
+        /// <param name="Title">Заголовок</param>
+        /// <param name="Body">Тело</param>
+        /// <param name="UserId">Идентификатор пользователя, создающего пост</param>
+        /// <param name="Category">Категория</param>
+        /// <param name="Cancel">Токен отмены</param>
+        /// <returns>Вновь созданный пост</returns>
+        public Task<IPost> CreatePostAsync(string Title, string Body, string UserId, string Category, CancellationToken Cancel = default)
+        {
+            var newPost = new Post()
+            {
+                Title = Title,
+                Body = Body,
+                Category = new Category(Category),
+                //
+                //TODO
+                //здесь нам как-то нужно добавить юзера
+                //
+            };
+            return _repo.Add((IPost)newPost, Cancel);
+        }
+
+
         public Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IEnumerable<IPost>> GetAllPostsAsync(CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IEnumerable<IPost>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default) => throw new NotImplementedException();
