@@ -28,7 +28,7 @@ namespace Thoughts.WebAPI.Services
                 {
                     var gettedPost = _repo.GetById(PostId).Result;
 
-                    //хз почему, но не мог добавить экземпляр Тэга без явного приведения
+                    //хз почему, но не мог добавить экземпляр сущностей без явного приведения
                     gettedPost.Tags.Add((ITag)tag);
 
                     var post = _repo.Update(gettedPost, Cancel);
@@ -217,7 +217,31 @@ namespace Thoughts.WebAPI.Services
             });
             return result;
         }
-        public Task<IPage<IPost>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default) => throw new NotImplementedException();
+
+        /// <summary>Получить все страницы с постами пользователя по его идентификатору (есть TODO блок)</summary>
+        /// <param name="UserId">Идентификатор пользователя</param>
+        /// <param name="PageIndex">Номер страницы</param>
+        /// <param name="PageSize">Размер страницы</param>
+        /// <param name="Cancel">Токен отмены</param>
+        /// <returns>Страница с перечислением всех постов пользователя</returns>
+        public Task<IPage<IPost>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default)
+        {
+            var task = new Task<IPage<IPost>>(() =>
+            {
+                var pages = _repo.GetPage(PageIndex, PageSize, Cancel).Result;
+
+                //
+                // TODO
+                // интерфейс не позволяет менять свойство Items
+                // а также нет сущности, реализующей интерфейс страницы
+                // поэтому метод временно возвращает все страницы
+                //
+                pages.Items.Where(p => p.User.Id == UserId);
+
+                return pages;
+            });
+            return task;
+        }
         public Task<IEnumerable<IPost>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<int> GetAllPostsCountAsync(CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IPage<IPost>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default) => throw new NotImplementedException();
