@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 
 using Thoughts.DAL;
 using Thoughts.DAL.Entities;
+using Thoughts.Domain;
 using Thoughts.Interfaces;
 using Thoughts.Interfaces.Base.Repositories;
 
@@ -47,117 +48,225 @@ public class SqlBlogPostManager : IBlogPostManager
         return (IEnumerable<IPost>)posts;
     }
 
-    public Task<IPage<IPost>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default)
+    public async Task<IPage<IPost>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default)
     {
-        //var totalCount = await db.Posts.CountAsync(Cancel).ConfigureAwait(false);
+        var totalCount = await db.Posts.CountAsync(Cancel).ConfigureAwait(false);
 
-        //if (PageSize == 0)
-        //    return new(Enumerable.Empty<IPost>(), PageIndex, PageSize, totalCount);
+        if (PageSize == 0)
+            return new Page<IPost>(Enumerable.Empty<IPost>(), PageIndex, PageSize, totalCount);
 
-        //var posts = await db.Posts
-        //    .Skip(PageIndex * PageSize)
-        //    .Take(PageSize)
-        //    .ToArrayAsync(Cancel)
-        //    .ConfigureAwait(false);
+        var posts = await db.Posts
+            .Skip(PageIndex * PageSize)
+            .Take(PageSize)
+            .ToArrayAsync(Cancel)
+            .ConfigureAwait(false);
 
-        //return new(posts, PageIndex, PageSize, totalCount);
-
-        throw new NotImplementedException();
-
+        return new Page<IPost>((IEnumerable<IPost>)posts,PageIndex,PageSize,totalCount);
     }
 
     #endregion
 
     #region Get user posts
 
-    public Task<IEnumerable<IPost>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
+    public async Task<IEnumerable<IPost>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var userPosts = await db.Posts
+            .FirstOrDefaultAsync(p => p.UserId == int.Parse(UserId), Cancel)
+            .ConfigureAwait(false);
+
+        return (IEnumerable<IPost>)userPosts!;
     }
 
-    public Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
+    public async Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        int count = await db.Posts
+            .CountAsync(p => p.UserId == int.Parse(UserId), Cancel)
+            .ConfigureAwait(false);
+            
+        return count;
     }
 
-    public Task<IEnumerable<IPost>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default)
+    public async Task<IEnumerable<IPost>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        if (Take == 0)
+            return Enumerable.Empty<IPost>();
+
+        var posts = await GetAllPostsByUserIdAsync(UserId, Cancel);
+        var page = posts.Skip(Skip).Take(Take);
+
+        return page;
     }
 
-    public Task<IPage<IPost>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default)
+    public async Task<IPage<IPost>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var totalCount = await db.Posts.CountAsync(Cancel).ConfigureAwait(false);
+        
+        if (PageSize == 0)
+            return new Page<IPost>(Enumerable.Empty<IPost>(), PageIndex, PageSize, totalCount);
+        
+        var posts = await GetAllPostsByUserIdAsync(UserId, Cancel);
+
+        return new Page<IPost>(posts, PageIndex, PageSize, totalCount);
     }
 
     #endregion
 
-    public Task<IPost?> GetPostAsync(int Id, CancellationToken Cancel = default)
+    public async Task<IPost?> GetPostAsync(int Id, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await db.Posts.FirstOrDefaultAsync(p => p.Id == Id, Cancel).ConfigureAwait(false);
+
+        return post as IPost;
     }
 
-    public Task<IPost> CreatePostAsync(
+    public async Task<IPost> CreatePostAsync(
         string Title,
         string Body,
         string UserId,
         string Category,
         CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = new Post { Title = Title,
+                              Body = Body,
+                              CategoryName = Category, 
+                              UserId = int.Parse(UserId) };
+
+        await db.Posts.AddAsync(post).ConfigureAwait(false);
+        await db.SaveChangesAsync(Cancel);
+
+        return (IPost)post;
     }
 
-    public Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default)
+    public async Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var dbPost = await GetPostAsync(Id, Cancel);
+        
+        if(dbPost is null)
+            return false;
+
+        db.Remove(dbPost);
+        await db.SaveChangesAsync(Cancel);
+
+        return true;
     }
 
     #region Tags
 
-    public Task<bool> AssignTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
+    public async Task<bool> AssignTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await GetPostAsync(PostId, Cancel);
+
+        if (post == null || Tag == null)
+            return false;
+
+        var assignedTags = post.Tags;
+
+        if(assignedTags != null && assignedTags.Any(n => n.Name == Tag)) 
+            return true;
+
+        var newTag = new Tag() { Name = Tag };
+
+        post.Tags.Add((ITag)newTag);
+
+        await db.SaveChangesAsync(Cancel);
+
+        return true;
     }
 
-    public Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
+    public async Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await GetPostAsync(PostId, Cancel);
+
+        if (post == null || Tag == null)
+            return false;
+
+        var assignedTags = post.Tags;
+
+        if (assignedTags is null || !assignedTags.Any(n => n.Name == Tag))
+            return false;
+
+        var removingTag = new Tag() { Name = Tag };
+
+        assignedTags.Remove((ITag)removingTag);
+
+        await db.SaveChangesAsync(Cancel);
+
+        return false;
     }
 
-    public Task<IEnumerable<ITag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default)
+    public async Task<IEnumerable<ITag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await GetPostAsync(Id, Cancel);
+        if (post == null) throw new NotImplementedException();
+
+        var assignedTags = post.Tags;
+        
+        return assignedTags;
     }
 
     public Task<IEnumerable<IPost>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var searchingTag = new Tag() { Name = Tag };
+
+        var searchingPosts = GetAllPostsAsync(Cancel)
+            .Result
+            .Where(t => t.Tags.Contains((ITag)searchingTag));
+
+        return (Task<IEnumerable<IPost>>)searchingPosts;
     }
 
     #endregion
 
     #region Редактирование
 
-    public Task<ICategory> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
+    public async Task<ICategory> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await GetPostAsync(PostId, Cancel);
+
+        if (post == null) { throw new NotImplementedException(); }
+
+        post.Category.Name = CategoryName;
+        await db.SaveChangesAsync(Cancel);
+
+        return post.Category;
     }
 
-    public Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default)
+    public async Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await GetPostAsync(PostId, Cancel);
+        
+        if(post == null)
+            return false;
+        
+        post.Title = Title;
+        await db.SaveChangesAsync(Cancel);
+        
+        return true;
     }
 
-    public Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default)
+    public async Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await GetPostAsync(PostId, Cancel);
+
+        if (post == null)
+            return false;
+
+        post.Body = Body;
+        await db.SaveChangesAsync(Cancel);
+
+        return true;
     }
 
-    public Task<IStatus> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default)
+    public async Task<IStatus> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
-    }
+        var post = await GetPostAsync(PostId, Cancel);
 
+        if (post == null) { throw new NotImplementedException(); }
+
+        post.Status.Name = Status;
+        await db.SaveChangesAsync(Cancel);
+
+        return post.Status;
+    }
 
     #endregion
 }
