@@ -340,7 +340,19 @@ namespace Thoughts.WebAPI.Services
             });
             return task;
         }
-        public Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default) => throw new NotImplementedException();
+
+        /// <summary>Получить количество постов пользователя</summary>
+        /// <param name="UserId">Идентификатор пользователя</param>
+        /// <param name="Cancel">Токен отмены</param>
+        /// <returns>Количество постов</returns>
+        public Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
+        {
+            var task = new Task<int>(() =>
+            {
+                return _repo.GetAll().Result.Where(p => p.User.Id == UserId).Count();
+            });
+            return task;
+        }
         public Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default) => throw new NotImplementedException();
     }
 }
