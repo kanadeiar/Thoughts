@@ -204,7 +204,19 @@ namespace Thoughts.WebAPI.Services
         {
             return _repo.GetAll(Cancel);
         }
-        public Task<IEnumerable<IPost>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default) => throw new NotImplementedException();
+
+        /// <summary>Получить все посты пользователя по его идентификатору</summary>
+        /// <param name="UserId">Идентификатор пользователя</param>
+        /// <param name="Cancel">Токен отмены</param>
+        /// <returns>Перечисление всех постов пользователя</returns>
+        public Task<IEnumerable<IPost>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
+        {
+            var result = new Task<IEnumerable<IPost>>(() =>
+            {
+                return GetAllPostsAsync(Cancel).Result.Where(p => p.User.Id == UserId);
+            });
+            return result;
+        }
         public Task<IPage<IPost>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IEnumerable<IPost>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<int> GetAllPostsCountAsync(CancellationToken Cancel = default) => throw new NotImplementedException();
