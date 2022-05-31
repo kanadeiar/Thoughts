@@ -7,7 +7,7 @@ namespace Thoughts.Interfaces;
 /// <summary>
 /// Пользователь
 /// </summary>
-public interface IUser : IEntity<string>
+public interface IUser : IEntity<int>
 {
     /// <summary>Статус пользователя</summary>
     [Required]
