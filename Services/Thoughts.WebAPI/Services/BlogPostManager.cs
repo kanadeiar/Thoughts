@@ -242,7 +242,21 @@ namespace Thoughts.WebAPI.Services
             });
             return task;
         }
-        public Task<IEnumerable<IPost>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default) => throw new NotImplementedException();
+
+        /// <summary>Получить определённое количество постов пользователя</summary>
+        /// <param name="UserId">Идентификатор пользователя</param>
+        /// <param name="Skip">Количество пропускаемых элементов</param>
+        /// <param name="Take">Количество получаемых элементов</param>
+        /// <param name="Cancel"></param>
+        /// <returns>Перечисление постов пользователя</returns>
+        public Task<IEnumerable<IPost>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default)
+        {
+            var result = new Task<IEnumerable<IPost>>(() =>
+            {
+                return GetAllPostsAsync(Cancel).Result.Where(p => p.User.Id == UserId).Skip(Skip).Take(Take);
+            });
+            return result;
+        }
         public Task<int> GetAllPostsCountAsync(CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IPage<IPost>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IEnumerable<IPost>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default) => throw new NotImplementedException();
