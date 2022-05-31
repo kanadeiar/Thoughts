@@ -325,7 +325,21 @@ namespace Thoughts.WebAPI.Services
             });
             return task;
         }
-        public Task<IEnumerable<IPost>> GetPostsByTag(string Tag, CancellationToken Cancel = default) => throw new NotImplementedException();
+
+        /// <summary>Получить посты по тэгу</summary>
+        /// <param name="Tag">Тэг</param>
+        /// <param name="Cancel">Токен отмены</param>
+        /// <returns>Перечисление постов</returns>
+        public Task<IEnumerable<IPost>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
+        {
+            var tag = new Tag(Tag);
+            var task = new Task<IEnumerable<IPost>>(() =>
+            {
+                var posts = _repo.GetAll(Cancel).Result.Where(p => p.Tags.Contains((ITag)tag));
+                return posts;
+            });
+            return task;
+        }
         public Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default) => throw new NotImplementedException();
     }
