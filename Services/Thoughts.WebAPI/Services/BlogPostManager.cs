@@ -20,7 +20,7 @@ namespace Thoughts.WebAPI.Services
         }
         /// <summary>Назначение тэга посту</summary>
         /// <param name="PostId">Идентификатор поста</param>
-        /// <param name="Tag">Тэг</param>
+        /// <param name="Tag">Добавляемый тэг</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Истина, если тэг был назначен успешно</returns>
         public Task<bool> AssignTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
@@ -50,7 +50,7 @@ namespace Thoughts.WebAPI.Services
 
         /// <summary>Изменение тела поста</summary>
         /// <param name="PostId">Идентификатор поста</param>
-        /// <param name="Body">Тело поста</param>
+        /// <param name="Body">Новое тело поста</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Истина, если тело было изменено успешно</returns>
         public Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default)
@@ -77,7 +77,7 @@ namespace Thoughts.WebAPI.Services
 
         /// <summary>Изменение категории поста</summary>
         /// <param name="PostId">Идентификатор поста</param>
-        /// <param name="CategoryName">Категория поста</param>
+        /// <param name="CategoryName">Новая категория поста</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Изменённая категория</returns>
         public Task<ICategory> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
@@ -102,7 +102,34 @@ namespace Thoughts.WebAPI.Services
             });
             return result;
         }
-        public Task<IStatus> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default) => throw new NotImplementedException();
+
+        /// <summary>Изменение статуса поста</summary>
+        /// <param name="PostId">Идентификатор поста</param>
+        /// <param name="Status">Новый статус поста</param>
+        /// <param name="Cancel">Токен отмены</param>
+        /// <returns>Изменённая категория</returns>
+        public Task<IStatus> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default)
+        {
+            var result = new Task<IStatus>(() =>
+            {
+                var existTask = _repo.ExistId(PostId, Cancel);
+                var status = new Status(Status);
+                if (existTask.Result is true)
+                {
+                    var gettedPost = _repo.GetById(PostId).Result;
+
+                    gettedPost.Status = (IStatus)status;
+
+                    var post = _repo.Update(gettedPost, Cancel);
+                    if (post.Result is not null)
+                    {
+                        return (IStatus)status;
+                    }
+                }
+                return null;
+            });
+            return result;
+        }
         public Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IPost> CreatePostAsync(string Title, string Body, string UserId, string Category, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default) => throw new NotImplementedException();
