@@ -130,7 +130,33 @@ namespace Thoughts.WebAPI.Services
             });
             return result;
         }
-        public Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default) => throw new NotImplementedException();
+
+        /// <summary>Изменение заголовка поста</summary>
+        /// <param name="PostId">Идентификатор поста</param>
+        /// <param name="Title">Новый заголовок поста</param>
+        /// <param name="Cancel">Токен отмены</param>
+        /// <returns>Истина, если заголовок был изменен успешно</returns>
+        public Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default)
+        {
+            var result = new Task<bool>(() =>
+            {
+                var existTask = _repo.ExistId(PostId, Cancel);
+                if (existTask.Result is true)
+                {
+                    var gettedPost = _repo.GetById(PostId).Result;
+
+                    gettedPost.Title = Title;
+
+                    var post = _repo.Update(gettedPost, Cancel);
+                    if (post.Result is not null)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            });
+            return result;
+        }
         public Task<IPost> CreatePostAsync(string Title, string Body, string UserId, string Category, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<IEnumerable<IPost>> GetAllPostsAsync(CancellationToken Cancel = default) => throw new NotImplementedException();
