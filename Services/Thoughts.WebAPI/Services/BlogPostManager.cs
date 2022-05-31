@@ -20,7 +20,7 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Истина, если тэг был назначен успешно</returns>
         public Task<bool> AssignTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
         {
-            var result = new Task<bool>(() =>
+            var task = new Task<bool>(() =>
             {
                 var existTask = _repo.ExistId(PostId, Cancel);
                 var tag = new Tag(Tag);
@@ -39,7 +39,7 @@ namespace Thoughts.WebAPI.Services
                 }
                 return false;
             });
-            return result;
+            return task;
 
         }
 
@@ -50,7 +50,7 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Истина, если тело было изменено успешно</returns>
         public Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default)
         {
-            var result = new Task<bool>(() =>
+            var task = new Task<bool>(() =>
             {
                 var existTask = _repo.ExistId(PostId, Cancel);
                 if (existTask.Result is true)
@@ -67,7 +67,7 @@ namespace Thoughts.WebAPI.Services
                 }
                 return false;
             });
-            return result;
+            return task;
         }
 
         /// <summary>Изменение категории поста</summary>
@@ -77,7 +77,7 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Изменённая категория</returns>
         public Task<ICategory> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
         {
-            var result = new Task<ICategory>(() =>
+            var task = new Task<ICategory>(() =>
             {
                 var existTask = _repo.ExistId(PostId, Cancel);
                 var category = new Category(CategoryName);
@@ -95,7 +95,7 @@ namespace Thoughts.WebAPI.Services
                 }
                 return null;
             });
-            return result;
+            return task;
         }
 
         /// <summary>Изменение статуса поста</summary>
@@ -105,7 +105,7 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Изменённая категория</returns>
         public Task<IStatus> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default)
         {
-            var result = new Task<IStatus>(() =>
+            var task = new Task<IStatus>(() =>
             {
                 var existTask = _repo.ExistId(PostId, Cancel);
                 var status = new Status(Status);
@@ -123,7 +123,7 @@ namespace Thoughts.WebAPI.Services
                 }
                 return null;
             });
-            return result;
+            return task;
         }
 
         /// <summary>Изменение заголовка поста</summary>
@@ -133,7 +133,7 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Истина, если заголовок был изменен успешно</returns>
         public Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default)
         {
-            var result = new Task<bool>(() =>
+            var task = new Task<bool>(() =>
             {
                 var existTask = _repo.ExistId(PostId, Cancel);
                 if (existTask.Result is true)
@@ -150,7 +150,7 @@ namespace Thoughts.WebAPI.Services
                 }
                 return false;
             });
-            return result;
+            return task;
         }
 
         /// <summary>Создание нового поста (есть TODO блок)</summary>
@@ -181,7 +181,7 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Истина, если пост был удалён успешно</returns>
         public Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default)
         {
-            var result = new Task<bool>(() =>
+            var task = new Task<bool>(() =>
             {
                 var existTask = _repo.ExistId(Id, Cancel);
                 if (existTask.Result is true)
@@ -194,7 +194,7 @@ namespace Thoughts.WebAPI.Services
                 }
                 return false;
             });
-            return result;
+            return task;
         }
 
         /// <summary>Получить все посты</summary>
@@ -211,11 +211,11 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Перечисление всех постов пользователя</returns>
         public Task<IEnumerable<IPost>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
         {
-            var result = new Task<IEnumerable<IPost>>(() =>
+            var task = new Task<IEnumerable<IPost>>(() =>
             {
                 return GetAllPostsAsync(Cancel).Result.Where(p => p.User.Id == UserId);
             });
-            return result;
+            return task;
         }
 
         /// <summary>Получить все страницы с постами пользователя по его идентификатору (есть TODO блок)</summary>
@@ -251,11 +251,11 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Перечисление постов пользователя</returns>
         public Task<IEnumerable<IPost>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default)
         {
-            var result = new Task<IEnumerable<IPost>>(() =>
+            var task = new Task<IEnumerable<IPost>>(() =>
             {
                 return GetAllPostsAsync(Cancel).Result.Where(p => p.User.Id == UserId).Skip(Skip).Take(Take);
             });
-            return result;
+            return task;
         }
 
         /// <summary>Получить число постов</summary>
