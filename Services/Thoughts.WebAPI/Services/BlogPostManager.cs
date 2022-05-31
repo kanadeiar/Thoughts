@@ -353,6 +353,31 @@ namespace Thoughts.WebAPI.Services
             });
             return task;
         }
-        public Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default) => throw new NotImplementedException();
+
+        /// <summary>Удалить тэг с поста</summary>
+        /// <param name="PostId">Идентификатор поста</param>
+        /// <param name="Tag">Тэг</param>
+        /// <param name="Cancel">Токен отмены</param>
+        /// <returns>Истина, если тэг был удалён успешно</returns>
+        public Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
+        {
+            var tag = new Tag(Tag);
+
+            var task = new Task<bool>(() =>
+            {
+                var postExist = _repo.ExistId(PostId, Cancel);
+                if(postExist.Result is true)
+                {
+                    var gettedPost = _repo.GetById(PostId, Cancel);
+                    if(gettedPost.Result is not null)
+                    {
+                        var post = gettedPost.Result;
+                        return post.Tags.Remove((ITag)tag);
+                    }
+                }
+                return false;
+            });
+            return task;
+        }
     }
 }
