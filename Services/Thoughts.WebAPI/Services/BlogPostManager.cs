@@ -296,7 +296,7 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Перечисление тэгов</returns>
         public Task<IEnumerable<ITag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default)
         {
-            var result = new Task<IEnumerable<ITag>>(() =>
+            var task = new Task<IEnumerable<ITag>>(() =>
             {
                 var existTask = _repo.ExistId(Id, Cancel);
                 if (existTask.Result is true)
@@ -305,11 +305,26 @@ namespace Thoughts.WebAPI.Services
                 }
                 return null;
             });
-            return result;
+            return task;
         }
 
-
-        public Task<IPost?> GetPostAsync(int Id, CancellationToken Cancel = default) => throw new NotImplementedException();
+        /// <summary>Получение поста по его идентификатору</summary>
+        /// <param name="Id">Идентификатор поста</param>
+        /// <param name="Cancel">Токен отмены</param>
+        /// <returns>Найденный пост или <b>null</b></returns>
+        public Task<IPost?> GetPostAsync(int Id, CancellationToken Cancel = default)
+        {
+            var task = new Task<IPost>(() =>
+            {
+                var existTask = _repo.ExistId(Id, Cancel);
+                if (existTask.Result is true)
+                {
+                    return _repo.GetById(Id).Result;
+                }
+                return null;
+            });
+            return task;
+        }
         public Task<IEnumerable<IPost>> GetPostsByTag(string Tag, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default) => throw new NotImplementedException();
         public Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default) => throw new NotImplementedException();
