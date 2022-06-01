@@ -7,40 +7,31 @@ namespace Thoughts.WebAPI.Services
 {
     public class BlogPostManager : IBlogPostManager
     {
-        private readonly IRepository<IPost> _repo;
+        private readonly IRepository<IPost> _PostsRepository;
 
         public BlogPostManager(IRepository<IPost> repository)
         {
-            _repo = repository;
+            _PostsRepository = repository;
         }
+
         /// <summary>Назначение тэга посту</summary>
         /// <param name="PostId">Идентификатор поста</param>
         /// <param name="Tag">Добавляемый тэг</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Истина, если тэг был назначен успешно</returns>
-        public Task<bool> AssignTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
+        public async Task<bool> AssignTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
         {
-            var task = new Task<bool>(() =>
-            {
-                var existTask = _repo.ExistId(PostId, Cancel);
-                var tag = new Tag(Tag);
-                if (existTask.Result is true)
-                {
-                    var gettedPost = _repo.GetById(PostId).Result;
+            var is_exists = await _PostsRepository.ExistId(PostId, Cancel);
+            if (!is_exists) return false;
 
-                    //хз почему, но не мог добавить экземпляр сущностей без явного приведения
-                    gettedPost.Tags.Add((ITag)tag);
+            var getted_post = await _PostsRepository.GetById(PostId, Cancel);
 
-                    var post = _repo.Update(gettedPost, Cancel);
-                    if (post.Result is not null)
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            });
-            return task;
+            //хз почему, но не мог добавить экземпляр сущностей без явного приведения
+            var tag = new Tag(Tag);
+            getted_post.Tags.Add((ITag)tag);
+            await _PostsRepository.Update(getted_post, Cancel);
 
+            return true;
         }
 
         /// <summary>Изменение тела поста</summary>
@@ -52,14 +43,14 @@ namespace Thoughts.WebAPI.Services
         {
             var task = new Task<bool>(() =>
             {
-                var existTask = _repo.ExistId(PostId, Cancel);
-                if (existTask.Result is true)
+                var exist_task = _PostsRepository.ExistId(PostId, Cancel);
+                if (exist_task.Result is true)
                 {
-                    var gettedPost = _repo.GetById(PostId).Result;
+                    var getted_post = _PostsRepository.GetById(PostId).Result;
 
-                    gettedPost.Body = Body;
+                    getted_post.Body = Body;
 
-                    var post = _repo.Update(gettedPost, Cancel);
+                    var post = _PostsRepository.Update(getted_post, Cancel);
                     if (post.Result is not null)
                     {
                         return true;
@@ -79,15 +70,15 @@ namespace Thoughts.WebAPI.Services
         {
             var task = new Task<ICategory>(() =>
             {
-                var existTask = _repo.ExistId(PostId, Cancel);
+                var exist_task = _PostsRepository.ExistId(PostId, Cancel);
                 var category = new Category(CategoryName);
-                if (existTask.Result is true)
+                if (exist_task.Result is true)
                 {
-                    var gettedPost = _repo.GetById(PostId).Result;
+                    var getted_post = _PostsRepository.GetById(PostId).Result;
 
-                    gettedPost.Category = (ICategory)category;
+                    getted_post.Category = (ICategory)category;
 
-                    var post = _repo.Update(gettedPost, Cancel);
+                    var post = _PostsRepository.Update(getted_post, Cancel);
                     if (post.Result is not null)
                     {
                         return (ICategory)category;
@@ -107,15 +98,15 @@ namespace Thoughts.WebAPI.Services
         {
             var task = new Task<IStatus>(() =>
             {
-                var existTask = _repo.ExistId(PostId, Cancel);
+                var exist_task = _PostsRepository.ExistId(PostId, Cancel);
                 var status = new Status(Status);
-                if (existTask.Result is true)
+                if (exist_task.Result is true)
                 {
-                    var gettedPost = _repo.GetById(PostId).Result;
+                    var getted_post = _PostsRepository.GetById(PostId).Result;
 
-                    gettedPost.Status = (IStatus)status;
+                    getted_post.Status = (IStatus)status;
 
-                    var post = _repo.Update(gettedPost, Cancel);
+                    var post = _PostsRepository.Update(getted_post, Cancel);
                     if (post.Result is not null)
                     {
                         return (IStatus)status;
@@ -135,14 +126,14 @@ namespace Thoughts.WebAPI.Services
         {
             var task = new Task<bool>(() =>
             {
-                var existTask = _repo.ExistId(PostId, Cancel);
-                if (existTask.Result is true)
+                var exist_task = _PostsRepository.ExistId(PostId, Cancel);
+                if (exist_task.Result is true)
                 {
-                    var gettedPost = _repo.GetById(PostId).Result;
+                    var getted_post = _PostsRepository.GetById(PostId).Result;
 
-                    gettedPost.Title = Title;
+                    getted_post.Title = Title;
 
-                    var post = _repo.Update(gettedPost, Cancel);
+                    var post = _PostsRepository.Update(getted_post, Cancel);
                     if (post.Result is not null)
                     {
                         return true;
@@ -162,7 +153,7 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Вновь созданный пост</returns>
         public Task<IPost> CreatePostAsync(string Title, string Body, string UserId, string Category, CancellationToken Cancel = default)
         {
-            var newPost = new Post()
+            var new_post = new Post()
             {
                 Title = Title,
                 Body = Body,
@@ -172,7 +163,7 @@ namespace Thoughts.WebAPI.Services
                 //здесь нам как-то нужно добавить юзера
                 //
             };
-            return _repo.Add((IPost)newPost, Cancel);
+            return _PostsRepository.Add((IPost)new_post, Cancel);
         }
 
         /// <summary>Удаление поста</summary>
@@ -183,10 +174,10 @@ namespace Thoughts.WebAPI.Services
         {
             var task = new Task<bool>(() =>
             {
-                var existTask = _repo.ExistId(Id, Cancel);
-                if (existTask.Result is true)
+                var exist_task = _PostsRepository.ExistId(Id, Cancel);
+                if (exist_task.Result is true)
                 {
-                    var delete = _repo.DeleteById(Id);
+                    var delete = _PostsRepository.DeleteById(Id);
                     if (delete.Result is not null)
                     {
                         return true;
@@ -202,7 +193,7 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Перечисление всех постов</returns>
         public Task<IEnumerable<IPost>> GetAllPostsAsync(CancellationToken Cancel = default)
         {
-            return _repo.GetAll(Cancel);
+            return _PostsRepository.GetAll(Cancel);
         }
 
         /// <summary>Получить все посты пользователя по его идентификатору</summary>
@@ -228,7 +219,7 @@ namespace Thoughts.WebAPI.Services
         {
             var task = new Task<IPage<IPost>>(() =>
             {
-                var pages = _repo.GetPage(PageIndex, PageSize, Cancel).Result;
+                var pages = _PostsRepository.GetPage(PageIndex, PageSize, Cancel).Result;
 
                 //
                 // TODO
@@ -263,7 +254,7 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Число постов</returns>
         public Task<int> GetAllPostsCountAsync(CancellationToken Cancel = default)
         {
-            return _repo.GetCount(Cancel);
+            return _PostsRepository.GetCount(Cancel);
         }
 
         /// <summary>Получить страницу со всеми постами</summary>
@@ -273,7 +264,7 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Страница с постами</returns>
         public Task<IPage<IPost>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default)
         {
-            return _repo.GetPage(PageIndex, PageSize, Cancel);
+            return _PostsRepository.GetPage(PageIndex, PageSize, Cancel);
         }
 
         /// <summary>Получить определённое количество постов из всех</summary>
@@ -298,10 +289,10 @@ namespace Thoughts.WebAPI.Services
         {
             var task = new Task<IEnumerable<ITag>>(() =>
             {
-                var existTask = _repo.ExistId(Id, Cancel);
-                if (existTask.Result is true)
+                var exist_task = _PostsRepository.ExistId(Id, Cancel);
+                if (exist_task.Result is true)
                 {
-                    return _repo.GetById(Id).Result.Tags;
+                    return _PostsRepository.GetById(Id).Result.Tags;
                 }
                 return null;
             });
@@ -316,10 +307,10 @@ namespace Thoughts.WebAPI.Services
         {
             var task = new Task<IPost>(() =>
             {
-                var existTask = _repo.ExistId(Id, Cancel);
-                if (existTask.Result is true)
+                var exist_task = _PostsRepository.ExistId(Id, Cancel);
+                if (exist_task.Result is true)
                 {
-                    return _repo.GetById(Id).Result;
+                    return _PostsRepository.GetById(Id).Result;
                 }
                 return null;
             });
@@ -335,7 +326,7 @@ namespace Thoughts.WebAPI.Services
             var tag = new Tag(Tag);
             var task = new Task<IEnumerable<IPost>>(() =>
             {
-                var posts = _repo.GetAll(Cancel).Result.Where(p => p.Tags.Contains((ITag)tag));
+                var posts = _PostsRepository.GetAll(Cancel).Result.Where(p => p.Tags.Contains((ITag)tag));
                 return posts;
             });
             return task;
@@ -349,7 +340,7 @@ namespace Thoughts.WebAPI.Services
         {
             var task = new Task<int>(() =>
             {
-                return _repo.GetAll().Result.Where(p => p.User.Id == UserId).Count();
+                return _PostsRepository.GetAll().Result.Where(p => p.User.Id == UserId).Count();
             });
             return task;
         }
@@ -365,13 +356,13 @@ namespace Thoughts.WebAPI.Services
 
             var task = new Task<bool>(() =>
             {
-                var postExist = _repo.ExistId(PostId, Cancel);
-                if(postExist.Result is true)
+                var post_exist = _PostsRepository.ExistId(PostId, Cancel);
+                if(post_exist.Result is true)
                 {
-                    var gettedPost = _repo.GetById(PostId, Cancel);
-                    if(gettedPost.Result is not null)
+                    var getted_post = _PostsRepository.GetById(PostId, Cancel);
+                    if(getted_post.Result is not null)
                     {
-                        var post = gettedPost.Result;
+                        var post = getted_post.Result;
                         return post.Tags.Remove((ITag)tag);
                     }
                 }
