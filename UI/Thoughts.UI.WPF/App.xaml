@@ -3,15 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Thoughts.UI.WPF"
              xmlns:vm="clr-namespace:Thoughts.UI.WPF.ViewModels"
+             xmlns:view="clr-namespace:Thoughts.UI.WPF.Views"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
+            <vm:ViewModelLocator x:Key="Locator"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles\RadioButtonMenuStyle.xaml"/>
                 <ResourceDictionary Source="Styles\ButtonStyle.xaml"/>
                 <ResourceDictionary Source="Styles\TextBoxStyle.xaml"/>
+                <ResourceDictionary Source="Styles\Brushes\DefaultBrushes.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-        <vm:ViewModelLocator x:Key="Locator"/>
+        </ResourceDictionary>        
     </Application.Resources>
 </Application>

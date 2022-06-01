@@ -5,21 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Thoughts.UI.WPF"
         xmlns:views="clr-namespace:Thoughts.UI.WPF.Views"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Height="450" Width="800"
         Background="Transparent"
         Foreground="Black"
-        FontFamily="Helvetica">
+        FontFamily="Helvetica"
+        DataContext="{Binding MainWindowModel, Source={StaticResource Locator}}">
     <Window.Resources>
-        <LinearGradientBrush x:Key="BackGroundBrush"
-                             StartPoint="0, 0"
-                             EndPoint="1, 1"
-                             >
-            <GradientStop Color="#FFB0E0E6" Offset="0.0"/>
-            <GradientStop Color="#F887CEEB" Offset="1.0"/>
-        </LinearGradientBrush>
+        
     </Window.Resources>
-    <Grid Background="{StaticResource BackGroundBrush}">
+    <Grid Background="{StaticResource DefaultWindowBackGroundColor}"
+          >
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition/>
@@ -46,12 +43,14 @@
                     <Setter Property="FontWeight" Value="Medium"/>
                 </Style>
             </StackPanel.Resources>
-            <RadioButton Content="Записи"/>
-            <RadioButton Content="Файлы"/>
-            <RadioButton Content="Сервис"/>
+            <RadioButton Content="Записи" 
+                         Command="{Binding RecordButtonCheckedCommand}"
+                         IsChecked="True">
+            </RadioButton>
+            <RadioButton Content="Файлы" Command="{Binding FilesButtonCheckedCommand}"/>
+            <RadioButton Content="Пользователи" Command="{Binding UsersButtonCheckedCommand}"/>
+            <RadioButton Content="Сервис"/>            
         </StackPanel>
-        <ContentControl Grid.Row="1" Grid.Column="1">
-            <views:RecordsView Margin="0 0"/>
-        </ContentControl>        
+        <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentView}"/>
     </Grid>
 </Window>
