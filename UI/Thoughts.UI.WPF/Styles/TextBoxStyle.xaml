@@ -1,20 +1,79 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
     <Style x:Key="TextBoxStyle"
-           TargetType="{x:Type TextBox}"
-           BasedOn="{StaticResource {x:Type TextBox}}">
+           TargetType="{x:Type TextBox}">
         <Style.Setters>
+            <Setter Property="IsEnabled" Value="True"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="AllowDrop" Value="True"/>
+            <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True"/>
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
-                        <Border CornerRadius="10"
+                    <ControlTemplate TargetType="{x:Type TextBoxBase}">
+                        <Border Name="Border"
+                                CornerRadius="10"
                                 BorderThickness="1"
-                                BorderBrush="CadetBlue"
-                                MinHeight="20"
-                                Background="#f5fdff">
-                            <ContentPresenter
-                                ContentSource="{TemplateBinding Text}"
-                                />
+                                MinHeight="20"                                
+                                Padding="4">
+                            <Border.Background>
+                                <SolidColorBrush Color="#f5fdff"/>
+                            </Border.Background>
+                            <Border.BorderBrush>
+                                <SolidColorBrush Color="#5f9ea0"/>
+                            </Border.BorderBrush>
+                                <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="Border"
+                                                            Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
+                                                            To="#f5fdff"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
+                                                                          Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                                                <EasingColorKeyFrame KeyTime="0"
+                                                                     Value="#d3d3d3"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="ReadOnly">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
+                                                                          Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                                                <EasingColorKeyFrame KeyTime="0"
+                                                                     Value="#e2f4f2"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ThicknessAnimation Storyboard.TargetName="Border"
+                                                                Storyboard.TargetProperty="BorderThickness"
+                                                                From="{Binding BorderThickness, ElementName=Border}"
+                                                                To="2"
+                                                                Duration="0:0:0.5"
+                                                                RepeatBehavior="1x"
+                                                                
+                                                             />
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
+                                                                          Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                                                          >
+                                                <EasingColorKeyFrame KeyTime="0"
+                                                                     Value="#5694a9"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ScrollViewer Margin="0"
+                                          x:Name="PART_ContentHost"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>

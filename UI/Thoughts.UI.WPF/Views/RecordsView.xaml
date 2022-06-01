@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:Thoughts.UI.WPF.Views"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="600"
+      DataContext="{Binding RecordsModel, Source={StaticResource Locator}}"       
       >
 
     <Grid Background="Transparent"> <!--Set this property to transparent later!!!!!-->
@@ -30,9 +31,9 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ListBox">
-                                <Border BorderBrush="CadetBlue"
+                                <Border BorderBrush="{StaticResource DefaultBorderColorBrush}"
                                         BorderThickness="1"
-                                        Background="#f5fdff"
+                                        Background="{StaticResource DefaultTextBoxBackgroundColorBrush}"
                                         CornerRadius="10">
                                     <ScrollViewer>
                                         <StackPanel
@@ -86,7 +87,7 @@
                     <TextBox Width="200" 
                          HorizontalAlignment="Center"
                          VerticalAlignment="Center"
-                         IsEnabled="False"/>
+                             IsReadOnly="True"/>
                 </Grid>
                 <Grid>
                     <TextBlock Text="Тема:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -102,7 +103,8 @@
             </WrapPanel>
             <TextBox AcceptsTab="True"
                      AcceptsReturn="True"
-                     Margin="0 10 5 10"/>
+                     Margin="0 10 5 10"
+                     VerticalScrollBarVisibility="Auto"/>
         </DockPanel>
     </Grid>
 </UserControl>
