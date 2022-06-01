@@ -11,18 +11,18 @@ namespace Thoughts.Services.InSQL;
 
 public class SqlBlogPostManager : IBlogPostManager
 {
-    private readonly ThoughtsDB db;
-    private readonly ILogger logger;
+    private readonly ThoughtsDB _DB;
+    private readonly ILogger<SqlBlogPostManager> _Logger;
 
     /// <summary>
     /// Конструктор сервиса
     /// </summary>
     /// <param name="Db"> База данных </param>
     /// <param name="Logger"> Логгер </param>
-    public SqlBlogPostManager(ThoughtsDB Db, ILogger Logger)
+    public SqlBlogPostManager(ThoughtsDB Db, ILogger<SqlBlogPostManager> Logger)
     {
-        db = Db;
-        logger = Logger;
+        _DB = Db;
+        _Logger = Logger;
     }
 
     #region Get all posts
@@ -34,7 +34,7 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Возвращает все посты </returns>
     public async Task<IEnumerable<IPost>> GetAllPostsAsync(CancellationToken Cancel = default)
     {
-        var posts = await db.Posts.ToArrayAsync(Cancel).ConfigureAwait(false);
+        var posts = await _DB.Posts.ToArrayAsync(Cancel).ConfigureAwait(false);
         return (IEnumerable<IPost>)posts;
     }
 
@@ -45,7 +45,7 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Возвращает количество постов </returns>
     public async Task<int> GetAllPostsCountAsync(CancellationToken Cancel = default)
     {
-        var count = await db.Posts.CountAsync(Cancel).ConfigureAwait(false);
+        var count = await _DB.Posts.CountAsync(Cancel).ConfigureAwait(false);
         return count;
     }
 
@@ -61,7 +61,7 @@ public class SqlBlogPostManager : IBlogPostManager
         if(Take == 0)
             return Enumerable.Empty<IPost>();
 
-        var posts = await db.Posts
+        var posts = await _DB.Posts
             .Skip(Skip)
             .Take(Take)
             .ToArrayAsync(Cancel)
@@ -79,18 +79,18 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Страница постов </returns>
     public async Task<IPage<IPost>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default)
     {
-        var totalCount = await db.Posts.CountAsync(Cancel).ConfigureAwait(false);
+        var total_count = await _DB.Posts.CountAsync(Cancel).ConfigureAwait(false);
 
         if (PageSize == 0)
-            return new Page<IPost>(Enumerable.Empty<IPost>(), PageIndex, PageSize, totalCount);
+            return new Page<IPost>(Enumerable.Empty<IPost>(), PageIndex, PageSize, total_count);
 
-        var posts = await db.Posts
+        var posts = await _DB.Posts
             .Skip(PageIndex * PageSize)
             .Take(PageSize)
             .ToArrayAsync(Cancel)
             .ConfigureAwait(false);
 
-        return new Page<IPost>((IEnumerable<IPost>)posts,PageIndex,PageSize,totalCount);
+        return new Page<IPost>((IEnumerable<IPost>)posts,PageIndex,PageSize,total_count);
     }
 
     #endregion
@@ -105,11 +105,11 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Все пользовательские посты </returns>
     public async Task<IEnumerable<IPost>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
     {
-        var userPosts = await db.Posts
+        var user_posts = await _DB.Posts
             .FirstOrDefaultAsync(p => p.UserId == int.Parse(UserId), Cancel)
             .ConfigureAwait(false);
 
-        return (IEnumerable<IPost>)userPosts!;
+        return (IEnumerable<IPost>)user_posts!;
     }
 
     /// <summary>
@@ -120,7 +120,7 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Количество всех постов пользователя </returns>
     public async Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
     {
-        int count = await db.Posts
+        int count = await _DB.Posts
             .CountAsync(p => p.UserId == int.Parse(UserId), Cancel)
             .ConfigureAwait(false);
             
@@ -156,14 +156,14 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Страница постов пользователя </returns>
     public async Task<IPage<IPost>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default)
     {
-        var totalCount = await db.Posts.CountAsync(Cancel).ConfigureAwait(false);
+        var total_count = await _DB.Posts.CountAsync(Cancel).ConfigureAwait(false);
         
         if (PageSize == 0)
-            return new Page<IPost>(Enumerable.Empty<IPost>(), PageIndex, PageSize, totalCount);
+            return new Page<IPost>(Enumerable.Empty<IPost>(), PageIndex, PageSize, total_count);
         
         var posts = await GetAllPostsByUserIdAsync(UserId, Cancel);
 
-        return new Page<IPost>(posts, PageIndex, PageSize, totalCount);
+        return new Page<IPost>(posts, PageIndex, PageSize, total_count);
     }
 
     #endregion
@@ -176,9 +176,13 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Конкретный пост </returns>
     public async Task<IPost?> GetPostAsync(int Id, CancellationToken Cancel = default)
     {
-        var post = await db.Posts.FirstOrDefaultAsync(p => p.Id == Id, Cancel).ConfigureAwait(false);
+        var post = await _DB.Posts
+           .Include(post => post.Category)
+           .Include(post => post.Tags)
+           .FirstOrDefaultAsync(p => p.Id == Id, Cancel)
+           .ConfigureAwait(false);
 
-        return post as IPost;
+        return (IPost)post; исправить!
     }
 
     /// <summary>
@@ -197,13 +201,16 @@ public class SqlBlogPostManager : IBlogPostManager
         string Category,
         CancellationToken Cancel = default)
     {
-        var post = new Post { Title = Title,
-                              Body = Body,
-                              CategoryName = Category, 
-                              UserId = int.Parse(UserId) };
+        var post = new Post 
+        {
+            Title = Title,
+            Body = Body,
+            CategoryName = Category, 
+            UserId = int.Parse(UserId)
+        };
 
-        await db.Posts.AddAsync(post).ConfigureAwait(false);
-        await db.SaveChangesAsync(Cancel);
+        await _DB.Posts.AddAsync(post, Cancel).ConfigureAwait(false);
+        await _DB.SaveChangesAsync(Cancel);
 
         return (IPost)post;
     }
@@ -216,13 +223,13 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Флаг результата удаления </returns>
     public async Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default)
     {
-        var dbPost = await GetPostAsync(Id, Cancel);
+        var db_post = await GetPostAsync(Id, Cancel);
         
-        if(dbPost is null)
+        if(db_post is null)
             return false;
 
-        db.Remove(dbPost);
-        await db.SaveChangesAsync(Cancel);
+        _DB.Remove(db_post);
+        await _DB.SaveChangesAsync(Cancel);
 
         return true;
     }
@@ -243,16 +250,16 @@ public class SqlBlogPostManager : IBlogPostManager
         if (post == null || Tag == null)
             return false;
 
-        var assignedTags = post.Tags;
+        var assigned_tags = post.Tags;
 
-        if(assignedTags != null && assignedTags.Any(n => n.Name == Tag)) 
+        if(assigned_tags != null && assigned_tags.Any(n => n.Name == Tag)) 
             return true;
 
-        var newTag = new Tag() { Name = Tag };
+        var new_tag = new Tag { Name = Tag };
 
-        post.Tags.Add((ITag)newTag);
+        post.Tags.Add((ITag)new_tag);
 
-        await db.SaveChangesAsync(Cancel);
+        await _DB.SaveChangesAsync(Cancel);
 
         return true;
     }
@@ -271,16 +278,16 @@ public class SqlBlogPostManager : IBlogPostManager
         if (post == null || Tag == null)
             return false;
 
-        var assignedTags = post.Tags;
+        var assigned_tags = post.Tags;
 
-        if (assignedTags is null || !assignedTags.Any(n => n.Name == Tag))
+        if (assigned_tags is null || !assigned_tags.Any(n => n.Name == Tag))
             return false;
 
-        var removingTag = new Tag() { Name = Tag };
+        var removing_tag = new Tag { Name = Tag };
 
-        assignedTags.Remove((ITag)removingTag);
+        assigned_tags.Remove((ITag)removing_tag);
 
-        await db.SaveChangesAsync(Cancel);
+        await _DB.SaveChangesAsync(Cancel);
 
         return false;
     }
@@ -295,11 +302,12 @@ public class SqlBlogPostManager : IBlogPostManager
     public async Task<IEnumerable<ITag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default)
     {
         var post = await GetPostAsync(Id, Cancel);
-        if (post == null) throw new NotImplementedException();
+        if (post == null)
+            throw new InvalidOperationException($"Не найдена запись блога с идентификатором {Id}");
 
-        var assignedTags = post.Tags;
+        var assigned_tags = post.Tags;
         
-        return assignedTags;
+        return assigned_tags;
     }
 
     /// <summary>
@@ -308,15 +316,20 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <param name="Tag"> Текст тэга </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Перечисление постов с конкретным тэгом </returns>
-    public Task<IEnumerable<IPost>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
+    public async Task<IEnumerable<IPost>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
     {
-        var searchingTag = new Tag() { Name = Tag };
+        //var searching_tag = new Tag { Name = Tag };
+        //var searching_posts = await GetAllPostsAsync(Cancel);
+        //return searching_posts.Where(post => post.Tags.Select(tag => tag.Name).Contains(Tag));
 
-        var searchingPosts = GetAllPostsAsync(Cancel)
-            .Result
-            .Where(t => t.Tags.Contains((ITag)searchingTag));
+        var tag = await _DB.Tags
+           .Include(t => t.Posts)
+           .FirstOrDefaultAsync(tag => tag.Name == Tag, Cancel).ConfigureAwait(false);
 
-        return (Task<IEnumerable<IPost>>)searchingPosts;
+        if (tag is null)
+            return Enumerable.Empty<IPost>();
+
+        return tag.Posts.Select(p => (IPost)p);
     }
 
     #endregion
@@ -333,12 +346,14 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <exception cref="NotImplementedException"> Не найденный пост </exception>
     public async Task<ICategory> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
     {
-        var post = await GetPostAsync(PostId, Cancel);
+        var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
 
-        if (post == null) { throw new NotImplementedException(); }
+        if (post == null) throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
 
-        post.Category.Name = CategoryName;
-        await db.SaveChangesAsync(Cancel);
+        throw new NotImplementedException("Переделать процесс редактирования категории");
+
+        post.Category.Name = CategoryName; // todo: здесь произойдёт переименование категории у всех записей! А должна произойти смена категории у указанной записи!
+        await _DB.SaveChangesAsync(Cancel);
 
         return post.Category;
     }
@@ -358,7 +373,7 @@ public class SqlBlogPostManager : IBlogPostManager
             return false;
         
         post.Title = Title;
-        await db.SaveChangesAsync(Cancel);
+        await _DB.SaveChangesAsync(Cancel);
         
         return true;
     }
@@ -378,7 +393,7 @@ public class SqlBlogPostManager : IBlogPostManager
             return false;
 
         post.Body = Body;
-        await db.SaveChangesAsync(Cancel);
+        await _DB.SaveChangesAsync(Cancel);
 
         return true;
     }
@@ -395,10 +410,13 @@ public class SqlBlogPostManager : IBlogPostManager
     {
         var post = await GetPostAsync(PostId, Cancel);
 
-        if (post == null) { throw new NotImplementedException(); }
+        if (post == null) 
+            throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
+
+        throw new NotImplementedException("Переделать редактирование статуса");
 
         post.Status.Name = Status;
-        await db.SaveChangesAsync(Cancel);
+        await _DB.SaveChangesAsync(Cancel);
 
         return post.Status;
     }
