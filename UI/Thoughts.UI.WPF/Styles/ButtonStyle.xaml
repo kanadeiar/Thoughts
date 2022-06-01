@@ -21,6 +21,12 @@
                                                           Content="{TemplateBinding Content}"
                                               Margin="5 0"/>
 
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>

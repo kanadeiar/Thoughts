@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Thoughts.UI.WPF"
              xmlns:vm="clr-namespace:Thoughts.UI.WPF.ViewModels"
+             xmlns:view="clr-namespace:Thoughts.UI.WPF.Views"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -11,6 +13,7 @@
                 <ResourceDictionary Source="Styles\RadioButtonMenuStyle.xaml"/>
                 <ResourceDictionary Source="Styles\ButtonStyle.xaml"/>
                 <ResourceDictionary Source="Styles\TextBoxStyle.xaml"/>
+                <ResourceDictionary Source="Styles\Brushes\DefaultBrushes.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>        
     </Application.Resources>

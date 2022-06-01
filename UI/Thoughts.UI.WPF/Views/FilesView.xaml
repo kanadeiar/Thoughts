@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:local="clr-namespace:Thoughts.UI.WPF.Views"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d" 
         d:DesignHeight="450" d:DesignWidth="800"
         DataContext="{Binding FilesModel, Source={StaticResource Locator}}"
@@ -25,7 +26,7 @@
         </Grid.Resources>
         <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ItemsSource="{Binding FilesCollection}"
-                 Background="Transparent"
+                 Background="{StaticResource DefaultBackgroundColor}"
                  BorderThickness="0">
             
             
@@ -40,7 +41,17 @@
                         Padding="3 3"
                         Margin="0 5">
                         <StackPanel>
-                            <Image Source="{Binding Path}"/>
+                            <Grid>                                
+                                <Image Source="{Binding Path}"/>
+                                <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Top">
+                                    <Button 
+                                            Background="Transparent"
+                                            Width="20"
+                                            >
+                                        <fa:ImageAwesome Icon="Trash" Foreground="DarkRed"/>
+                                    </Button>
+                                </WrapPanel>
+                            </Grid>                            
                             <TextBlock Height="20" 
                                        Text="{Binding Name}"
                                        Padding="1 1"

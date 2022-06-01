@@ -11,5 +11,7 @@ namespace Thoughts.UI.WPF.ViewModels
     internal class ViewModelLocator
     {
         public FilesViewModel FilesModel => App.Services.GetRequiredService<FilesViewModel>();
+        public MainWindowViewModel MainWindowModel => App.Services.GetRequiredService<MainWindowViewModel>();
+        public RecordsViewModel RecordsModel => App.Services.GetRequiredService<RecordsViewModel>();
     }
 }

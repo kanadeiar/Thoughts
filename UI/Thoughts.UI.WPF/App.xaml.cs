@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -17,11 +18,14 @@ namespace Thoughts.UI.WPF
         public static IHost Hosting => __Hosting ??= CreateHostBuilder(Environment.GetCommandLineArgs()).Build();
         public static IServiceProvider Services => Hosting.Services;        
 
-        public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args).ConfigureServices(ConfigureServices);
+        public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args).ConfigureAppConfiguration(opt => opt.AddJsonFile("appconfig.json", false, true)).ConfigureServices(ConfigureServices);
         
         private static void ConfigureServices(HostBuilderContext host, IServiceCollection services)
         {
             services.AddSingleton<FilesViewModel>();
+            services.AddSingleton<RecordsViewModel>();
+            services.AddSingleton <MainWindowViewModel>();
+            
         }
     }
 }
