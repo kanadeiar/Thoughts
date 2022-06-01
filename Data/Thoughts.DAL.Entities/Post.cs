@@ -15,7 +15,7 @@ public class Post : Entity
     public Status Status { get; set; } = null!;
 
     /// <summary>Дата записи</summary>
-    public DateTime Date { get; set; } = DateTime.Now;
+    public DateTime Date { get; set; } = DateTime.Now; // todo: заменить тип на DateTimeOffset и переделать миграцию
 
     /// <summary>Автор</summary>
     [Required]
@@ -23,7 +23,7 @@ public class Post : Entity
     public User User { get; set; } = null!;
 
     /// <summary> Внешний ключ для пользователя </summary>
-    public int UserId { get; set; }
+    public string UserId { get; set; }
 
     /// <summary>Заголовок записи</summary>
     [Required]

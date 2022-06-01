@@ -1,15 +1,19 @@
-﻿
-using Thoughts.Interfaces;
+﻿using Thoughts.Interfaces;
 using Thoughts.Interfaces.Base.Repositories;
 using Thoughts.DAL.Entities;
+
+using Post = Thoughts.Domain.Base.Entities.Post;
+using Tag = Thoughts.Domain.Base.Entities.Tag;
+using Category = Thoughts.Domain.Base.Entities.Category;
+using Status = Thoughts.Domain.Base.Entities.Status;
 
 namespace Thoughts.WebAPI.Services
 {
     public class BlogPostManager : IBlogPostManager
     {
-        private readonly IRepository<IPost> _PostsRepository;
+        private readonly IRepository<Post> _PostsRepository;
 
-        public BlogPostManager(IRepository<IPost> repository)
+        public BlogPostManager(IRepository<Post> repository)
         {
             _PostsRepository = repository;
         }
@@ -28,7 +32,7 @@ namespace Thoughts.WebAPI.Services
 
             //хз почему, но не мог добавить экземпляр сущностей без явного приведения
             var tag = new Tag(Tag);
-            getted_post.Tags.Add((ITag)tag);
+            getted_post.Tags.Add((Tag)tag);
             await _PostsRepository.Update(getted_post, Cancel);
 
             return true;
@@ -66,9 +70,9 @@ namespace Thoughts.WebAPI.Services
         /// <param name="CategoryName">Новая категория поста</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Изменённая категория</returns>
-        public Task<ICategory> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
+        public Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
         {
-            var task = new Task<ICategory>(() =>
+            var task = new Task<Category>(() =>
             {
                 var exist_task = _PostsRepository.ExistId(PostId, Cancel);
                 var category = new Category(CategoryName);
@@ -76,12 +80,12 @@ namespace Thoughts.WebAPI.Services
                 {
                     var getted_post = _PostsRepository.GetById(PostId).Result;
 
-                    getted_post.Category = (ICategory)category;
+                    getted_post.Category = (Category)category;
 
                     var post = _PostsRepository.Update(getted_post, Cancel);
                     if (post.Result is not null)
                     {
-                        return (ICategory)category;
+                        return (Category)category;
                     }
                 }
                 return null;
@@ -94,9 +98,9 @@ namespace Thoughts.WebAPI.Services
         /// <param name="Status">Новый статус поста</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Изменённая категория</returns>
-        public Task<IStatus> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default)
+        public Task<Status> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default)
         {
-            var task = new Task<IStatus>(() =>
+            var task = new Task<Status>(() =>
             {
                 var exist_task = _PostsRepository.ExistId(PostId, Cancel);
                 var status = new Status(Status);
@@ -104,12 +108,12 @@ namespace Thoughts.WebAPI.Services
                 {
                     var getted_post = _PostsRepository.GetById(PostId).Result;
 
-                    getted_post.Status = (IStatus)status;
+                    getted_post.Status = (Status)status;
 
                     var post = _PostsRepository.Update(getted_post, Cancel);
                     if (post.Result is not null)
                     {
-                        return (IStatus)status;
+                        return (Status)status;
                     }
                 }
                 return null;
@@ -151,7 +155,7 @@ namespace Thoughts.WebAPI.Services
         /// <param name="Category">Категория</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Вновь созданный пост</returns>
-        public Task<IPost> CreatePostAsync(string Title, string Body, string UserId, string Category, CancellationToken Cancel = default)
+        public Task<Post> CreatePostAsync(string Title, string Body, string UserId, string Category, CancellationToken Cancel = default)
         {
             var new_post = new Post()
             {
@@ -163,7 +167,7 @@ namespace Thoughts.WebAPI.Services
                 //здесь нам как-то нужно добавить юзера
                 //
             };
-            return _PostsRepository.Add((IPost)new_post, Cancel);
+            return _PostsRepository.Add((Post)new_post, Cancel);
         }
 
         /// <summary>Удаление поста</summary>
@@ -191,7 +195,7 @@ namespace Thoughts.WebAPI.Services
         /// <summary>Получить все посты</summary>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Перечисление всех постов</returns>
-        public Task<IEnumerable<IPost>> GetAllPostsAsync(CancellationToken Cancel = default)
+        public Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken Cancel = default)
         {
             return _PostsRepository.GetAll(Cancel);
         }
@@ -200,9 +204,9 @@ namespace Thoughts.WebAPI.Services
         /// <param name="UserId">Идентификатор пользователя</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Перечисление всех постов пользователя</returns>
-        public Task<IEnumerable<IPost>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
+        public Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
         {
-            var task = new Task<IEnumerable<IPost>>(() =>
+            var task = new Task<IEnumerable<Post>>(() =>
             {
                 return GetAllPostsAsync(Cancel).Result.Where(p => p.User.Id == UserId);
             });
@@ -215,9 +219,9 @@ namespace Thoughts.WebAPI.Services
         /// <param name="PageSize">Размер страницы</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Страница с перечислением всех постов пользователя</returns>
-        public Task<IPage<IPost>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default)
+        public Task<IPage<Post>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default)
         {
-            var task = new Task<IPage<IPost>>(() =>
+            var task = new Task<IPage<Post>>(() =>
             {
                 var pages = _PostsRepository.GetPage(PageIndex, PageSize, Cancel).Result;
 
@@ -240,9 +244,9 @@ namespace Thoughts.WebAPI.Services
         /// <param name="Take">Количество получаемых элементов</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Перечисление постов пользователя</returns>
-        public Task<IEnumerable<IPost>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default)
+        public Task<IEnumerable<Post>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default)
         {
-            var task = new Task<IEnumerable<IPost>>(() =>
+            var task = new Task<IEnumerable<Post>>(() =>
             {
                 return GetAllPostsAsync(Cancel).Result.Where(p => p.User.Id == UserId).Skip(Skip).Take(Take);
             });
@@ -262,7 +266,7 @@ namespace Thoughts.WebAPI.Services
         /// <param name="PageSize">Размер страницы</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Страница с постами</returns>
-        public Task<IPage<IPost>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default)
+        public Task<IPage<Post>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default)
         {
             return _PostsRepository.GetPage(PageIndex, PageSize, Cancel);
         }
@@ -272,9 +276,9 @@ namespace Thoughts.WebAPI.Services
         /// <param name="Take">Количество получаемых элементов</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Перечисление постов</returns>
-        public Task<IEnumerable<IPost>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default)
+        public Task<IEnumerable<Post>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default)
         {
-            var task = new Task<IEnumerable<IPost>>(() =>
+            var task = new Task<IEnumerable<Post>>(() =>
             {
                 return GetAllPostsAsync(Cancel).Result.Skip(Skip).Take(Take);
             });
@@ -285,9 +289,9 @@ namespace Thoughts.WebAPI.Services
         /// <param name="Id">Идентификатор поста</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Перечисление тэгов</returns>
-        public Task<IEnumerable<ITag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default)
+        public Task<IEnumerable<Tag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default)
         {
-            var task = new Task<IEnumerable<ITag>>(() =>
+            var task = new Task<IEnumerable<Tag>>(() =>
             {
                 var exist_task = _PostsRepository.ExistId(Id, Cancel);
                 if (exist_task.Result is true)
@@ -303,9 +307,9 @@ namespace Thoughts.WebAPI.Services
         /// <param name="Id">Идентификатор поста</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Найденный пост или <b>null</b></returns>
-        public Task<IPost?> GetPostAsync(int Id, CancellationToken Cancel = default)
+        public Task<Post?> GetPostAsync(int Id, CancellationToken Cancel = default)
         {
-            var task = new Task<IPost>(() =>
+            var task = new Task<Post>(() =>
             {
                 var exist_task = _PostsRepository.ExistId(Id, Cancel);
                 if (exist_task.Result is true)
@@ -321,12 +325,12 @@ namespace Thoughts.WebAPI.Services
         /// <param name="Tag">Тэг</param>
         /// <param name="Cancel">Токен отмены</param>
         /// <returns>Перечисление постов</returns>
-        public Task<IEnumerable<IPost>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
+        public Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
         {
             var tag = new Tag(Tag);
-            var task = new Task<IEnumerable<IPost>>(() =>
+            var task = new Task<IEnumerable<Post>>(() =>
             {
-                var posts = _PostsRepository.GetAll(Cancel).Result.Where(p => p.Tags.Contains((ITag)tag));
+                var posts = _PostsRepository.GetAll(Cancel).Result.Where(p => p.Tags.Contains((Tag)tag));
                 return posts;
             });
             return task;
@@ -363,7 +367,7 @@ namespace Thoughts.WebAPI.Services
                     if(getted_post.Result is not null)
                     {
                         var post = getted_post.Result;
-                        return post.Tags.Remove((ITag)tag);
+                        return post.Tags.Remove((Tag)tag);
                     }
                 }
                 return false;
