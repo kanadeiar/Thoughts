@@ -15,11 +15,15 @@ public class Post : Entity
     public Status Status { get; set; } = null!;
 
     /// <summary>Дата записи</summary>
-    public DateTime Date { get; set; } = DateTime.Now;
+    public DateTime Date { get; set; } = DateTime.Now; // todo: заменить тип на DateTimeOffset и переделать миграцию
 
     /// <summary>Автор</summary>
     [Required]
+    [ForeignKey(nameof(UserId))]
     public User User { get; set; } = null!;
+
+    /// <summary> Внешний ключ для пользователя </summary>
+    public string UserId { get; set; }
 
     /// <summary>Заголовок записи</summary>
     [Required]
@@ -31,13 +35,24 @@ public class Post : Entity
 
     /// <summary>Категория к которой относится запись</summary>
     [Required]
+    [ForeignKey(nameof(CategoryName))]
     public Category Category { get; set; } = null!;
 
+    /// <summary> Внешний ключ для категории </summary>
+    public string CategoryName { get; set; }
+
     /// <summary>Список тегов относящихся к записи</summary>
+    [ForeignKey(nameof(TagsName))]
     public ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
 
+    public ICollection<string> TagsName { get; set; }
+
     /// <summary>Список комментариев относящихся к записи</summary>
+    [ForeignKey(nameof(CommentsId))]
     public ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
+
+    /// <summary> Внешний ключ для комментариев </summary>
+    public ICollection<int> CommentsId { get; set; }
 
     /// <summary>Дата публикации</summary>
     public DateTime DatePublicatione { get; set; }

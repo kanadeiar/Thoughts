@@ -1,16 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-using Thoughts.Domain.Base;
+namespace Thoughts.Domain.Base.Entities;
 
-namespace Thoughts.Domain;
-/// <summary>
-/// Пользователь (автор)
-/// </summary>
-public class UserModel : EntityModel
+/// <summary>Пользователь (автор)</summary>
+public class User : EntityModel<string>
 {
     /// <summary>Статус пользователя</summary>
     [Required]
-    public StatusModel Status { get; set; } = null!;
+    public Status Status { get; set; } = null!;
+
     /// <summary>Фамилия</summary>
     [Required, MinLength(2)]
     public string LastName { get; set; } = null!;
@@ -30,11 +28,11 @@ public class UserModel : EntityModel
     public string NickName { get; set; } = null!;
 
     /// <summary>Роли пользователя</summary>
-    public ICollection<RoleModel> Roles { get; set; } = new HashSet<RoleModel>();
+    public ICollection<Role> Roles { get; set; } = new HashSet<Role>();
 
-    public UserModel() { }
+    public User() { }
 
-    public UserModel(string LastName, string FirstName, string Patronymic, DateTime Birthday, string NickName)
+    public User(string LastName, string FirstName, string Patronymic, DateTime Birthday, string NickName)
     {
         this.LastName = LastName;
         this.FirstName = FirstName;

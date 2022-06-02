@@ -11,7 +11,7 @@ namespace Thoughts.DAL.Entities;
 /// </summary>
 
 [Index(nameof(LastName), nameof(FirstName), nameof(Patronymic), IsUnique = true, Name = "NameIndex")]
-public class User : Entity
+public class User : Entity<string>
 {
     /// <summary>Статус пользователя</summary>
     [Required]

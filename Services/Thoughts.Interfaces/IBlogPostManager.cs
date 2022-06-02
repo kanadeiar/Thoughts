@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Thoughts.Domain.Base.Entities;
 using Thoughts.Interfaces.Base.Repositories;
 
 namespace Thoughts.Interfaces;
@@ -11,31 +12,31 @@ public interface IBlogPostManager
 {
     #region Get all posts
     
-    Task<IEnumerable<IPost>> GetAllPostsAsync(CancellationToken Cancel = default);
+    Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken Cancel = default);
 
     Task<int> GetAllPostsCountAsync(CancellationToken Cancel = default);
 
-    Task<IEnumerable<IPost>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default);
+    Task<IEnumerable<Post>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default);
 
-    Task<IPage<IPost>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default);
+    Task<IPage<Post>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default);
 
     #endregion
 
     #region Get user posts
     
-    Task<IEnumerable<IPost>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default);
+    Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default);
 
     Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default);
 
-    Task<IEnumerable<IPost>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default);
+    Task<IEnumerable<Post>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default);
 
-    Task<IPage<IPost>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default);
+    Task<IPage<Post>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default);
 
     #endregion
 
-    Task<IPost?> GetPostAsync(int Id, CancellationToken Cancel = default);
+    Task<Post?> GetPostAsync(int Id, CancellationToken Cancel = default);
 
-    Task<IPost> CreatePostAsync(
+    Task<Post> CreatePostAsync(
         string Title,
         string Body,
         string UserId,
@@ -50,21 +51,21 @@ public interface IBlogPostManager
 
     Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default);
 
-    Task<IEnumerable<ITag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default);
+    Task<IEnumerable<Tag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default);
 
-    Task<IEnumerable<IPost>> GetPostsByTag(string Tag, CancellationToken Cancel = default);
+    Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default);
 
     #endregion
 
     #region Редактирование
     
-    Task<ICategory> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default);
+    Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default);
 
     Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default);
 
     Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default);
 
-    Task<IStatus> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default); 
+    Task<Status> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default); 
 
     #endregion
 }

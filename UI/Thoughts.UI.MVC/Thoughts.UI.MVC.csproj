@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Data\Thoughts.DAL.Sqlite\Thoughts.DAL.Sqlite.csproj" />
     <ProjectReference Include="..\..\Data\Thoughts.DAL.SqlServer\Thoughts.DAL.SqlServer.csproj" />
+    <ProjectReference Include="..\..\Services\Thoughts.Interfaces\Thoughts.Interfaces.csproj" />
   </ItemGroup>
   
 </Project>
