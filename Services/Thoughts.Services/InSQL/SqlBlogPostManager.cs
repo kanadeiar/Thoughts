@@ -18,9 +18,7 @@ public class SqlBlogPostManager : IBlogPostManager
     private readonly ThoughtsDB _DB;
     private readonly ILogger<SqlBlogPostManager> _Logger;
 
-    /// <summary>
-    /// Конструктор сервиса
-    /// </summary>
+    /// <summary> Конструктор сервиса </summary>
     /// <param name="Db"> База данных </param>
     /// <param name="Logger"> Логгер </param>
     public SqlBlogPostManager(ThoughtsDB Db, ILogger<SqlBlogPostManager> Logger)
@@ -31,9 +29,7 @@ public class SqlBlogPostManager : IBlogPostManager
 
     #region Get all posts
 
-    /// <summary>
-    /// Аолучить все посты
-    /// </summary>
+    /// <summary> Получить все посты </summary>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Возвращает все посты </returns>
     public async Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken Cancel = default)
@@ -61,9 +57,7 @@ public class SqlBlogPostManager : IBlogPostManager
         return await domain_posts.ToArrayAsync(Cancel).ConfigureAwait(false);
     }
 
-    /// <summary>
-    /// Получить количество всех постов
-    /// </summary>
+    /// <summary> Получить количество всех постов </summary>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Возвращает количество постов </returns>
     public async Task<int> GetAllPostsCountAsync(CancellationToken Cancel = default)
@@ -72,9 +66,7 @@ public class SqlBlogPostManager : IBlogPostManager
         return count;
     }
 
-    /// <summary>
-    /// Получение постов для пагинации (выборка)
-    /// </summary>
+    /// <summary> Получение постов для пагинации (выборка) </summary>
     /// <param name="Skip"> Пропуск количества заданного диапазона постов </param>
     /// <param name="Take"> Получение заданного диапазона постов</param>
     /// <param name="Cancel"> Токен отмены </param>
@@ -100,9 +92,7 @@ public class SqlBlogPostManager : IBlogPostManager
         return domain_posts;
     }
 
-    /// <summary>
-    /// Получение страницы постов
-    /// </summary>
+    /// <summary> Получение страницы постов </summary>
     /// <param name="PageIndex"> Номер страницы </param>
     /// <param name="PageSize"> Размер страницы </param>
     /// <param name="Cancel"> Токен отмены </param>
@@ -134,9 +124,7 @@ public class SqlBlogPostManager : IBlogPostManager
 
     #region Get user posts
 
-    /// <summary>
-    /// Получение всех постов пользователя
-    /// </summary>
+    /// <summary> Получение всех постов пользователя </summary>
     /// <param name="UserId"> ID пользователя </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Все пользовательские посты </returns>
@@ -154,9 +142,7 @@ public class SqlBlogPostManager : IBlogPostManager
         return await domain_posts.ToArrayAsync(Cancel).ConfigureAwait(false);
     }
 
-    /// <summary>
-    /// Получение количества всех постов пользователя
-    /// </summary>
+    /// <summary> Получение количества всех постов пользователя </summary>
     /// <param name="UserId"> ID пользователя </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Количество всех постов пользователя </returns>
@@ -169,9 +155,7 @@ public class SqlBlogPostManager : IBlogPostManager
         return count;
     }
 
-    /// <summary>
-    /// Получение выборки постов для пагинации конкретного пользователя
-    /// </summary>
+    /// <summary> Получение выборки постов для пагинации конкретного пользователя </summary>
     /// <param name="UserId"> ID пользователя </param>
     /// <param name="Skip"> Пропуск количества заданного диапазона постов </param>
     /// <param name="Take"> Получение заданного диапазона постов</param>
@@ -188,9 +172,7 @@ public class SqlBlogPostManager : IBlogPostManager
         return page;
     }
 
-    /// <summary>
-    /// Получение страницы постов пользователя
-    /// </summary>
+    /// <summary> Получение страницы постов пользователя </summary>
     /// <param name="UserId"> ID пользователя </param>
     /// <param name="PageIndex"> Номер страницы </param>
     /// <param name="PageSize"> Размер страницы </param>
@@ -210,9 +192,7 @@ public class SqlBlogPostManager : IBlogPostManager
 
     #endregion
 
-    /// <summary>
-    /// Получение поста по его Id
-    /// </summary>
+    /// <summary> Получение поста по его Id </summary>
     /// <param name="Id"></param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Конкретный пост </returns>
@@ -234,9 +214,7 @@ public class SqlBlogPostManager : IBlogPostManager
         return domain_post;
     }
 
-    /// <summary>
-    /// Создание поста
-    /// </summary>
+    /// <summary> Создание поста </summary>
     /// <param name="Title"> Заголовок </param>
     /// <param name="Body"> Тело поста </param>
     /// <param name="UserId"> Id автора поста </param>
@@ -266,9 +244,7 @@ public class SqlBlogPostManager : IBlogPostManager
         //return (Post)post;
     }
 
-    /// <summary>
-    /// Удаление поста
-    /// </summary>
+    /// <summary> Удаление поста </summary>
     /// <param name="Id"> Идентификатор поста </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Флаг результата удаления </returns>
@@ -331,9 +307,7 @@ public class SqlBlogPostManager : IBlogPostManager
         return true;
     }
 
-    /// <summary>
-    /// Удаление тэга из поста
-    /// </summary>
+    /// <summary> Удаление тэга из поста </summary>
     /// <param name="PostId"> Идентификатор поста </param>
     /// <param name="Tag"> Текст тэга </param>
     /// <param name="Cancel"> Токен отмены </param>
@@ -363,9 +337,7 @@ public class SqlBlogPostManager : IBlogPostManager
         //return false;
     }
 
-    /// <summary>
-    /// Получение тэгов поста
-    /// </summary>
+    /// <summary> Получение тэгов поста </summary>
     /// <param name="Id"> Идентификатор тэга </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Перечисление тэгов поста </returns>
@@ -381,9 +353,7 @@ public class SqlBlogPostManager : IBlogPostManager
         return assigned_tags;
     }
 
-    /// <summary>
-    /// Получение всех постов по тэгу
-    /// </summary>
+    /// <summary> Получение всех постов по тэгу </summary>
     /// <param name="Tag"> Текст тэга </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Перечисление постов с конкретным тэгом </returns>
@@ -412,9 +382,7 @@ public class SqlBlogPostManager : IBlogPostManager
 
     #region Редактирование
 
-    /// <summary>
-    /// Изменение категории поста
-    /// </summary>
+    /// <summary> Изменение категории поста </summary>
     /// <param name="PostId"> Идентификатор поста </param>
     /// <param name="CategoryName"> Название категории </param>
     /// <param name="Cancel"> Токен отмены </param>
@@ -435,9 +403,7 @@ public class SqlBlogPostManager : IBlogPostManager
         return post.Category;
     }
 
-    /// <summary>
-    /// Изменение заголовка поста
-    /// </summary>
+    /// <summary> Изменение заголовка поста </summary>
     /// <param name="PostId"> Идентификатор поста </param>
     /// <param name="Title"> Заголовок поста </param>
     /// <param name="Cancel"> Токен отмены </param>
@@ -455,9 +421,7 @@ public class SqlBlogPostManager : IBlogPostManager
         return true;
     }
 
-    /// <summary>
-    /// Изменение тела поста
-    /// </summary>
+    /// <summary> Изменение тела поста </summary>
     /// <param name="PostId"> Идентификатор поста </param>
     /// <param name="Body"> Тело поста </param>
     /// <param name="Cancel"> Токен отмены </param>
@@ -475,9 +439,7 @@ public class SqlBlogPostManager : IBlogPostManager
         return true;
     }
 
-    /// <summary>
-    /// Изменение статуса поста
-    /// </summary>
+    /// <summary> Изменение статуса поста </summary>
     /// <param name="PostId"> Идентификатор поста </param>
     /// <param name="Status"> Текст статуса </param>
     /// <param name="Cancel"> Токен отмены </param>
