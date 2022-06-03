@@ -55,7 +55,7 @@ public class Post : Entity
     public ICollection<int> CommentsId { get; set; }
 
     /// <summary>Дата публикации</summary>
-    public DateTime DatePublicatione { get; set; }
+    public DateTime PublicationDate { get; set; }
 
     /// <summary>Приложенные файлы</summary>
     public ICollection<File> Files { get; set; } = new HashSet<File>();
@@ -67,7 +67,7 @@ public class Post : Entity
     public Post() { }
 
     public Post(Status status, DateTime date, User user,
-        string title, string body, Category category, DateTime datePublicatione,
+        string title, string body, Category category, DateTime publicationDate,
         ICollection<Tag> tags, ICollection<Comment> comments, ICollection<File> files, string email)
     {
         Status = status;
@@ -78,7 +78,7 @@ public class Post : Entity
         Category = category;
         Tags = tags;
         Comments = comments;
-        DatePublicatione = datePublicatione;
+        PublicationDate = publicationDate;
         Files = files;
         Email = email;
     }
