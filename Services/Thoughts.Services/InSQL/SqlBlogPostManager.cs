@@ -10,6 +10,7 @@ using Post = Thoughts.Domain.Base.Entities.Post;
 using Tag = Thoughts.Domain.Base.Entities.Tag;
 using Category = Thoughts.Domain.Base.Entities.Category;
 using Status = Thoughts.Domain.Base.Entities.Status;
+using Thoughts.Services.Mapping;
 
 namespace Thoughts.Services.InSQL;
 
@@ -32,29 +33,13 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <summary> Получить все посты </summary>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Возвращает все посты </returns>
-    public async Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken Cancel = default)
+    public Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken Cancel = default)
     {
-        //var db_posts = await _DB.Posts.ToArrayAsync(Cancel).ConfigureAwait(false);
-
-        //var domain_posts = db_posts.Select(p => new Post
-        //{
-        //    Title = p.Title,
-        //    Body = p.Body,
-        //    // todo: либо настроить AutoMapper/Mapster, либо прописать методы-расширения для проекции DAL.Post -> Domain.Post
-        //});
-
-        //return domain_posts;
-
         var db_posts = _DB.Posts;
 
-        var domain_posts = db_posts.Select(p => new Post
-        {
-            Title = p.Title,
-            Body = p.Body,
-            // todo: либо настроить AutoMapper/Mapster, либо прописать методы-расширения для проекции DAL.Post -> Domain.Post
-        });
+        var domain_posts = db_posts.PostToDomain();
 
-        return await domain_posts.ToArrayAsync(Cancel).ConfigureAwait(false);
+        return Task.FromResult(domain_posts)!;
     }
 
     /// <summary> Получить количество всех постов </summary>
@@ -82,14 +67,9 @@ public class SqlBlogPostManager : IBlogPostManager
             .ToArrayAsync(Cancel)
             .ConfigureAwait(false);
 
-        var domain_posts = db_posts.Select(p => new Post
-        {
-            Title = p.Title,
-            Body = p.Body,
-            // todo: либо настроить AutoMapper/Mapster, либо прописать методы-расширения для проекции DAL.Post -> Domain.Post
-        });
+        var domain_posts = db_posts.PostToDomain();
 
-        return domain_posts;
+        return domain_posts!;
     }
 
     /// <summary> Получение страницы постов </summary>
@@ -110,14 +90,9 @@ public class SqlBlogPostManager : IBlogPostManager
             .ToArrayAsync(Cancel)
             .ConfigureAwait(false);
 
-        var domain_posts = db_posts.Select(p => new Post
-        {
-            Title = p.Title,
-            Body = p.Body,
-            // todo: либо настроить AutoMapper/Mapster, либо прописать методы-расширения для проекции DAL.Post -> Domain.Post
-        });
+        var domain_posts = db_posts.PostToDomain();
 
-        return new Page<Post>(domain_posts, PageIndex, PageSize, total_count);
+        return new Page<Post>(domain_posts!, PageIndex, PageSize, total_count);
     }
 
     #endregion
@@ -128,18 +103,13 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <param name="UserId"> ID пользователя </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Все пользовательские посты </returns>
-    public async Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
+    public Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
     {
         var db_posts = _DB.Posts.Where(p => p.UserId == UserId);
 
-        var domain_posts = db_posts.Select(p => new Post
-        {
-            Title = p.Title,
-            Body = p.Body,
-            // todo: либо настроить AutoMapper/Mapster, либо прописать методы-расширения для проекции DAL.Post -> Domain.Post
-        });
+        var domain_posts = db_posts.PostToDomain();
 
-        return await domain_posts.ToArrayAsync(Cancel).ConfigureAwait(false);
+        return Task.FromResult(domain_posts)!;
     }
 
     /// <summary> Получение количества всех постов пользователя </summary>
@@ -180,7 +150,7 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Страница постов пользователя </returns>
     public async Task<IPage<Post>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default)
     {
-        var total_count = await _DB.Posts.CountAsync(Cancel).ConfigureAwait(false);
+        var total_count = await GetUserPostsCountAsync(UserId, Cancel).ConfigureAwait(false);
 
         if (PageSize == 0)
             return new Page<Post>(Enumerable.Empty<Post>(), PageIndex, PageSize, total_count);
@@ -204,12 +174,9 @@ public class SqlBlogPostManager : IBlogPostManager
            .FirstOrDefaultAsync(p => p.Id == Id, Cancel)
            .ConfigureAwait(false);
 
-        var domain_post = new Post
-        {
-            Title = db_post.Title,
-            Body = db_post.Body,
-            // todo: либо настроить AutoMapper/Mapster, либо прописать методы-расширения для проекции DAL.Post -> Domain.Post
-        };
+        if (db_post is null) return null;
+
+        var domain_post = db_post.PostToDomain();
 
         return domain_post;
     }
@@ -228,20 +195,24 @@ public class SqlBlogPostManager : IBlogPostManager
         string Category,
         CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        if (Title == null || Body == null || UserId == null || Category == null) throw new InvalidOperationException();
 
-        //var post = new Post
-        //{
-        //    Title = Title,
-        //    Body = Body,
-        //    CategoryName = Category, // надо найти в БД запись с выбранной категорией (по её имени) и присвоить сюда значение
-        //    UserId = UserId
-        //};
+        var db_category = await _DB.Categories.FirstOrDefaultAsync(c => c.Name == Category, Cancel).ConfigureAwait(false);
 
-        //await _DB.Posts.AddAsync(post, Cancel).ConfigureAwait(false);
-        //await _DB.SaveChangesAsync(Cancel);
+        if (db_category is null) db_category = new DAL.Entities.Category { Name = Category };
 
-        //return (Post)post;
+        var post = new Post
+        {
+            Title = Title,
+            Body = Body,
+            Category = db_category.CategoryToDomain()!,
+            User = _DB.Users.FirstOrDefault(user => user.Id == UserId).UserToDomain()!,
+        };
+
+        await _DB.Posts.AddAsync(post.PostToDAL()!, Cancel).ConfigureAwait(false);
+        await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
+
+        return post;
     }
 
     /// <summary> Удаление поста </summary>
@@ -256,7 +227,7 @@ public class SqlBlogPostManager : IBlogPostManager
             return false;
 
         _DB.Remove(db_post);
-        await _DB.SaveChangesAsync(Cancel);
+        await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
 
         return true;
     }
@@ -273,8 +244,8 @@ public class SqlBlogPostManager : IBlogPostManager
         var post = await _DB.Posts
            .Select(p => new DAL.Entities.Post { Id = p.Id })
            .FirstOrDefaultAsync(p => p.Id == PostId, Cancel).ConfigureAwait(false);
-        if (post is null)
-            return false;
+
+        if (post is null) return false;
 
         var tag = await _DB.Tags
            .Include(t => t.Posts)
@@ -286,23 +257,9 @@ public class SqlBlogPostManager : IBlogPostManager
             await _DB.AddAsync(tag, Cancel);
         }
 
-        tag.Posts.Add(post);
+        post.Tags.Add(tag);
 
-        //var post = await GetPostAsync(PostId, Cancel);
-
-        //if (post is null || Tag is null)
-        //    return false;
-
-        //var assigned_tags = post.Tags;
-
-        //if (assigned_tags.Any(n => n.Name == Tag))
-        //    return true;
-
-        //var new_tag = new Tag { Name = Tag };
-
-        //post.Tags.Add((ITag)new_tag);
-
-        await _DB.SaveChangesAsync(Cancel);
+        await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
 
         return true;
     }
@@ -314,43 +271,37 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Флаг результата удаления тэга </returns>
     public async Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await _DB.Posts
+           .Select(p => new DAL.Entities.Post { Id = p.Id })
+           .FirstOrDefaultAsync(p => p.Id == PostId, Cancel).ConfigureAwait(false);
+        
+        if (post is null || post.Tags.Count == 0) return false;
+        
+        var tag = await _DB.Tags
+           .Include(t => t.Posts)
+           .FirstOrDefaultAsync(t => t.Name == Tag, Cancel);
 
-        // todo: Переделать в соответствии с реализацией AssignTagAsync
+        if (tag is null) return false;
 
-        //var post = await GetPostAsync(PostId, Cancel);
+        post.Tags.Remove(tag);    // тут всё же не уверен, что удалится тег из поста, а не вообще тег
 
-        //if (post is null || Tag is null)
-        //    return false;
+        await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
 
-        //var assigned_tags = post.Tags;
-
-        //if (assigned_tags is null || !assigned_tags.Any(n => n.Name == Tag))
-        //    return false;
-
-        //var removing_tag = new Tag { Name = Tag };
-
-        //assigned_tags.Remove((ITag)removing_tag);
-
-        //await _DB.SaveChangesAsync(Cancel);
-
-        //return false;
+        return true;
     }
 
     /// <summary> Получение тэгов поста </summary>
     /// <param name="Id"> Идентификатор тэга </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Перечисление тэгов поста </returns>
-    /// <exception cref="NotImplementedException"> Не найденный пост (?) </exception>
+    /// <exception cref="InvalidOperationException"> Не найденный пост (?) </exception>
     public async Task<IEnumerable<Tag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default)
     {
         var post = await GetPostAsync(Id, Cancel);
         if (post is null)
             throw new InvalidOperationException($"Не найдена запись блога с идентификатором {Id}");
 
-        var assigned_tags = post.Tags;
-
-        return assigned_tags;
+        return post.Tags;
     }
 
     /// <summary> Получение всех постов по тэгу </summary>
@@ -359,10 +310,6 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Перечисление постов с конкретным тэгом </returns>
     public async Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
     {
-        //var searching_tag = new Tag { Name = Tag };
-        //var searching_posts = await GetAllPostsAsync(Cancel);
-        //return searching_posts.Where(post => post.Tags.Select(tag => tag.Name).Contains(Tag));
-
         var tag = await _DB.Tags
            .Include(t => t.Posts)
            .FirstOrDefaultAsync(tag => tag.Name == Tag, Cancel).ConfigureAwait(false);
@@ -370,12 +317,7 @@ public class SqlBlogPostManager : IBlogPostManager
         if (tag is null)
             return Enumerable.Empty<Post>();
 
-        return tag.Posts.Select(p => new Post
-        {
-            Title = p.Title,
-            Body = p.Body,
-            // todo: либо настроить AutoMapper/Mapster, либо прописать методы-расширения для проекции DAL.Post -> Domain.Post
-        });
+        return tag.Posts.PostToDomain()!;
     }
 
     #endregion
@@ -387,20 +329,21 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <param name="CategoryName"> Название категории </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Возврат категории поста </returns>
-    /// <exception cref="NotImplementedException"> Не найденный пост </exception>
+    /// <exception cref="InvalidOperationException"> Не найденный пост </exception>
     public async Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
     {
         var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
 
-        if (post is null) 
+        if (post is null)
             throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
 
-        throw new NotImplementedException("Переделать процесс редактирования категории");
+        var new_category = new Category { Name = CategoryName };
 
-        post.Category.Name = CategoryName; // todo: здесь произойдёт переименование категории у всех записей! А должна произойти смена категории у указанной записи!
-        await _DB.SaveChangesAsync(Cancel);
+        post.Category = new_category;   // - тут всё же не уверен
 
-        return post.Category;
+        await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
+
+        return post.Category!;
     }
 
     /// <summary> Изменение заголовка поста </summary>
@@ -412,11 +355,10 @@ public class SqlBlogPostManager : IBlogPostManager
     {
         var post = await GetPostAsync(PostId, Cancel);
 
-        if (post is null)
-            return false;
+        if (post is null) return false;
 
         post.Title = Title;
-        await _DB.SaveChangesAsync(Cancel);
+        await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
 
         return true;
     }
@@ -434,7 +376,7 @@ public class SqlBlogPostManager : IBlogPostManager
             return false;
 
         post.Body = Body;
-        await _DB.SaveChangesAsync(Cancel);
+        await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
 
         return true;
     }
@@ -452,10 +394,11 @@ public class SqlBlogPostManager : IBlogPostManager
         if (post is null)
             throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
 
-        throw new NotImplementedException("Переделать редактирование статуса");
+        var new_status = new Status { Name = Status };
+        
+        post.Status = new_status;   // - тут всё же не уверен
 
-        post.Status.Name = Status;
-        await _DB.SaveChangesAsync(Cancel);
+        await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
 
         return post.Status;
     }
