@@ -84,15 +84,9 @@ public class SqlBlogPostManager : IBlogPostManager
         if (PageSize == 0)
             return new Page<Post>(Enumerable.Empty<Post>(), PageIndex, PageSize, total_count);
 
-        var db_posts = await _DB.Posts
-            .Skip(PageIndex * PageSize)
-            .Take(PageSize)
-            .ToArrayAsync(Cancel)
-            .ConfigureAwait(false);
+        var db_posts = await GetAllPostsAsync(Cancel).ConfigureAwait(false);
 
-        var domain_posts = db_posts.PostToDomain();
-
-        return new Page<Post>(domain_posts!, PageIndex, PageSize, total_count);
+        return new Page<Post>(db_posts, PageIndex, PageSize, total_count);
     }
 
     #endregion
@@ -161,6 +155,8 @@ public class SqlBlogPostManager : IBlogPostManager
     }
 
     #endregion
+
+    #region Get Create Delete
 
     /// <summary> Получение поста по его Id </summary>
     /// <param name="Id"></param>
@@ -231,6 +227,8 @@ public class SqlBlogPostManager : IBlogPostManager
 
         return true;
     }
+
+    #endregion
 
     #region Tags
 
