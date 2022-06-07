@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Thoughts.Domain.Base.Entities;
 
@@ -13,7 +14,11 @@ public class Post : EntityModel
 
     /// <summary>Автор</summary>
     [Required]
+    [ForeignKey(nameof(UserId))]
     public User User { get; set; } = null!;
+
+    /// <summary> Внешний ключ для актора </summary>
+    public string UserId { get; set; } //собственно, хитрость
 
     /// <summary>Заголовок записи</summary>
     [Required]
