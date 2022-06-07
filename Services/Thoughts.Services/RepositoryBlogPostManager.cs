@@ -1,30 +1,33 @@
 ﻿using Thoughts.Interfaces;
 using Thoughts.Interfaces.Base.Repositories;
 
-using Post = Thoughts.Domain.Base.Entities.Post;
-using Tag = Thoughts.Domain.Base.Entities.Tag;
-using Category = Thoughts.Domain.Base.Entities.Category;
-using Status = Thoughts.Domain.Base.Entities.Status;
-using User = Thoughts.Domain.Base.Entities.User;
+using Thoughts.Domain;
+using Thoughts.Domain.Base.Entities;
 
 namespace Thoughts.Services;
 
 public class RepositoryBlogPostManager : IBlogPostManager
 {
     private readonly IRepository<Post> _postRepo;
-    private readonly IRepository<Tag> _tagRepo;
-    private readonly IRepository<Category> _categoryRepo;
-    private readonly IRepository<Status> _statusRepo;
+    private readonly INamedRepository<Tag> _tagRepo;
+    private readonly INamedRepository<Category> _categoryRepo;
+    private readonly INamedRepository<Status> _statusRepo;
+    //private readonly IRepository<User> userRepo;
+
+    //никак не получилось создать репозиторий сущности, выдаёт ошибку CS0311
+    //пришлось хитрить, добавляя внешний ключ для сущности User в Post
 
     public RepositoryBlogPostManager(IRepository<Post> PostRepo,
-                                     IRepository<Tag> TagRepo,
-                                     IRepository<Category> CategoryRepo,
-                                     IRepository<Status> StatusRepo)
+                                     INamedRepository<Tag> TagRepo,
+                                     INamedRepository<Category> CategoryRepo,
+                                     INamedRepository<Status> StatusRepo/*,*/
+                                     /*IRepository<User> UserRepo*/)
     {
         _postRepo = PostRepo;
         _tagRepo = TagRepo;
         _categoryRepo = CategoryRepo;
         _statusRepo = StatusRepo;
+        //userRepo = UserRepo;
     }
 
     #region Get All Posts
@@ -32,17 +35,19 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <summary> Получить все посты </summary>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Возвращает все посты </returns>
-    public Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken Cancel = default)
+    public async Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var posts = await _postRepo.GetAll(Cancel).ConfigureAwait(false);
+        return posts;
     }
 
     /// <summary> Получить количество всех постов </summary>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Возвращает количество постов </returns>
-    public Task<int> GetAllPostsCountAsync(CancellationToken Cancel = default)
+    public async Task<int> GetAllPostsCountAsync(CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var posts_count = await _postRepo.GetCount(Cancel).ConfigureAwait(false);
+        return posts_count;
     }
 
     /// <summary> Получение постов для пагинации (выборка) </summary>
@@ -50,9 +55,14 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="Take"> Получение заданного диапазона постов</param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Урезанное перечисление постов (для пагинации) </returns>
-    public Task<IEnumerable<Post>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default)
+    public async Task<IEnumerable<Post>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        if (Take == 0)
+            return Enumerable.Empty<Post>();
+
+        var page = await _postRepo.Get(Skip, Take, Cancel).ConfigureAwait(false);
+
+        return page;
     }
 
     /// <summary> Получение страницы постов </summary>
@@ -60,9 +70,20 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="PageSize"> Размер страницы </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Страница постов </returns>
-    public Task<IPage<Post>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default)
+    public async Task<IPage<Post>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var total_count = await _postRepo.GetCount(Cancel).ConfigureAwait(false);
+
+        //var total_count = await GetAllPostsCountAsync(Cancel).ConfigureAwait(false);
+
+        if(PageIndex == 0)
+            return new Page<Post>(Enumerable.Empty<Post>(), PageIndex, PageSize, total_count);
+
+        var page = await _postRepo.GetPage(PageIndex, PageSize, Cancel).ConfigureAwait(false);
+
+        //здесь не уверен, всё же в конструкторе страницы обязательно указывать общее количество, а в интерфейсе репозитория общее количество не указывается
+        return page;
+
     }
 
     #endregion
@@ -73,18 +94,24 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="UserId"> ID пользователя </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Все пользовательские посты </returns>
-    public Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
+    public async Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var user_posts = _postRepo.GetAll(Cancel).Result.Where(p => p.User.Id == UserId); //без Result никак
+        return await Task.FromResult(user_posts).ConfigureAwait(false);
+
+        //return GetAllPostsAsync(Cancel).Result.Where(p => p.User.Id == UserId); <- или всё же так, с использованием предыдущего метода?
     }
 
     /// <summary> Получение количества всех постов пользователя </summary>
     /// <param name="UserId"> ID пользователя </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Количество всех постов пользователя </returns>
-    public Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
+    public async Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var count = _postRepo.GetAll(Cancel).Result.Where(p => p.User.Id == UserId).Count();
+        //var count = GetAllPostsByUserIdAsync(UserId, Cancel).Result.Count();
+        
+        return await Task.FromResult(count).ConfigureAwait(false);
     }
 
     /// <summary> Получение выборки постов для пагинации конкретного пользователя </summary>
@@ -93,9 +120,14 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="Take"> Получение заданного диапазона постов</param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Выборка постов для пагинации пользователя </returns>
-    public Task<IEnumerable<Post>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default)
+    public async Task<IEnumerable<Post>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        if (Take == 0)
+            return Enumerable.Empty<Post>();
+
+        var page = GetAllPostsByUserIdAsync(UserId, Cancel).Result.Where(p => p.User.Id == UserId).Skip(Skip).Take(Take);
+        
+        return await Task.FromResult(page).ConfigureAwait(false);
     }
 
     /// <summary> Получение страницы постов пользователя </summary>
@@ -104,9 +136,16 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="PageSize"> Размер страницы </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Страница постов пользователя </returns>
-    public Task<IPage<Post>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default)
+    public async Task<IPage<Post>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var count = await GetUserPostsCountAsync(UserId,Cancel).ConfigureAwait(false);
+
+        if (PageIndex == 0)
+            return new Page<Post>(Enumerable.Empty<Post>(), PageIndex, PageSize, count);
+
+        var posts = await GetAllPostsByUserIdAsync(UserId, Cancel).ConfigureAwait(false); //здесь не как в GetAllPostsPageAsync - метод GetPage из IRepository не даёт сделать выборку по Id
+
+        return new Page<Post>(posts, PageIndex, PageSize, count);
     }
 
     #endregion
@@ -117,9 +156,26 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="Id">Id поста</param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Конкретный пост </returns>
-    public Task<Post?> GetPostAsync(int Id, CancellationToken Cancel = default)
+    public async Task<Post?> GetPostAsync(int Id, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await _postRepo.GetById(Id, Cancel).ConfigureAwait(false);
+        return post;
+    }
+
+
+    /// <summary> Удаление поста </summary>
+    /// <param name="Id"> Идентификатор поста </param>
+    /// <param name="Cancel"> Токен отмены </param>
+    /// <returns> Флаг результата удаления </returns>
+    public async Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default)
+    {
+        var post = await GetPostAsync(Id, Cancel).ConfigureAwait(false);
+        
+        if(post is null)
+            return false;
+
+        await _postRepo.DeleteById(Id, Cancel).ConfigureAwait(false);
+        return true;
     }
 
     /// <summary> Создание поста </summary>
@@ -129,20 +185,24 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="Category"> Категория поста </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Созданный пост </returns>
-    public Task<Post> CreatePostAsync(string Title, string Body, string UserId, string Category, CancellationToken Cancel = default)
+    public async Task<Post> CreatePostAsync(string Title, string Body, string UserId, string Category, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
-    }
+        if (Title == null || Body == null || UserId == null || Category == null) throw new InvalidOperationException();
+        
+        var post = new Post
+        {
+            Title = Title,
+            Body = Body,
+            UserId = UserId, // <- тут да, схитрил, добавив внешний ключ для сущности юзера
+            //Category = new_category,
+            Category = await _categoryRepo.ExistName(Category, Cancel).ConfigureAwait(false)
+                        ? await _categoryRepo.GetByName(Category, Cancel).ConfigureAwait(false)
+                        : new Category { Name = Category },
+        };
 
-    /// <summary> Удаление поста </summary>
-    /// <param name="Id"> Идентификатор поста </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Флаг результата удаления </returns>
-    public Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default)
-    {
-        throw new NotImplementedException();
+        await _postRepo.Update(post, Cancel).ConfigureAwait(false);
+        return await _postRepo.Add(post,Cancel).ConfigureAwait(false);
     }
-
 
     #endregion
 
@@ -153,9 +213,24 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="Tag"> Текст тэга </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Флаг результата добавления тэга </returns>
-    public Task<bool> AssignTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
+    public async Task<bool> AssignTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
+        
+        if( post is null || Tag is null ) return false;
+
+        var tag = await _tagRepo.ExistName(Tag, Cancel).ConfigureAwait(false)
+                ? await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false)
+                : new Tag { Name = Tag };
+
+        if (post.Tags.Contains(tag))
+            return true;              //  <- наверное всё же true, так как тег с таким именем уже есть в посте
+
+        post.Tags.Add(tag);
+        
+        await _postRepo.Update(post, Cancel).ConfigureAwait(false);
+
+        return true;
     }
 
     /// <summary> Удаление тэга из поста </summary>
@@ -163,18 +238,24 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="Tag"> Текст тэга </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Флаг результата удаления тэга </returns>
-    public Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
+    public async Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
-    }
+        var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
+        var tag = await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false);
 
-    /// <summary> Получение всех постов по тэгу </summary>
-    /// <param name="Tag"> Текст тэга </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Перечисление постов с конкретным тэгом </returns>
-    public Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
-    {
-        throw new NotImplementedException();
+        if (post is null || Tag is null) return false;
+
+        if (!post.Tags.Contains(tag))
+            return false;
+
+        tag.Posts.Remove(post); // тут я подумал, а почему нет, раз есть в тегах есть ссылка на посты, которые связаны с этим тегом
+
+        //post.Tags.Remove(tag);
+
+        await _postRepo.Update(post, Cancel).ConfigureAwait(false);
+        await _tagRepo.Update(tag, Cancel).ConfigureAwait(false); //нужно ли тут репозиторий тега обновлять
+
+        return true;
     }
 
     /// <summary> Получение тэгов поста </summary>
@@ -182,9 +263,22 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Перечисление тэгов поста </returns>
     /// <exception cref="InvalidOperationException"> Не найденный пост (?) </exception>
-    public Task<IEnumerable<Tag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default)
+    public async Task<IEnumerable<Tag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await GetPostAsync(Id, Cancel).ConfigureAwait(false);
+
+        return post is null ? Enumerable.Empty<Tag>() : post.Tags;
+    }
+
+    /// <summary> Получение всех постов по тэгу </summary>
+    /// <param name="Tag"> Текст тэга </param>
+    /// <param name="Cancel"> Токен отмены </param>
+    /// <returns> Перечисление постов с конкретным тэгом </returns>
+    public async Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
+    {
+        var tag = await _tagRepo.GetByName(Tag, Cancel);
+
+        return tag is null ? Enumerable.Empty<Post>() : tag.Posts;
     }
 
     #endregion
@@ -196,9 +290,16 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="Title"> Заголовок поста </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Возврат флага результата изменения заголовка поста</returns>
-    public Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default)
+    public async Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
+
+        if (post is null || Title is null) return false;
+
+        post.Title = Title;
+        await _postRepo.Update(post, Cancel).ConfigureAwait(false);
+
+        return true;
     }
 
     /// <summary> Изменение тела поста </summary>
@@ -206,9 +307,16 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="Body"> Тело поста </param>
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Возврат флага результата изменения тела поста</returns>
-    public Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default)
+    public async Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
+
+        if (post is null || Body is null) return false;
+
+        post.Body = Body;
+        await _postRepo.Update(post, Cancel).ConfigureAwait(false);
+
+        return true;
     }
 
     /// <summary> Изменение статуса поста </summary>
@@ -217,9 +325,21 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Возврат статуса поста </returns>
     /// <exception cref="NotImplementedException"> Не найденный пост </exception>
-    public Task<Status> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default)
+    public async Task<Status> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
+
+        if (post is null)
+            throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
+
+        post.Status = await _statusRepo.ExistName(Status, Cancel).ConfigureAwait(false)
+                    ? await _statusRepo.GetByName(Status, Cancel).ConfigureAwait(false)
+                    : new Status { Name = Status };
+
+        await _postRepo.Update(post, Cancel).ConfigureAwait(false);
+        await _statusRepo.Update(post.Status, Cancel).ConfigureAwait(false);
+
+        return post.Status;
     }
 
     /// <summary> Изменение категории поста </summary>
@@ -228,9 +348,21 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <param name="Cancel"> Токен отмены </param>
     /// <returns> Возврат категории поста </returns>
     /// <exception cref="InvalidOperationException"> Не найденный пост </exception>
-    public Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
+    public async Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
+        
+        if (post is null)
+            throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
+
+        post.Category = await _categoryRepo.ExistName(CategoryName, Cancel).ConfigureAwait(false)
+                      ? await _categoryRepo.GetByName(CategoryName, Cancel).ConfigureAwait(false)
+                      : new Category { Name = CategoryName };
+
+        await _postRepo.Update(post, Cancel).ConfigureAwait(false);
+        await _categoryRepo.Update(post.Category, Cancel).ConfigureAwait(false);
+
+        return post.Category;
     }
 
     #endregion
