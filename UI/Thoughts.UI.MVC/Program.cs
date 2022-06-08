@@ -33,8 +33,8 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<ThoughtsDB>();
     await db.Database.MigrateAsync();
 
-    var statuses = await db.Statuses.ToArrayAsync();
-    var roles = await db.Roles.ToArrayAsync();
+    //var statuses = await db.Statuses.ToArrayAsync();
+    //var roles = await db.Roles.ToArrayAsync();
 
     //var db_factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ThoughtsDB>>();
     //using (var db = db_factory.CreateDbContext())

@@ -28,12 +28,12 @@ public class ThoughtsDB:DbContext
 
     protected override void OnModelCreating(ModelBuilder db)
     {
-        db.Entity<Status>().HasData(GetDefaultData.DefaultStatus());
-        db.Entity<Role>().HasData(GetDefaultData.DefaultRole());
+        //db.Entity<Status>().HasData(GetDefaultData.DefaultStatus());
+        //db.Entity<Role>().HasData(GetDefaultData.DefaultRole());
 
-        db.Entity<Status>()
-           .HasMany(s => s.Posts)
-           .WithOne(p => p.Status)
-           .OnDelete(DeleteBehavior.Cascade);
+        //db.Entity<Status>()
+        //   .HasMany(s => s.Posts)
+        //   .WithOne(p => p.Status)
+        //   .OnDelete(DeleteBehavior.Cascade);
     }
 }
