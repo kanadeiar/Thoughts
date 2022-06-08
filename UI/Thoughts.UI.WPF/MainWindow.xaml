@@ -1,0 +1,56 @@
+﻿<Window x:Class="Thoughts.UI.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Thoughts.UI.WPF"
+        xmlns:views="clr-namespace:Thoughts.UI.WPF.Views"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        mc:Ignorable="d"
+        Height="450" Width="800"
+        Background="Transparent"
+        Foreground="Black"
+        FontFamily="Helvetica"
+        DataContext="{Binding MainWindowModel, Source={StaticResource Locator}}">
+    <Window.Resources>
+        
+    </Window.Resources>
+    <Grid Background="{StaticResource DefaultWindowBackGroundColor}"
+          >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="140">
+            </ColumnDefinition>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0"
+                   Text="Thoughts.AdminPanel"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Left"
+                   Margin="10 0 0 0"/>
+        <StackPanel Grid.Row="1" Grid.Column="0"
+                    Margin="0 15 0 0">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type RadioButton}"
+                           BasedOn="{StaticResource MenuRadioButton}">
+                    <Setter Property="Height" Value="50"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="FontFamily" Value="Helvetica"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="FontWeight" Value="Medium"/>
+                </Style>
+            </StackPanel.Resources>
+            <RadioButton Content="Записи" 
+                         Command="{Binding RecordButtonCheckedCommand}"
+                         IsChecked="True">
+            </RadioButton>
+            <RadioButton Content="Файлы" Command="{Binding FilesButtonCheckedCommand}"/>
+            <RadioButton Content="Пользователи" Command="{Binding UsersButtonCheckedCommand}"/>
+            <RadioButton Content="Сервис"/>            
+        </StackPanel>
+        <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentView}"/>
+    </Grid>
+</Window>
