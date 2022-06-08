@@ -12,7 +12,7 @@ public class RepositoryBlogPostManager : IBlogPostManager
     private readonly INamedRepository<Tag> _tagRepo;
     private readonly INamedRepository<Category> _categoryRepo;
     private readonly INamedRepository<Status> _statusRepo;
-    //private readonly IRepository<User> userRepo;
+    private readonly IRepository<User, string> _userRepo;
 
     //никак не получилось создать репозиторий сущности, выдаёт ошибку CS0311
     //пришлось хитрить, добавляя внешний ключ для сущности User в Post
@@ -20,14 +20,14 @@ public class RepositoryBlogPostManager : IBlogPostManager
     public RepositoryBlogPostManager(IRepository<Post> PostRepo,
                                      INamedRepository<Tag> TagRepo,
                                      INamedRepository<Category> CategoryRepo,
-                                     INamedRepository<Status> StatusRepo/*,*/
-                                     /*IRepository<User> UserRepo*/)
+                                     INamedRepository<Status> StatusRepo,
+                                     IRepository<User, string> UserRepo)
     {
         _postRepo = PostRepo;
         _tagRepo = TagRepo;
         _categoryRepo = CategoryRepo;
         _statusRepo = StatusRepo;
-        //userRepo = UserRepo;
+        _userRepo = UserRepo;
     }
 
     #region Get All Posts
@@ -188,12 +188,14 @@ public class RepositoryBlogPostManager : IBlogPostManager
     public async Task<Post> CreatePostAsync(string Title, string Body, string UserId, string Category, CancellationToken Cancel = default)
     {
         if (Title == null || Body == null || UserId == null || Category == null) throw new InvalidOperationException();
+        var user = await _userRepo.GetById(UserId, Cancel).ConfigureAwait(false);
         
         var post = new Post
         {
             Title = Title,
             Body = Body,
-            UserId = UserId, // <- тут да, схитрил, добавив внешний ключ для сущности юзера
+            User = user,
+            //UserId = UserId, // <- тут да, схитрил, добавив внешний ключ для сущности юзера
             //Category = new_category,
             Category = await _categoryRepo.ExistName(Category, Cancel).ConfigureAwait(false)
                         ? await _categoryRepo.GetByName(Category, Cancel).ConfigureAwait(false)
