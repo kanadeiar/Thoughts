@@ -12,22 +12,20 @@ public class RepositoryBlogPostManager : IBlogPostManager
     private readonly INamedRepository<Tag> _tagRepo;
     private readonly INamedRepository<Category> _categoryRepo;
     private readonly INamedRepository<Status> _statusRepo;
-    //private readonly IRepository<User> userRepo;
+    private readonly IRepository<User, string> _userRepo;
 
-    //никак не получилось создать репозиторий сущности, выдаёт ошибку CS0311
-    //пришлось хитрить, добавляя внешний ключ для сущности User в Post
 
     public RepositoryBlogPostManager(IRepository<Post> PostRepo,
                                      INamedRepository<Tag> TagRepo,
                                      INamedRepository<Category> CategoryRepo,
-                                     INamedRepository<Status> StatusRepo/*,*/
-                                     /*IRepository<User> UserRepo*/)
+                                     INamedRepository<Status> StatusRepo,
+                                     IRepository<User, string> UserRepo)
     {
         _postRepo = PostRepo;
         _tagRepo = TagRepo;
         _categoryRepo = CategoryRepo;
         _statusRepo = StatusRepo;
-        //userRepo = UserRepo;
+        _userRepo = UserRepo;
     }
 
     #region Get All Posts
@@ -187,13 +185,24 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <returns> Созданный пост </returns>
     public async Task<Post> CreatePostAsync(string Title, string Body, string UserId, string Category, CancellationToken Cancel = default)
     {
-        if (Title == null || Body == null || UserId == null || Category == null) throw new InvalidOperationException();
-        
+        if (Title is null) throw new ArgumentNullException(nameof(Title));
+        if (Body is null) throw new ArgumentNullException(nameof(Body));
+        if (UserId is null) throw new ArgumentNullException(nameof(UserId));
+        if (Category is null) throw new ArgumentNullException(nameof(Category));
+
+        //if (string.IsNullOrEmpty(UserId)) throw new ArgumentException("Не указано значение идентификатора пользвоателя", nameof(UserId));
+        //if (string.IsNullOrEmpty(Category)) throw new ArgumentException("Не указано значение категории", nameof(Category));
+
+        if (UserId is not { Length: > 0 }) throw new ArgumentException("Не указан идентификатор пользователя", nameof(UserId));
+
+        var user = await _userRepo.GetById(UserId, Cancel).ConfigureAwait(false);
+
         var post = new Post
         {
             Title = Title,
             Body = Body,
-            UserId = UserId, // <- тут да, схитрил, добавив внешний ключ для сущности юзера
+            User = user,
+            //UserId = UserId, // <- тут да, схитрил, добавив внешний ключ для сущности юзера
             //Category = new_category,
             Category = await _categoryRepo.ExistName(Category, Cancel).ConfigureAwait(false)
                         ? await _categoryRepo.GetByName(Category, Cancel).ConfigureAwait(false)
@@ -215,6 +224,8 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <returns> Флаг результата добавления тэга </returns>
     public async Task<bool> AssignTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
     {
+        if (Tag is null) throw new ArgumentNullException(nameof(Tag));
+
         var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
         
         if( post is null || Tag is null ) return false;
@@ -240,6 +251,8 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <returns> Флаг результата удаления тэга </returns>
     public async Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
     {
+        if (Tag is null) throw new ArgumentNullException(nameof(Tag));
+
         var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
         var tag = await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false);
 
@@ -276,6 +289,8 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <returns> Перечисление постов с конкретным тэгом </returns>
     public async Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
     {
+        if (Tag is null) throw new ArgumentNullException(nameof(Tag));
+
         var tag = await _tagRepo.GetByName(Tag, Cancel);
 
         return tag is null ? Enumerable.Empty<Post>() : tag.Posts;

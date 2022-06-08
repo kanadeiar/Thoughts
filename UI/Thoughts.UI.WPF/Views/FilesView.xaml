@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="Thoughts.UI.WPF.Views.FilesView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:Thoughts.UI.WPF.Views"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        mc:Ignorable="d" 
+        d:DesignHeight="450" d:DesignWidth="800"
+        DataContext="{Binding FilesModel, Source={StaticResource Locator}}"
+             Background="Transparent">
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="{x:Type Thumb}">
+                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Thumb}">
+                            <Border CornerRadius="50"
+                                    BorderBrush="CadetBlue"
+                                    BorderThickness="2"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
+        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ItemsSource="{Binding FilesCollection}"
+                 Background="{StaticResource DefaultBackgroundColor}"
+                 BorderThickness="0">
+            
+            
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border
+                        CornerRadius="10"
+                        BorderThickness="1"
+                        BorderBrush="CadetBlue"
+                        Width="190"
+                        Height="160"
+                        Padding="3 3"
+                        Margin="0 5">
+                        <StackPanel>
+                            <Grid>                                
+                                <Image Source="{Binding Path}"/>
+                                <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Top">
+                                    <Button 
+                                            Background="Transparent"
+                                            Width="20"
+                                            >
+                                        <fa:ImageAwesome Icon="Trash" Foreground="DarkRed"/>
+                                    </Button>
+                                </WrapPanel>
+                            </Grid>                            
+                            <TextBlock Height="20" 
+                                       Text="{Binding Name}"
+                                       Padding="1 1"
+                                       Margin="0 10"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Margin="5 5"
+                               HorizontalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+    </Grid>
+</UserControl>

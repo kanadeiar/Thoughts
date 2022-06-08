@@ -99,7 +99,7 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Все пользовательские посты </returns>
     public Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
     {
-        var db_posts = _DB.Posts.Where(p => p.UserId == UserId);
+        var db_posts = _DB.Posts.Where(p => p.User.Id == UserId);
 
         var domain_posts = db_posts.PostToDomain();
 
@@ -113,7 +113,7 @@ public class SqlBlogPostManager : IBlogPostManager
     public async Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
     {
         var count = await _DB.Posts
-            .CountAsync(p => p.UserId == UserId, Cancel)
+            .CountAsync(p => p.User.Id == UserId, Cancel)
             .ConfigureAwait(false);
 
         return count;
