@@ -8,31 +8,30 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Views\Windows\Logo64.png" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Data\Thoughts.DAL.Sqlite\Thoughts.DAL.Sqlite.csproj" />
-    <ProjectReference Include="..\..\Data\Thoughts.DAL.SqlServer\Thoughts.DAL.SqlServer.csproj" />
     <ProjectReference Include="..\..\Services\Thoughts.WebAPI.Clients\Thoughts.WebAPI.Clients.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Pages\" />
+    <Folder Include="Models\" />
+    <Folder Include="ViewModels\Base\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Views\Windows\Logo64.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="appsettings.json">
+    <None Update="appconfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Styles\Brushes\DefaultBrushes.xaml">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </Page>
   </ItemGroup>
 
 </Project>

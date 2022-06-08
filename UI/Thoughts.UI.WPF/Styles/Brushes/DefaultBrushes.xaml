@@ -1,0 +1,32 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="DefaultBorderColorBrush">
+        <SolidColorBrush.Color>
+            #5f9ea0
+        </SolidColorBrush.Color>
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="DefaultBackgroundColor"
+                     Color="Transparent"/>
+    
+    <SolidColorBrush x:Key="DefaultTextBoxBackgroundColorBrush"
+                     Color="#f5fdff"/>
+    <SolidColorBrush x:Key="DefaultMouseOverColorBrush"
+                     Color="#afeeee"/>
+
+    <Color x:Key="DisabledControlDefaultColor">#d3d3d3</Color>
+    <Color x:Key="ReadOnlyControlDefaultColor">#e2f4f2</Color>
+    <Color x:Key="DefaultMouseOverColor">#afeeee</Color>
+    <Color x:Key="DefaultTextBoxBackgroundColor">#f5fdff</Color>
+    <Color x:Key="DefaultBorderColor">#5f9ea0</Color>
+
+
+
+    <LinearGradientBrush x:Key="DefaultWindowBackGroundColor"
+                             StartPoint="0, 0"
+                             EndPoint="1, 1"
+                             >
+        <GradientStop Color="#EEB0E0E6" Offset="0.0"/>
+        <GradientStop Color="#EE87CEEB" Offset="1.0"/>
+    </LinearGradientBrush>
+</ResourceDictionary>
