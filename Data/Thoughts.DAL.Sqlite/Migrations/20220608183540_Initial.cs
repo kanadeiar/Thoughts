@@ -72,8 +72,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
                     StatusId = table.Column<int>(type: "INTEGER", nullable: false),
                     LastName = table.Column<string>(type: "TEXT", nullable: false),
                     FirstName = table.Column<string>(type: "TEXT", nullable: false),
@@ -100,11 +99,11 @@ namespace Thoughts.DAL.Sqlite.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     StatusId = table.Column<int>(type: "INTEGER", nullable: false),
                     Date = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     Body = table.Column<string>(type: "TEXT", nullable: false),
                     CategoryId = table.Column<int>(type: "INTEGER", nullable: false),
-                    DatePublicatione = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    PublicationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Email = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -135,7 +134,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
                 columns: table => new
                 {
                     RolesId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UsersId = table.Column<int>(type: "INTEGER", nullable: false)
+                    UsersId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -162,7 +161,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Date = table.Column<DateTime>(type: "TEXT", nullable: false),
                     PostId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
                     Body = table.Column<string>(type: "TEXT", nullable: false),
                     ParentCommentId = table.Column<int>(type: "INTEGER", nullable: true),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
@@ -190,7 +189,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "File",
+                name: "ContentFile",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -203,9 +202,9 @@ namespace Thoughts.DAL.Sqlite.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_File", x => x.Id);
+                    table.PrimaryKey("PK_ContentFile", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_File_Posts_PostId",
+                        name: "FK_ContentFile_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "Id");
@@ -235,46 +234,6 @@ namespace Thoughts.DAL.Sqlite.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "Администратор" });
-
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 2, "Модератор" });
-
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 3, "Автор" });
-
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 4, "Гость" });
-
-            migrationBuilder.InsertData(
-                table: "Statuses",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "Черновик" });
-
-            migrationBuilder.InsertData(
-                table: "Statuses",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 2, "Опубликовано" });
-
-            migrationBuilder.InsertData(
-                table: "Statuses",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 3, "На модерации" });
-
-            migrationBuilder.InsertData(
-                table: "Statuses",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 4, "Заблокировано" });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_StatusId",
                 table: "Categories",
@@ -302,13 +261,13 @@ namespace Thoughts.DAL.Sqlite.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_File_PostId",
-                table: "File",
+                name: "IX_ContentFile_PostId",
+                table: "ContentFile",
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
                 name: "NameIndex1",
-                table: "File",
+                table: "ContentFile",
                 column: "FileHash",
                 unique: true);
 
@@ -373,7 +332,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
                 name: "Comments");
 
             migrationBuilder.DropTable(
-                name: "File");
+                name: "ContentFile");
 
             migrationBuilder.DropTable(
                 name: "PostTag");

@@ -10,7 +10,7 @@ namespace Thoughts.DAL.Entities;
 /// Класс для хранения Файла
 /// </summary>
 [Index(nameof(FileHash), IsUnique = true, Name = "NameIndex")]
-public class File : NamedEntity
+public class ContentFile : NamedEntity
 {
     /// <summary>Описание файла (при необходимости)</summary>
     public string? FileDescription { get; set; }
@@ -23,9 +23,9 @@ public class File : NamedEntity
     [MaxLength(16)]
     public byte[] FileHash { get; set; } = null!;
 
-    public File() { }
+    public ContentFile() { }
 
-    public File(string fileName, string? fileDescription, byte[] fileBody, byte[] fileHash)
+    public ContentFile(string fileName, string? fileDescription, byte[] fileBody, byte[] fileHash)
     {
         Name = fileName;
         FileDescription = fileDescription;

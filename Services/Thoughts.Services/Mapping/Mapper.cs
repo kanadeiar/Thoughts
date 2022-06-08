@@ -1,4 +1,6 @@
-﻿using PostDomain = Thoughts.Domain.Base.Entities.Post;
+﻿using Thoughts.DAL.Entities;
+
+using PostDomain = Thoughts.Domain.Base.Entities.Post;
 using PostDAL = Thoughts.DAL.Entities.Post;
 
 using UserDomain = Thoughts.Domain.Base.Entities.User;
@@ -17,7 +19,6 @@ using CommentDomain = Thoughts.Domain.Base.Entities.Comment;
 using CommentDAL = Thoughts.DAL.Entities.Comment;
 
 using FileDomain = Thoughts.Domain.Base.Entities.FileModel;
-using FileDAL = Thoughts.DAL.Entities.File;
 
 namespace Thoughts.Services.Mapping;
 
@@ -36,7 +37,7 @@ public static class Mapper
             Category = postDomain.Category.CategoryToDAL()!,
             Tags = (ICollection<TagDAL>)postDomain.Tags.TagToDAL(),
             Comments = (ICollection<CommentDAL>)postDomain.Comments.CommentToDAL(),
-            Files = (ICollection<FileDAL>)postDomain.Files.FileToDAL(),
+            Files = (ICollection<ContentFile>)postDomain.Files.FileToDAL(),
             PublicationDate = postDomain.PublicationsDate,
             Date = postDomain.Date.DateTime,        // <- тут скорее всего плохо, всё же DateTimeOffset гораздо шире 
         };
@@ -108,9 +109,9 @@ public static class Mapper
     public static IEnumerable<CommentDAL?> CommentToDAL(this IEnumerable<CommentDomain?> commentsDomain) => commentsDomain.Select(CommentToDAL);
 
 
-    public static FileDAL? FileToDAL(this FileDomain? fileDomain)
+    public static ContentFile? FileToDAL(this FileDomain? fileDomain)
         => fileDomain is null ? null
-        : new FileDAL
+        : new ContentFile
         {
             Id = fileDomain.Id,
             Name = fileDomain.Name,
@@ -119,7 +120,7 @@ public static class Mapper
             FileHash = fileDomain.Hash,
         };
 
-    public static IEnumerable<FileDAL?> FileToDAL(this IEnumerable<FileDomain?> filesDomain) => filesDomain.Select(FileToDAL);
+    public static IEnumerable<ContentFile?> FileToDAL(this IEnumerable<FileDomain?> filesDomain) => filesDomain.Select(FileToDAL);
 
     #endregion
 
@@ -200,7 +201,7 @@ public static class Mapper
     public static IEnumerable<CommentDomain?> CommentToDomain(this IEnumerable<CommentDAL?> commentsDAL) => commentsDAL.Select(CommentToDomain);
 
 
-    public static FileDomain? FileToDomain(this FileDAL? fileDAL)
+    public static FileDomain? FileToDomain(this ContentFile? fileDAL)
         => fileDAL is null ? null
         : new FileDomain
         {
@@ -211,7 +212,7 @@ public static class Mapper
             Hash = fileDAL.FileHash,
         };
 
-    public static IEnumerable<FileDomain?> FileToDomain(this IEnumerable<FileDAL?> filesDAL) => filesDAL.Select(FileToDomain);
+    public static IEnumerable<FileDomain?> FileToDomain(this IEnumerable<ContentFile?> filesDAL) => filesDAL.Select(FileToDomain);
 
     #endregion
 }
