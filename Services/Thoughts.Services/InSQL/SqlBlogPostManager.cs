@@ -9,7 +9,7 @@ using Thoughts.Interfaces.Base.Repositories;
 using Post = Thoughts.Domain.Base.Entities.Post;
 using Tag = Thoughts.Domain.Base.Entities.Tag;
 using Category = Thoughts.Domain.Base.Entities.Category;
-using Status = Thoughts.Domain.Base.Entities.Status;
+
 using Thoughts.Services.Mapping;
 
 namespace Thoughts.Services.InSQL;
@@ -377,28 +377,6 @@ public class SqlBlogPostManager : IBlogPostManager
         await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
 
         return true;
-    }
-
-    /// <summary> Изменение статуса поста </summary>
-    /// <param name="PostId"> Идентификатор поста </param>
-    /// <param name="Status"> Текст статуса </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Возврат статуса поста </returns>
-    /// <exception cref="NotImplementedException"> Не найденный пост </exception>
-    public async Task<Status> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default)
-    {
-        var post = await GetPostAsync(PostId, Cancel);
-
-        if (post is null)
-            throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
-
-        var new_status = new Status { Name = Status };
-        
-        post.Status = new_status;   // - тут всё же не уверен
-
-        await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
-
-        return post.Status;
     }
 
     #endregion

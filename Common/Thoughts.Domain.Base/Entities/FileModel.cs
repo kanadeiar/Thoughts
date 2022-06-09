@@ -6,7 +6,7 @@ namespace Thoughts.Domain.Base.Entities;
 public class FileModel : NamedEntityModel
 {
     /// <summary>Описание файла (при необходимости)</summary>
-    public string? Description { get; set; } = null!;
+    public string? Description { get; set; }
 
     /// <summary>Файл преобразованный в массив байт</summary>
     [Required]
@@ -15,15 +15,5 @@ public class FileModel : NamedEntityModel
     /// <summary>MD-5 Hash файла</summary>
     [MaxLength(16)]
     public byte[] Hash { get; set; } = null!;
-
-    public FileModel() { }
-
-    public FileModel(string FileName, string? Description, byte[] Content, byte[] Hash)
-    {
-        Name = FileName;
-        this.Description = Description;
-        this.Content = Content;
-        this.Hash = Hash;
-    }
 }
 
