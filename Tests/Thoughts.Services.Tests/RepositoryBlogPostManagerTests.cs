@@ -140,7 +140,7 @@ public class RepositoryBlogPostManagerTests
             .ReturnsAsync(_Categories);
 
         _Status_Repo_Mock = new Mock<INamedRepository<Status>>();
-        _Status_Repo_Mock.Setup(s => s.GetAll(It.IsAny<CancellationToken>()))
+        _User_Repo_Mock = new Mock<IRepository<User, string>>();
             .ReturnsAsync(_Statuses);
 
         _User_Repo_Mock = new Mock<IRepository<User, string>>();
