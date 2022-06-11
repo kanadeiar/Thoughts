@@ -126,6 +126,34 @@ public class RepositoryBlogPostManagerTests
                 NickName="User3"
             },
         };
+
+        _Post_Repo_Mock = new Mock<IRepository<Post>>();
+        _Post_Repo_Mock.Setup(p => p.GetAll(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_Posts);
+
+        _Tag_Repo_Mock = new Mock<INamedRepository<Tag>>();
+        _Tag_Repo_Mock.Setup(t => t.GetAll(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_Tags);
+
+        _Category_Repo_Mock = new Mock<INamedRepository<Category>>();
+        _Category_Repo_Mock.Setup(c => c.GetAll(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_Categories);
+
+        _Status_Repo_Mock = new Mock<INamedRepository<Status>>();
+        _Status_Repo_Mock.Setup(s => s.GetAll(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_Statuses);
+
+        _User_Repo_Mock = new Mock<IRepository<User, string>>();
+        _User_Repo_Mock.Setup(u => u.GetAll(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_Users);
+
+        _BlogPostManager = new RepositoryBlogPostManager(
+            _Post_Repo_Mock.Object,
+            _Tag_Repo_Mock.Object,
+            _Category_Repo_Mock.Object,
+            _Status_Repo_Mock.Object,
+            _User_Repo_Mock.Object
+            );
     }
 
     [TestMethod]
