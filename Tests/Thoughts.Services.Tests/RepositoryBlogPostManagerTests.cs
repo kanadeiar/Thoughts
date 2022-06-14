@@ -31,12 +31,12 @@ public class RepositoryBlogPostManagerTests
     {
         _Posts = new Post[]
         {
-            new()
+            new Post
             {
                 Id = 1,
                 Title = "Title1",
                 Body = "Body1",
-                Tags = (ICollection<Tag>)_Tags.First(t => t.Id == 1),
+                Tags = _Tags.Where(t => t.Id == 1).ToArray(),
                 Category = _Categories.First(c => c.Id == 1),
                 User = _Users.First(u => u.Id == "1"),
             },
@@ -63,7 +63,7 @@ public class RepositoryBlogPostManagerTests
                 Id = 4,
                 Title = "Title4",
                 Body = "Body4",
-                Tags = (ICollection<Tag>)_Tags.First(t => t.Id == 1),
+                Tags = _Tags.Where(t => t.Id == 1).ToArray(),
                 Category = _Categories.First(c => c.Id == 2),
                 User = _Users.First(u => u.Id == "2"),
             },
@@ -89,12 +89,12 @@ public class RepositoryBlogPostManagerTests
 
         _Tags = new Tag[]
         {
-            new(){ Id = 1, Name = "Tag1", },
-            new(){ Id = 2, Name = "Tag2", },
-            new(){ Id = 3, Name = "Tag3", },
-        };
-
-        _Categories = new Category[]
+                Id = 7,
+                Title = "Title7",
+                Body = "Body7",
+                Tags = new[] {_Tags[0], _Tags[2] },
+                Category = _Categories[1],
+                User = _Users.First(u => u.Id == "1"),
         {
             new(){ Id = 1, Name = "Category1", },
             new(){ Id = 2, Name = "Category2", },
