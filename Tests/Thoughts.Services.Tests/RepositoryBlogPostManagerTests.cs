@@ -10,6 +10,8 @@ namespace Thoughts.Services.Tests;
 [TestClass]
 public class RepositoryBlogPostManagerTests
 {
+    #region Test Initialize
+
     private Post[] _Posts;
     private Mock<IRepository<Post>> _Post_Repo_Mock;
 
@@ -155,6 +157,10 @@ public class RepositoryBlogPostManagerTests
             );
     }
 
+    #endregion
+
+    #region Get All Posts Tests
+
     [TestMethod]
     public async Task GetAllPostsAsync_Test_Returns_Posts_ToArray()
     {
@@ -247,5 +253,6 @@ public class RepositoryBlogPostManagerTests
         Assert.AreEqual(expected_page, actual_page);
     }
 
+    #endregion
 
 }
