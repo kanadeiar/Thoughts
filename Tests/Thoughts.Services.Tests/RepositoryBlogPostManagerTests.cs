@@ -45,24 +45,30 @@ public class RepositoryBlogPostManagerTests
 
         _Users = new User[]
         {
-            new(){ Id = "1",
+            new()
+            {
+                Id = "1",
                 FirstName = "User1",
                 LastName = "User1",
                 NickName="User1"
             },
-            new(){ Id = "2",
+            new()
+            {
+                Id = "2",
                 FirstName = "User2",
                 LastName = "User2",
-                NickName="User2"
+                NickName = "User2"
             },
-            new(){ Id = "3",
+            new()
+            {
+                Id = "3",
                 FirstName = "User3",
                 LastName = "User3",
-                NickName="User3"
+                NickName = "User3"
             },
         };
 
-        _Posts = new Post[]
+        _Posts = new[]
         {
             new Post
             {
@@ -123,7 +129,7 @@ public class RepositoryBlogPostManagerTests
                 Id = 7,
                 Title = "Title7",
                 Body = "Body7",
-                Tags = new[] {_Tags[0], _Tags[2] },
+                Tags = new[] { _Tags[0], _Tags[2] },
                 Category = _Categories[1],
                 User = _Users.First(u => u.Id == "1"),
             },
@@ -307,7 +313,7 @@ public class RepositoryBlogPostManagerTests
         _Post_Repo_Mock.Setup(c => c.GetAll(It.IsAny<CancellationToken>()))
             .ReturnsAsync(_Posts);
 
-        var actual_page = await _BlogPostManager.GetAllPostsByUserIdSkipTakeAsync( user_id, skip, take);
+        var actual_page = await _BlogPostManager.GetAllPostsByUserIdSkipTakeAsync(user_id, skip, take);
 
         CollectionAssert.AreEqual(expected_page.ToArray(), actual_page.ToArray());
     }
@@ -316,7 +322,7 @@ public class RepositoryBlogPostManagerTests
     public async Task GetAllPostsByUserIdPageAsync_Test_Returns_EmptyPage()
     {
         var user_id = "1";
-        var total_count = _Posts.Where(c=>c.User.Id == user_id).Count();
+        var total_count = _Posts.Where(c => c.User.Id == user_id).Count();
 
         int pageIndex = 0;
         int pageSize = 3;
@@ -335,7 +341,7 @@ public class RepositoryBlogPostManagerTests
     public async Task GetAllPostsByUserIdPageAsync_Test_Returns_CorrectPage()
     {
         var user_id = "1";
-        var posts = _Posts.Where(p=>p.User.Id == user_id);
+        var posts = _Posts.Where(p => p.User.Id == user_id);
         var total_count = posts.Count();
         int pageIndex = 2;
         int pageSize = 3;
@@ -349,10 +355,10 @@ public class RepositoryBlogPostManagerTests
 
         var actual_page = await _BlogPostManager.GetAllPostsByUserIdPageAsync(user_id, pageIndex, pageSize);
 
-                CollectionAssert.AreEqual(posts.ToArray(), actual_page.Items.ToArray());
-                Assert.AreEqual(pageIndex, actual_page.PageNumber);                
-                Assert.AreEqual(pageSize, actual_page.PageSize);
-                Assert.AreEqual(total_count, actual_page.TotalCount);
+        CollectionAssert.AreEqual(posts.ToArray(), actual_page.Items.ToArray());
+        Assert.AreEqual(pageIndex, actual_page.PageNumber);
+        Assert.AreEqual(pageSize, actual_page.PageSize);
+        Assert.AreEqual(total_count, actual_page.TotalCount);
     }
 
     #endregion
