@@ -13,11 +13,11 @@ public class RepositoryBlogPostManager : IBlogPostManager
     private readonly INamedRepository<Category> _categoryRepo;
     private readonly IRepository<User, string> _userRepo;
 
-
-    public RepositoryBlogPostManager(IRepository<Post> PostRepo,
-                                     INamedRepository<Tag> TagRepo,
-                                     INamedRepository<Category> CategoryRepo,
-                                     IRepository<User, string> UserRepo)
+    public RepositoryBlogPostManager(
+        IRepository<Post> PostRepo,
+        INamedRepository<Tag> TagRepo,
+        INamedRepository<Category> CategoryRepo,
+        IRepository<User, string> UserRepo)
     {
         _postRepo = PostRepo;
         _tagRepo = TagRepo;

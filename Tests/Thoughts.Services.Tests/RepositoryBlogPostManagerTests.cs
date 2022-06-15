@@ -24,7 +24,7 @@ public class RepositoryBlogPostManagerTests
     private User[] _Users;
     private Mock<IRepository<User, string>> _User_Repo_Mock;
 
-    private IBlogPostManager _BlogPostManager;
+    private RepositoryBlogPostManager _BlogPostManager;
 
     [TestInitialize]
     public void TestInitialize()

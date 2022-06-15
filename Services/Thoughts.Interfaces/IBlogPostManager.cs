@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Thoughts.Domain.Base.Entities;
+﻿using Thoughts.Domain.Base.Entities;
 using Thoughts.Interfaces.Base.Repositories;
 
 namespace Thoughts.Interfaces;
