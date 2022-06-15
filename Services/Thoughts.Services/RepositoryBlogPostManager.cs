@@ -123,7 +123,7 @@ public class RepositoryBlogPostManager : IBlogPostManager
         if (Take == 0)
             return Enumerable.Empty<Post>();
 
-        var page = GetAllPostsByUserIdAsync(UserId, Cancel).Result.Where(p => p.User.Id == UserId).Skip(Skip).Take(Take);
+        var page = GetAllPostsByUserIdAsync(UserId, Cancel).Result.Skip(Skip).Take(Take);
         
         return await Task.FromResult(page).ConfigureAwait(false);
     }
