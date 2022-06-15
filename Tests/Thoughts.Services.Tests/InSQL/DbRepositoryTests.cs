@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-using Moq;
-
 using Thoughts.DAL;
 using Thoughts.DAL.Entities;
 using Thoughts.Services.InSQL;

@@ -1,6 +1,4 @@
-﻿using Moq;
-
-using Thoughts.Domain;
+﻿using Thoughts.Domain;
 using Thoughts.Domain.Base.Entities;
 using Thoughts.Interfaces;
 using Thoughts.Interfaces.Base.Repositories;

@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Using Include="System"/>
+    <Using Include="System.Threading.Tasks"/>
+    <Using Include="Moq"/>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.6" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
     <PackageReference Include="Moq" Version="4.18.1" />
