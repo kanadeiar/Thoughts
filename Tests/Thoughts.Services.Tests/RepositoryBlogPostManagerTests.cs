@@ -363,7 +363,10 @@ public class RepositoryBlogPostManagerTests
 
         var actual_page = await _BlogPostManager.GetAllPostsByUserIdPageAsync(user_id, pageIndex, pageSize);
 
-        Assert.AreEqual(expected_page, actual_page);
+                CollectionAssert.AreEqual(posts.ToArray(), actual_page.Items.ToArray());
+                Assert.AreEqual(pageIndex, actual_page.PageNumber);                
+                Assert.AreEqual(pageSize, actual_page.PageSize);
+                Assert.AreEqual(total_count, actual_page.TotalCount);
     }
 
     #endregion
