@@ -21,9 +21,6 @@ public class RepositoryBlogPostManagerTests
     private Category[] _Categories;
     private Mock<INamedRepository<Category>> _Category_Repo_Mock;
 
-    private Status[] _Statuses;
-    private Mock<INamedRepository<Status>> _Status_Repo_Mock;
-
     private User[] _Users;
     private Mock<IRepository<User, string>> _User_Repo_Mock;
 
@@ -32,8 +29,6 @@ public class RepositoryBlogPostManagerTests
     [TestInitialize]
     public void TestInitialize()
     {
-
-
         _Tags = new Tag[]
         {
             new(){ Id = 1, Name = "Tag1", },
@@ -46,13 +41,6 @@ public class RepositoryBlogPostManagerTests
             new(){ Id = 1, Name = "Category1", },
             new(){ Id = 2, Name = "Category2", },
             new(){ Id = 3, Name = "Category3", },
-        };
-
-        _Statuses = new Status[]
-        {
-            new(){ Id = 1, Name = "Status1", },
-            new(){ Id = 2, Name = "Status2", },
-            new(){ Id = 3, Name = "Status3", },
         };
 
         _Users = new User[]
@@ -144,7 +132,6 @@ public class RepositoryBlogPostManagerTests
         _Post_Repo_Mock = new Mock<IRepository<Post>>();
         _Tag_Repo_Mock = new Mock<INamedRepository<Tag>>();
         _Category_Repo_Mock = new Mock<INamedRepository<Category>>();
-        _Status_Repo_Mock = new Mock<INamedRepository<Status>>();
         _User_Repo_Mock = new Mock<IRepository<User, string>>();
 
 
@@ -152,7 +139,6 @@ public class RepositoryBlogPostManagerTests
             _Post_Repo_Mock.Object,
             _Tag_Repo_Mock.Object,
             _Category_Repo_Mock.Object,
-            _Status_Repo_Mock.Object,
             _User_Repo_Mock.Object
             );
     }
@@ -239,7 +225,7 @@ public class RepositoryBlogPostManagerTests
     [TestMethod]
     public async Task GetAllPostsPageAsync_Test_Returns_Page()
     {
-        var total_count = _Posts.Count();
+        var total_count = _Posts.Length;
         int pageIndex = 3;
         int pageSize = 3;
         var posts = _Posts;
