@@ -188,7 +188,7 @@ public class RepositoryBlogPostManagerTests
     }
 
     [TestMethod]
-    public async Task GetAllPostsSkipTakeAsync_Test_Returns_EmptyEnumerable()
+    public async Task GetAllPostsSkipTakeAsync_Test_Returns_EmptyEnumerable_when_Take_eq_0()
     {
         int skip = 2;
         int take = 0; //проверяем If: Take == 0
