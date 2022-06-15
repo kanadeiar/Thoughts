@@ -91,10 +91,10 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <returns> Все пользовательские посты </returns>
     public async Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
     {
-        var user_posts = _postRepo.GetAll(Cancel).Result.Where(p => p.User.Id == UserId); //без Result никак
-        return await Task.FromResult(user_posts).ConfigureAwait(false);
+        var all_posts = await _postRepo.GetAll(Cancel);
 
-        //return GetAllPostsAsync(Cancel).Result.Where(p => p.User.Id == UserId); <- или всё же так, с использованием предыдущего метода?
+        var user_posts = all_posts.Where(p => p.User.Id == UserId); //без Result никак
+        return await Task.FromResult(user_posts).ConfigureAwait(false);
     }
 
     /// <summary> Получение количества всех постов пользователя </summary>
@@ -103,8 +103,9 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <returns> Количество всех постов пользователя </returns>
     public async Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
     {
-        var count = _postRepo.GetAll(Cancel).Result.Where(p => p.User.Id == UserId).Count();
-        //var count = GetAllPostsByUserIdAsync(UserId, Cancel).Result.Count();
+        var all_posts = await _postRepo.GetAll(Cancel);
+
+        var count = all_posts.Count(p => p.User.Id == UserId); // todo: надо обучить репозиторий выдавать записи по id указанного пользователя
         
         return await Task.FromResult(count).ConfigureAwait(false);
     }
@@ -120,7 +121,9 @@ public class RepositoryBlogPostManager : IBlogPostManager
         if (Take == 0)
             return Enumerable.Empty<Post>();
 
-        var page = GetAllPostsByUserIdAsync(UserId, Cancel).Result.Skip(Skip).Take(Take);
+        var all_posts_by_user_id = await GetAllPostsByUserIdAsync(UserId, Cancel);
+
+        var page = all_posts_by_user_id.Skip(Skip).Take(Take);
         
         return await Task.FromResult(page).ConfigureAwait(false);
     }
