@@ -7,18 +7,17 @@ namespace Thoughts.DAL.Entities;
 
 public class Post : Entity
 {
-    public int StatusId { get; set; }
-
     /// <summary>Статус записи</summary>
-    [Required]
-    [ForeignKey(nameof(StatusId))]
     public Status Status { get; set; } = null!;
 
     /// <summary>Дата записи</summary>
-    public DateTime Date { get; set; } = DateTime.Now;
+    public DateTime Date { get; set; } = DateTime.Now; // todo: заменить тип на DateTimeOffset и переделать миграцию
+
+    //public string UserId { get; set; }
 
     /// <summary>Автор</summary>
     [Required]
+    //[ForeignKey(nameof(UserId))]
     public User User { get; set; } = null!;
 
     /// <summary>Заголовок записи</summary>
@@ -40,10 +39,10 @@ public class Post : Entity
     public ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
 
     /// <summary>Дата публикации</summary>
-    public DateTime DatePublicatione { get; set; }
+    public DateTime PublicationDate { get; set; }
 
     /// <summary>Приложенные файлы</summary>
-    public ICollection<File> Files { get; set; } = new HashSet<File>();
+    public ICollection<ContentFile> Files { get; set; } = new HashSet<ContentFile>();
 
     /// <summary>Адрес эл. почты</summary>
     [EmailAddress]
@@ -52,8 +51,8 @@ public class Post : Entity
     public Post() { }
 
     public Post(Status status, DateTime date, User user,
-        string title, string body, Category category, DateTime datePublicatione,
-        ICollection<Tag> tags, ICollection<Comment> comments, ICollection<File> files, string email)
+        string title, string body, Category category, DateTime publicationDate,
+        ICollection<Tag> tags, ICollection<Comment> comments, ICollection<ContentFile> files, string email)
     {
         Status = status;
         Date = date;
@@ -63,7 +62,7 @@ public class Post : Entity
         Category = category;
         Tags = tags;
         Comments = comments;
-        DatePublicatione = datePublicatione;
+        PublicationDate = publicationDate;
         Files = files;
         Email = email;
     }

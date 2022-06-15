@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,7 @@ public class Comment : Entity
 {
     /// <summary>Дата комментария</summary>
     public DateTime Date { get; set; }
+
 
     /// <summary>Запись к которой принадлежит комментарий</summary>
     [Required]

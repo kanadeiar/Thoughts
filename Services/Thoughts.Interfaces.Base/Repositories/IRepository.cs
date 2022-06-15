@@ -79,6 +79,7 @@ public interface IRepository<T, in TKey> where T : IEntity<TKey>
     /// <param name="item">Сущность, хранящая в себе информацию, которую надо обновить в репозитории</param>
     /// <param name="Cancel">Признак отмены асинхронной операции</param>
     /// <returns>Сущность из репозитория с обновлёнными данными</returns>
+    /// <exception cref="InvalidOperationException">Если запись <paramref name="item"/> не существует в репозитории</exception>
     Task<T> Update(T item, CancellationToken Cancel = default);
 
     /// <summary>Обновление сущности в репозитории</summary>
@@ -90,6 +91,7 @@ public interface IRepository<T, in TKey> where T : IEntity<TKey>
     {
         if (await GetById(id, Cancel).ConfigureAwait(false) is not { } item)
             return default;
+
         ItemUpdated(item);
         await Update(item, Cancel).ConfigureAwait(false);
         return item;

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -12,8 +13,11 @@ namespace Thoughts.DAL.Entities;
 [Index(nameof(Name), IsUnique = true, Name = "NameIndex")]
 public class Category : NamedEntity
 {
+    //public int StatusId { get; set; }
+
     /// <summary>Статус категории</summary>
     [Required]
+    //[ForeignKey(nameof(StatusId))]
     public Status Status { get; set; } = null!;
 
     /// <summary>Список постов входящих в категорию</summary>
