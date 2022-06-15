@@ -1,10 +1,9 @@
 ﻿namespace Thoughts.Domain.Base.Entities;
 
-public class Status : NamedEntityModel
+public enum Status
 {
-    public Status() { }
-
-    public Status(string name) => Name = name;
-
-    public override string ToString() => Name;
+    Private,
+    Protected,
+    Public,
+    Blocked
 }

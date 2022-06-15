@@ -11,20 +11,17 @@ public class RepositoryBlogPostManager : IBlogPostManager
     private readonly IRepository<Post> _postRepo;
     private readonly INamedRepository<Tag> _tagRepo;
     private readonly INamedRepository<Category> _categoryRepo;
-    private readonly INamedRepository<Status> _statusRepo;
     private readonly IRepository<User, string> _userRepo;
 
 
     public RepositoryBlogPostManager(IRepository<Post> PostRepo,
                                      INamedRepository<Tag> TagRepo,
                                      INamedRepository<Category> CategoryRepo,
-                                     INamedRepository<Status> StatusRepo,
                                      IRepository<User, string> UserRepo)
     {
         _postRepo = PostRepo;
         _tagRepo = TagRepo;
         _categoryRepo = CategoryRepo;
-        _statusRepo = StatusRepo;
         _userRepo = UserRepo;
     }
 
@@ -332,29 +329,6 @@ public class RepositoryBlogPostManager : IBlogPostManager
         await _postRepo.Update(post, Cancel).ConfigureAwait(false);
 
         return true;
-    }
-
-    /// <summary> Изменение статуса поста </summary>
-    /// <param name="PostId"> Идентификатор поста </param>
-    /// <param name="Status"> Текст статуса </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Возврат статуса поста </returns>
-    /// <exception cref="NotImplementedException"> Не найденный пост </exception>
-    public async Task<Status> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default)
-    {
-        var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
-
-        if (post is null)
-            throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
-
-        post.Status = await _statusRepo.ExistName(Status, Cancel).ConfigureAwait(false)
-                    ? await _statusRepo.GetByName(Status, Cancel).ConfigureAwait(false)
-                    : new Status { Name = Status };
-
-        await _postRepo.Update(post, Cancel).ConfigureAwait(false);
-        await _statusRepo.Update(post.Status, Cancel).ConfigureAwait(false);
-
-        return post.Status;
     }
 
     /// <summary> Изменение категории поста </summary>
