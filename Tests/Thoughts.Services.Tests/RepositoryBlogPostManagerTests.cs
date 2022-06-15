@@ -222,7 +222,7 @@ public class RepositoryBlogPostManagerTests
     [TestMethod]
     public async Task GetAllPostsPageAsync_Test_Returns_EmptyPage()
     {
-        var total_count = _Posts.Count();
+        var total_count = _Posts.Length;
 
         int pageIndex = 0;
         int pageSize = 3;
