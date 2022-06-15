@@ -4,11 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 using Thoughts.DAL.Entities;
-using Thoughts.DAL.Entities.DefaultData;
 
 namespace Thoughts.DAL;
 
-public class ThoughtsDB:DbContext
+public class ThoughtsDB : DbContext
 {
     #region DbSet
 
@@ -26,7 +25,7 @@ public class ThoughtsDB:DbContext
 
     #endregion
 
-    public ThoughtsDB(DbContextOptions<ThoughtsDB> options) : base(options){ }
+    public ThoughtsDB(DbContextOptions<ThoughtsDB> options) : base(options) { }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder db)
     {
