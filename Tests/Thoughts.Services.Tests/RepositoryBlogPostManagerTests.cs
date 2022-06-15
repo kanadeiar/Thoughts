@@ -195,7 +195,8 @@ public class RepositoryBlogPostManagerTests
 
         var expected_page = _Posts.ToArray().Skip(skip).Take(take);
 
-        _Post_Repo_Mock.Setup(c => c.Get(skip, take, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Setup(c => c.Get(skip, take, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_page);
 
         var actual_page = await _BlogPostManager.GetAllPostsSkipTakeAsync(skip, take);
 
@@ -208,7 +209,7 @@ public class RepositoryBlogPostManagerTests
         int skip = 2;
         int take = 3;
 
-        var expected_page = _Posts.ToArray().Skip(skip).Take(take);
+        var expected_page = _Posts.Skip(skip).Take(take);
 
         _Post_Repo_Mock.Setup(c => c.Get(skip, take, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected_page);
@@ -243,12 +244,123 @@ public class RepositoryBlogPostManagerTests
         int pageSize = 3;
         var posts = _Posts;
 
-        var expected_page = new Page<Post>(posts, pageIndex, pageSize, total_count);
+        var expected_page = new Page<Post>(posts,
+                                           pageIndex,
+                                           pageSize,
+                                           total_count);
 
         _Post_Repo_Mock.Setup(c => c.GetPage(pageIndex, pageSize, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected_page);
 
         var actual_page = await _BlogPostManager.GetAllPostsPageAsync(pageIndex, pageSize);
+
+        Assert.AreEqual(expected_page, actual_page);
+    }
+
+    #endregion
+
+    #region Get All Posts by User Tests
+
+    [TestMethod]
+    public async Task GetAllPostsByUserIdAsync_Test_Returns_AllUserPosts()
+    {
+        var user_id = "1";
+
+        var expected_posts = _Posts.Where(p => p.UserId == user_id);
+
+        _Post_Repo_Mock.Setup(c => c.GetAll(It.IsAny<CancellationToken>()))
+                                    .ReturnsAsync(expected_posts);
+
+        var actual_posts = await _BlogPostManager.GetAllPostsByUserIdAsync(user_id);
+
+        CollectionAssert.AreEqual(expected_posts.ToArray(), actual_posts.ToArray());
+    }
+
+    [TestMethod]
+    public async Task GetUserPostsCountAsync_Test_Returns_UserPostsCount()
+    {
+        var user_id = "2";
+        var posts = _Posts.Where(p => p.UserId == user_id);
+        var expected_posts_count = posts.Count();
+
+        _Post_Repo_Mock.Setup(c => c.GetCount(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_posts_count);
+
+        var actual_posts_count = await _BlogPostManager.GetUserPostsCountAsync(user_id);
+
+        Assert.AreEqual(expected_posts_count, actual_posts_count);
+    }
+
+    [TestMethod]
+    public async Task GetAllPostsByUserIdSkipTakeAsync_Test_Returns_EmptyEnumerable()
+    {
+        var user_id = "3";
+        var skip = 2;
+        var take = 0; //проверяем If: Take == 0
+
+        var expected_page = _Posts.Where(p => p.User.Id == user_id).Skip(skip).Take(take);
+
+        _Post_Repo_Mock.Setup(c => c.Get(skip, take, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_page);
+
+        var actual_page = await _BlogPostManager.GetAllPostsByUserIdSkipTakeAsync(user_id, skip, take);
+
+        Assert.AreEqual(expected_page.Count(), actual_page.Count());
+    }
+
+    [TestMethod]
+    public async Task GetAllPostsByUserIdSkipTakeAsync_Test_Returns_CorrectEnum()
+    {
+        var user_id = "1";
+        int skip = 1;
+        int take = 3;
+
+        var expected_page = _Posts.Where(p => p.User.Id == user_id).Skip(skip).Take(take);
+
+        _Post_Repo_Mock.Setup(c => c.GetAll(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_Posts);
+
+        var actual_page = await _BlogPostManager.GetAllPostsByUserIdSkipTakeAsync( user_id, skip, take);
+
+        CollectionAssert.AreEqual(expected_page.ToArray(), actual_page.ToArray());
+    }
+
+    [TestMethod]
+    public async Task GetAllPostsByUserIdPageAsync_Test_Returns_EmptyPage()
+    {
+        var user_id = "1";
+        var total_count = _Posts.Where(c=>c.User.Id == user_id).Count();
+
+        int pageIndex = 0;
+        int pageSize = 3;
+
+        var expected_page = new Page<Post>(Enumerable.Empty<Post>(), pageIndex, pageSize, total_count);
+
+        _Post_Repo_Mock.Setup(c => c.GetPage(pageIndex, pageSize, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_page);
+
+        var actual_page = await _BlogPostManager.GetAllPostsByUserIdPageAsync(user_id, pageIndex, pageSize);
+
+        Assert.AreEqual(expected_page.Items, actual_page.Items);
+    }
+
+    [TestMethod]
+    public async Task GetAllPostsByUserIdPageAsync_Test_Returns_CorrectPage()
+    {
+        var user_id = "1";
+        var posts = _Posts.Where(p=>p.User.Id == user_id);
+        var total_count = posts.Count();
+        int pageIndex = 2;
+        int pageSize = 3;
+
+        var expected_page = new Page<Post>(posts, pageIndex, pageSize, total_count);
+
+
+        //todo: не понимаю как настроить Mock, тест не проходит
+        _Post_Repo_Mock.Setup(c => c.GetAll(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(posts);
+
+        var actual_page = await _BlogPostManager.GetAllPostsByUserIdPageAsync(user_id, pageIndex, pageSize);
 
         Assert.AreEqual(expected_page, actual_page);
     }
