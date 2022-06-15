@@ -177,7 +177,7 @@ public class RepositoryBlogPostManagerTests
     public async Task GetAllPostsCountAsync_Test_Returns_CountOfAllPosts()
     {
         var posts = _Posts;
-        var expected_posts_count = posts.Count();
+        var expected_posts_count = posts.Length;
 
         _Post_Repo_Mock.Setup(c => c.GetCount(It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected_posts_count);
