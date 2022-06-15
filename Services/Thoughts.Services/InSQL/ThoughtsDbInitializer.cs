@@ -52,10 +52,10 @@ public class ThoughtsDbInitializer
     {
         await using var transaction = await _db.Database.BeginTransactionAsync(Cancel).ConfigureAwait(false);
 
-        await _db.AddAsync(TestDbData.Categories, Cancel);
-        await _db.AddAsync(TestDbData.Tags, Cancel);
-        await _db.AddAsync(TestDbData.Users, Cancel);
-        await _db.AddAsync(TestDbData.Posts, Cancel);
+        await _db.AddRangeAsync(TestDbData.Categories, Cancel);
+        await _db.AddRangeAsync(TestDbData.Tags, Cancel);
+        await _db.AddRangeAsync(TestDbData.Users, Cancel);
+        await _db.AddRangeAsync(TestDbData.Posts, Cancel);
 
         await _db.SaveChangesAsync(Cancel);
 
