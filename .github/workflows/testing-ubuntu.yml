@@ -24,6 +24,7 @@ jobs:
       run:  |
         dotnet build --no-restore UI/Thoughts.UI.MVC
         dotnet build --no-restore Services/Thoughts.WebAPI
+        dotnet build Tests/Thoughts.Services.Tests
       
     - name: Test
-      run: dotnet test
+      run: dotnet test --no-build
