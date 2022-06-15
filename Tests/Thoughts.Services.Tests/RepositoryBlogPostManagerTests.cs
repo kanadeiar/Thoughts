@@ -254,6 +254,7 @@ public class RepositoryBlogPostManagerTests
 
         var actual_page = await _BlogPostManager.GetAllPostsPageAsync(pageIndex, pageSize);
 
+        Assert.IsTrue(ReferenceEquals(expected_page, actual_page));
         Assert.AreEqual(expected_page, actual_page);
     }
 
