@@ -25,5 +25,5 @@ jobs:
         dotnet build --no-restore UI/Thoughts.UI.MVC
         dotnet build --no-restore Services/Thoughts.WebAPI
       
-#     - name: Test
-#       run: dotnet test --no-build --verbosity normal
+    - name: Test
+      run: dotnet test
