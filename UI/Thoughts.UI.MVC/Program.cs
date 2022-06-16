@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 using Thoughts.DAL;
 using Thoughts.DAL.Sqlite;
 using Thoughts.DAL.SqlServer;
+using Thoughts.Services.InSQL;
+using Thoughts.UI.MVC.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,22 +29,11 @@ switch (db_type)
         break;
 }
 
+services.AddTransient<ThoughtsDbInitializer>();
+
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ThoughtsDB>();
-    await db.Database.MigrateAsync();
-
-    //var statuses = await db.Statuses.ToArrayAsync();
-    //var roles = await db.Roles.ToArrayAsync();
-
-    //var db_factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ThoughtsDB>>();
-    //using (var db = db_factory.CreateDbContext())
-    //{
-    //    // выполнение операций над БД и его уничтожение
-    //}
-}
+await app.InitializeDatabase();
 
 if (!app.Environment.IsDevelopment())
 {

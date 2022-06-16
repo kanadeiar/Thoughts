@@ -5,7 +5,6 @@ using Thoughts.DAL.Entities;
 using Post = Thoughts.Domain.Base.Entities.Post;
 using Tag = Thoughts.Domain.Base.Entities.Tag;
 using Category = Thoughts.Domain.Base.Entities.Category;
-using Status = Thoughts.Domain.Base.Entities.Status;
 
 namespace Thoughts.WebAPI.Services
 {
@@ -30,9 +29,8 @@ namespace Thoughts.WebAPI.Services
 
             var getted_post = await _PostsRepository.GetById(PostId, Cancel);
 
-            //хз почему, но не мог добавить экземпляр сущностей без явного приведения
-            var tag = new Tag(Tag);
-            getted_post.Tags.Add((Tag)tag);
+            var tag = new Tag { Name = Tag };
+            getted_post.Tags.Add(tag);
             await _PostsRepository.Update(getted_post, Cancel);
 
             return true;
@@ -75,45 +73,17 @@ namespace Thoughts.WebAPI.Services
             var task = new Task<Category>(() =>
             {
                 var exist_task = _PostsRepository.ExistId(PostId, Cancel);
-                var category = new Category(CategoryName);
+                var category = new Category { Name = CategoryName };
                 if (exist_task.Result is true)
                 {
                     var getted_post = _PostsRepository.GetById(PostId).Result;
 
-                    getted_post.Category = (Category)category;
+                    getted_post.Category = category;
 
                     var post = _PostsRepository.Update(getted_post, Cancel);
                     if (post.Result is not null)
                     {
-                        return (Category)category;
-                    }
-                }
-                return null;
-            });
-            return task;
-        }
-
-        /// <summary>Изменение статуса поста</summary>
-        /// <param name="PostId">Идентификатор поста</param>
-        /// <param name="Status">Новый статус поста</param>
-        /// <param name="Cancel">Токен отмены</param>
-        /// <returns>Изменённая категория</returns>
-        public Task<Status> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default)
-        {
-            var task = new Task<Status>(() =>
-            {
-                var exist_task = _PostsRepository.ExistId(PostId, Cancel);
-                var status = new Status(Status);
-                if (exist_task.Result is true)
-                {
-                    var getted_post = _PostsRepository.GetById(PostId).Result;
-
-                    getted_post.Status = (Status)status;
-
-                    var post = _PostsRepository.Update(getted_post, Cancel);
-                    if (post.Result is not null)
-                    {
-                        return (Status)status;
+                        return category;
                     }
                 }
                 return null;
@@ -161,13 +131,13 @@ namespace Thoughts.WebAPI.Services
             {
                 Title = Title,
                 Body = Body,
-                Category = new Category(Category),
+                Category = new Category { Name = Category },
                 //
                 //TODO
                 //здесь нам как-то нужно добавить юзера
                 //
             };
-            return _PostsRepository.Add((Post)new_post, Cancel);
+            return _PostsRepository.Add(new_post, Cancel);
         }
 
         /// <summary>Удаление поста</summary>
@@ -327,10 +297,10 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Перечисление постов</returns>
         public Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
         {
-            var tag = new Tag(Tag);
+            var tag = new Tag { Name = Tag };
             var task = new Task<IEnumerable<Post>>(() =>
             {
-                var posts = _PostsRepository.GetAll(Cancel).Result.Where(p => p.Tags.Contains((Tag)tag));
+                var posts = _PostsRepository.GetAll(Cancel).Result.Where(p => p.Tags.Contains(tag));
                 return posts;
             });
             return task;
@@ -356,18 +326,18 @@ namespace Thoughts.WebAPI.Services
         /// <returns>Истина, если тэг был удалён успешно</returns>
         public Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
         {
-            var tag = new Tag(Tag);
+            var tag = new Tag { Name = Tag };
 
             var task = new Task<bool>(() =>
             {
                 var post_exist = _PostsRepository.ExistId(PostId, Cancel);
-                if(post_exist.Result is true)
+                if (post_exist.Result is true)
                 {
                     var getted_post = _PostsRepository.GetById(PostId, Cancel);
-                    if(getted_post.Result is not null)
+                    if (getted_post.Result is not null)
                     {
                         var post = getted_post.Result;
-                        return post.Tags.Remove((Tag)tag);
+                        return post.Tags.Remove(tag);
                     }
                 }
                 return false;

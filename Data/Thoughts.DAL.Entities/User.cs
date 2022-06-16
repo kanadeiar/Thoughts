@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -6,17 +6,10 @@ using Thoughts.DAL.Entities.Base;
 
 namespace Thoughts.DAL.Entities;
 
-/// <summary>
-/// Пользователь (автор)
-/// </summary>
-
+/// <summary>Пользователь (автор)</summary>
 [Index(nameof(LastName), nameof(FirstName), nameof(Patronymic), IsUnique = true, Name = "NameIndex")]
 public class User : Entity<string>
 {
-    /// <summary>Статус пользователя</summary>
-    [Required]
-    public Status Status { get; set; } = null!;
-
     /// <summary>Фамилия</summary>
     [Required, MinLength(2)]
     public string LastName { get; set; } = null!;
@@ -29,25 +22,23 @@ public class User : Entity<string>
     public string? Patronymic { get; set; }
 
     /// <summary>Дата рождения</summary>
-    public DateTime Birthday { get; set; }
+    [Column(TypeName = "date")]
+    public DateOnly? Birthday { get; set; }
 
     /// <summary>Псевдоним (отображаемое имя автора)</summary>
     [Required]
     public string NickName { get; set; } = null!;
 
+    /// <summary>Статус пользователя</summary>
+    [Required]
+    public Status Status { get; set; }
+
     /// <summary>Роли пользователя</summary>
     public ICollection<Role> Roles { get; set; } = new HashSet<Role>();
 
-    public User() { }
+    public ICollection<Post> Posts { get; set; } = new HashSet<Post>();
 
-    public User(string LastName, string FirstName, string Patronymic, DateTime Birthday, string NickName)
-    {
-        this.LastName = LastName;
-        this.FirstName = FirstName;
-        this.Patronymic = Patronymic;
-        this.Birthday = Birthday;
-        this.NickName = NickName;
-    }
+    public ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
 
     public override string ToString() => $"[id:{Id}] {string.Join(' ', LastName, FirstName, Patronymic)}";
 }

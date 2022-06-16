@@ -10,7 +10,6 @@ using Thoughts.Interfaces.Base.Repositories;
 using Post = Thoughts.Domain.Base.Entities.Post;
 using Tag = Thoughts.Domain.Base.Entities.Tag;
 using Category = Thoughts.Domain.Base.Entities.Category;
-using Status = Thoughts.Domain.Base.Entities.Status;
 
 namespace Thoughts.TestConsole.Services;
 
@@ -56,6 +55,4 @@ public class InMemoryBlogPostManager : IBlogPostManager
     public Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default) => throw new NotImplementedException();
 
     public Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default) => throw new NotImplementedException();
-
-    public Task<Status> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default) => throw new NotImplementedException();
 }

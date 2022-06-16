@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-using Thoughts.Interfaces.Base.Entities;
+﻿using Thoughts.Interfaces.Base.Entities;
 
 namespace Thoughts.DAL.Entities.Base;
 

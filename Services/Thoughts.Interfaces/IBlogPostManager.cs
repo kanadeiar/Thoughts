@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Thoughts.Domain.Base.Entities;
+﻿using Thoughts.Domain.Base.Entities;
 using Thoughts.Interfaces.Base.Repositories;
 
 namespace Thoughts.Interfaces;
@@ -64,8 +59,6 @@ public interface IBlogPostManager
     Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default);
 
     Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default);
-
-    Task<Status> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default); 
 
     #endregion
 }
