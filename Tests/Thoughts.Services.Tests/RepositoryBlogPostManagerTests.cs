@@ -361,4 +361,71 @@ public class RepositoryBlogPostManagerTests
 
     #endregion
 
+    #region GetById Delete 
+
+    [TestMethod]
+    public async Task GetPostAsync_Test_Returns_Post()
+    {
+        var post_id = 7;
+        var expected_post = _Posts.Single(p => p.Id == post_id);
+
+        _Post_Repo_Mock.Setup(p => p.GetById(post_id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_post);
+
+        var actual_post = await _BlogPostManager.GetPostAsync(post_id);
+
+        Assert.AreEqual(expected_post, actual_post);
+    }
+
+    [TestMethod] 
+    public async Task DeletePostAsync_Test_Returns_True_if_FindPost()
+    {
+        //Решил дополнительные проверки сделать, сравнивая наборы постов
+
+        var post_id = 1;
+        var posts = _Posts.ToList();
+        var expected_post = _Posts.Single(p => p.Id == post_id);
+        bool expecting_result = posts.Remove(expected_post);
+
+        _Post_Repo_Mock.Setup(p => p.GetById(post_id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_post);
+        _Post_Repo_Mock.Setup(c => c.DeleteById(post_id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_post);
+
+        var actual_result = await _BlogPostManager.DeletePostAsync(post_id);
+
+        _Post_Repo_Mock.Setup(c=>c.GetAll(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(posts);
+        var actual_posts = await _BlogPostManager.GetAllPostsAsync();
+
+
+        Assert.AreEqual(expecting_result, actual_result);
+        CollectionAssert.AreNotEqual(_Posts, posts);
+        CollectionAssert.AreEqual(posts, actual_posts.ToArray());
+        _Post_Repo_Mock.Verify(c => c.DeleteById(post_id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Verify(c => c.GetById(post_id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Verify(c => c.GetAll(It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task DeletePostAsync_Test_Returns_False_if_PostNotFound()
+    {
+        var post_id = 8;
+        var posts = _Posts.ToList();
+        var expected_post = _Posts.SingleOrDefault(p => p.Id == post_id);
+        var expecting_result = posts.Remove(expected_post!);
+
+        _Post_Repo_Mock.Setup(p => p.GetById(post_id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_post!);
+        _Post_Repo_Mock.Setup(c => c.DeleteById(post_id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_post!);
+
+        var actual_result = await _BlogPostManager.DeletePostAsync(post_id);
+
+        Assert.AreEqual(expecting_result, actual_result);
+    }
+    #endregion
+
+
 }
