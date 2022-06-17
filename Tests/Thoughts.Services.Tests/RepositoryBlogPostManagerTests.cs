@@ -283,7 +283,7 @@ public class RepositoryBlogPostManagerTests
     }
 
     [TestMethod]
-    public async Task GetAllPostsByUserIdSkipTakeAsync_Test_Returns_EmptyEnumerable()
+    public async Task GetAllPostsByUserIdSkipTakeAsync_Test_Returns_EmptyEnumerable_when_Take_eq_0()
     {
         var user_id = "3";
         var skip = 2;
@@ -317,13 +317,13 @@ public class RepositoryBlogPostManagerTests
     }
 
     [TestMethod]
-    public async Task GetAllPostsByUserIdPageAsync_Test_Returns_EmptyPage()
+    public async Task GetAllPostsByUserIdPageAsync_Test_Returns_EmptyPage_when_pageSize_eq_0()
     {
         var user_id = "1";
         var total_count = _Posts.Where(c => c.User.Id == user_id).Count();
 
-        int pageIndex = 0;
-        int pageSize = 3;
+        int pageIndex = 2;
+        int pageSize = 0;
 
         var expected_page = new Page<Post>(Enumerable.Empty<Post>(), pageIndex, pageSize, total_count);
 
@@ -339,17 +339,17 @@ public class RepositoryBlogPostManagerTests
     public async Task GetAllPostsByUserIdPageAsync_Test_Returns_CorrectPage()
     {
         var user_id = "1";
-        var posts = _Posts.Where(p => p.User.Id == user_id);
-        var total_count = posts.Count();
-        int pageIndex = 2;
-        int pageSize = 3;
-
+        int pageIndex = 0;
+        int pageSize = 2;
+        var all_posts = _Posts;
+        var posts = all_posts.Where(p => p.User.Id == user_id).Skip(pageIndex * pageSize).Take(pageSize);
+        var total_count = all_posts.Where(p=>p.User.Id == user_id).Count();
+         
         var expected_page = new Page<Post>(posts, pageIndex, pageSize, total_count);
-
 
         //todo: не понимаю как настроить Mock, тест не проходит
         _Post_Repo_Mock.Setup(c => c.GetAll(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(posts);
+            .ReturnsAsync(all_posts);
 
         var actual_page = await _BlogPostManager.GetAllPostsByUserIdPageAsync(user_id, pageIndex, pageSize);
 

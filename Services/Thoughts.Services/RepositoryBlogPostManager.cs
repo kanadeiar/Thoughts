@@ -137,10 +137,13 @@ public class RepositoryBlogPostManager : IBlogPostManager
     {
         var count = await GetUserPostsCountAsync(UserId,Cancel).ConfigureAwait(false);
 
-        if (PageIndex == 0)
+        if (PageSize == 0)
             return new Page<Post>(Enumerable.Empty<Post>(), PageIndex, PageSize, count);
 
-        var posts = await GetAllPostsByUserIdAsync(UserId, Cancel).ConfigureAwait(false); //здесь не как в GetAllPostsPageAsync - метод GetPage из IRepository не даёт сделать выборку по Id
+        //var user_posts = await GetAllPostsByUserIdAsync(UserId, Cancel).ConfigureAwait(false); //здесь не как в GetAllPostsPageAsync - метод GetPage из IRepository не даёт сделать выборку по Id
+        var user_posts = await _postRepo.GetAll(Cancel).ConfigureAwait(false);
+
+        var posts = user_posts.Where(p => p.User.Id == UserId).Skip(PageIndex * PageSize).Take(PageSize);
 
         return new Page<Post>(posts, PageIndex, PageSize, count);
     }
