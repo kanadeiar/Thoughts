@@ -210,16 +210,16 @@ public class RepositoryBlogPostManagerTests
     }
 
     [TestMethod]
-    public async Task GetAllPostsPageAsync_Test_Returns_EmptyPage()
+    public async Task GetAllPostsPageAsync_Test_Returns_EmptyPage_when_pageSize_eq_0()
     {
         var total_count = _Posts.Length;
 
-        int pageIndex = 0;
-        int pageSize = 3;
+        int pageIndex = 2;
+        int pageSize = 0;
 
         var expected_page = new Page<Post>(Enumerable.Empty<Post>(), pageIndex, pageSize, total_count);
 
-        _Post_Repo_Mock.Setup(c => c.GetPage(pageIndex, pageSize, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Setup(c => c.GetPage(pageIndex, pageSize, It.IsAny<CancellationToken>())).ReturnsAsync(expected_page);
 
         var actual_page = await _BlogPostManager.GetAllPostsPageAsync(pageIndex, pageSize);
 
@@ -230,9 +230,9 @@ public class RepositoryBlogPostManagerTests
     public async Task GetAllPostsPageAsync_Test_Returns_Page()
     {
         var total_count = _Posts.Length;
-        int pageIndex = 3;
+        int pageIndex = 2;
         int pageSize = 3;
-        var posts = _Posts;
+        var posts = _Posts.Skip(pageIndex * pageSize).Take(pageSize);
 
         var expected_page = new Page<Post>(posts,
                                            pageIndex,
@@ -244,7 +244,7 @@ public class RepositoryBlogPostManagerTests
 
         var actual_page = await _BlogPostManager.GetAllPostsPageAsync(pageIndex, pageSize);
 
-        Assert.IsTrue(ReferenceEquals(expected_page, actual_page));
+        //Assert.IsTrue(ReferenceEquals(expected_page, actual_page));
         Assert.AreEqual(expected_page, actual_page);
     }
 

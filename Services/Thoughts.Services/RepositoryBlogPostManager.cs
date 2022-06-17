@@ -71,14 +71,13 @@ public class RepositoryBlogPostManager : IBlogPostManager
 
         //var total_count = await GetAllPostsCountAsync(Cancel).ConfigureAwait(false);
 
-        if(PageIndex == 0)
+        if(PageSize == 0)
             return new Page<Post>(Enumerable.Empty<Post>(), PageIndex, PageSize, total_count);
 
         var page = await _postRepo.GetPage(PageIndex, PageSize, Cancel).ConfigureAwait(false);
 
         //здесь не уверен, всё же в конструкторе страницы обязательно указывать общее количество, а в интерфейсе репозитория общее количество не указывается
         return page;
-
     }
 
     #endregion
@@ -93,8 +92,8 @@ public class RepositoryBlogPostManager : IBlogPostManager
     {
         var all_posts = await _postRepo.GetAll(Cancel);
 
-        var user_posts = all_posts.Where(p => p.User.Id == UserId); //без Result никак
-        return await Task.FromResult(user_posts).ConfigureAwait(false);
+        var user_posts = all_posts.Where(p => p.User.Id == UserId);
+        return user_posts;
     }
 
     /// <summary> Получение количества всех постов пользователя </summary>
@@ -107,7 +106,7 @@ public class RepositoryBlogPostManager : IBlogPostManager
 
         var count = all_posts.Count(p => p.User.Id == UserId); // todo: надо обучить репозиторий выдавать записи по id указанного пользователя
         
-        return await Task.FromResult(count).ConfigureAwait(false);
+        return count;
     }
 
     /// <summary> Получение выборки постов для пагинации конкретного пользователя </summary>
@@ -125,7 +124,7 @@ public class RepositoryBlogPostManager : IBlogPostManager
 
         var page = all_posts_by_user_id.Skip(Skip).Take(Take);
         
-        return await Task.FromResult(page).ConfigureAwait(false);
+        return page;
     }
 
     /// <summary> Получение страницы постов пользователя </summary>
