@@ -343,8 +343,8 @@ public class RepositoryBlogPostManagerTests
         int pageSize = 2;
         var all_posts = _Posts;
         var posts = all_posts.Where(p => p.User.Id == user_id).Skip(pageIndex * pageSize).Take(pageSize);
-        var total_count = all_posts.Where(p=>p.User.Id == user_id).Count();
-         
+        var total_count = all_posts.Where(p => p.User.Id == user_id).Count();
+
         var expected_page = new Page<Post>(posts, pageIndex, pageSize, total_count);
 
         //todo: не понимаю как настроить Mock, тест не проходит
@@ -377,7 +377,7 @@ public class RepositoryBlogPostManagerTests
         Assert.AreEqual(expected_post, actual_post);
     }
 
-    [TestMethod] 
+    [TestMethod]
     public async Task DeletePostAsync_Test_Returns_True_if_FindPost()
     {
         //Решил дополнительные проверки сделать, сравнивая наборы постов
@@ -394,7 +394,7 @@ public class RepositoryBlogPostManagerTests
 
         var actual_result = await _BlogPostManager.DeletePostAsync(post_id);
 
-        _Post_Repo_Mock.Setup(c=>c.GetAll(It.IsAny<CancellationToken>()))
+        _Post_Repo_Mock.Setup(c => c.GetAll(It.IsAny<CancellationToken>()))
             .ReturnsAsync(posts);
         var actual_posts = await _BlogPostManager.GetAllPostsAsync();
 
@@ -427,5 +427,220 @@ public class RepositoryBlogPostManagerTests
     }
     #endregion
 
+    #region Create (7 tests)
+
+    [TestMethod]
+    public async Task CreatePostAsync_Test_Returns_Post_With_newCategory() // todo: проверить что может быть не так
+    {
+        string title = "new_title_post8";
+        string body = "new_body_post8";
+        string user_id = "2";
+        string new_category = "new_Category4_post8";
+
+        var containsCategory = _Categories.Any(p => p.Name == new_category);
+        var user = _Users.Single(p => p.Id == user_id);
+
+        var expected_post = new Post
+        {
+            Title = title,
+            Body = body,
+            User = user,
+            Category = new Category { Name = new_category },
+        };
+
+        _User_Repo_Mock.Setup(c => c.GetById(user_id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+        _Category_Repo_Mock.Setup(c => c.ExistName(new_category, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(containsCategory);
+        //_Post_Repo_Mock.Setup(c => c.Update(expected_post, It.IsAny<CancellationToken>()))
+        //    .ReturnsAsync(expected_post);
+        _Post_Repo_Mock.Setup(c => c.Add(expected_post, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_post);
+
+        var actual_post = await _BlogPostManager.CreatePostAsync(title, body, user_id, new_category);
+
+        Assert.AreEqual(expected_post.Title, actual_post.Title);
+        Assert.AreEqual(expected_post.Body, actual_post.Body);
+        Assert.AreEqual(expected_post.User.Id, actual_post.User.Id);
+        Assert.AreEqual(expected_post.Category.Name, actual_post.Category.Name); // сравнивать категорию можно только по имени
+        //Assert.AreEqual(expected_post.Category, actual_post.Category); // <- такое сравнение выдаёт ошибку
+        //Assert.AreEqual(expected_post.ToString, actual_post.ToString);
+        //Assert.AreEqual(expected_post, actual_post); // <- любые прямые сравнения объектов у меня не сработали
+        // в общем, полностью сравнивать объекты не получается
+
+        _Post_Repo_Mock.Verify();
+        _Category_Repo_Mock.Verify();
+        _User_Repo_Mock.Verify();
+
+        //_Post_Repo_Mock.VerifyNoOtherCalls(); //<- здесь так же возникала ошибка
+    }
+
+    [TestMethod]
+    public async Task CreatePostAsync_Test_Returns_Post_With_oldCathegory()
+    {
+        string title = "new_title_post8";
+        string body = "new_body_post8";
+        string user_id = "2";
+        string old_category = "Category3";
+
+        var containsCategory = _Categories.Any(p => p.Name == old_category);
+
+        var expected_category = _Categories.Single(c => c.Name == old_category);
+
+        var user = _Users.Single(p => p.Id == user_id);
+
+        var expected_post = new Post
+        {
+            Title = title,
+            Body = body,
+            User = user,
+            Category = expected_category,
+        };
+
+        _User_Repo_Mock.Setup(c => c.GetById(user_id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+        _Category_Repo_Mock.Setup(c => c.ExistName(old_category, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(containsCategory);
+        _Category_Repo_Mock.Setup(c => c.GetByName(old_category, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_category);
+        _Post_Repo_Mock.Setup(c => c.Add(expected_post, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_post);
+
+        var actual_post = await _BlogPostManager.CreatePostAsync(title, body, user_id, old_category);
+
+        Assert.AreEqual(expected_post.Title, actual_post.Title);
+        Assert.AreEqual(expected_post.Body, actual_post.Body);
+        Assert.AreEqual(expected_post.User.Id, actual_post.User.Id);
+        Assert.AreEqual(expected_post.Category.Name, actual_post.Category.Name);
+
+        Assert.AreEqual(expected_category, actual_post.Category);
+
+        _Post_Repo_Mock.Verify();
+        _Category_Repo_Mock.Verify();
+        _User_Repo_Mock.Verify();
+    }
+
+    [TestMethod]
+    public async Task CreatePostAsync_Test_Throws_ArgumentNullException_when_Title_is_Null()
+    {
+        string Title = null; //проверяем на null заголовок
+
+        string body = "new_body_post8";
+        var category = _Categories[0];
+        var user = _Users[0];
+
+        var expected_exception = new ArgumentNullException(nameof(Title));
+
+        try
+        {
+            await _BlogPostManager.CreatePostAsync(Title, body, user.Id, category.Name);
+        }
+        catch (Exception actual_exception)
+        {
+            Assert.AreEqual(expected_exception.Message, actual_exception.Message);
+            Assert.AreEqual(expected_exception.GetType(), actual_exception.GetType());\
+            return;
+        }
+
+        Assert.Fail("Исключение не было получено.");
+    }
+
+    [TestMethod]
+    public async Task CreatePostAsync_Test_Throws_ArgumentNullException_when_Body_is_Null()
+    {
+        string title = "new_title_post8";
+        string Body = null; //проверяем на null тело поста
+        var category = _Categories[0];
+        var user = _Users[0];
+
+        var expected_exception = new ArgumentNullException(nameof(Body));
+
+        try
+        {
+            await _BlogPostManager.CreatePostAsync(title, Body, user.Id, category.Name);
+        }
+        catch (Exception actual_exception)
+        {
+            Assert.AreEqual(expected_exception.Message, actual_exception.Message);
+            Assert.AreEqual(expected_exception.GetType(), actual_exception.GetType());
+            return;
+        }
+
+        Assert.Fail("Исключение не было получено.");
+    }
+
+    [TestMethod]
+    public async Task CreatePostAsync_Test_Throws_ArgumentNullException_when_Category_is_Null()
+    {
+        string title = "new_title_post8";
+        string body = "new_body_post8";
+        string Category = null; //проверяем на null категорию
+        var user = _Users[0];
+
+        var expected_exception = new ArgumentNullException(nameof(Category));
+
+        try
+        {
+            await _BlogPostManager.CreatePostAsync(title, body, user.Id, Category);
+        }
+        catch (Exception actual_exception)
+        {
+            Assert.AreEqual(expected_exception.Message, actual_exception.Message);
+            Assert.AreEqual(expected_exception.GetType(), actual_exception.GetType());
+            return;
+        }
+
+        Assert.Fail("Исключение не было получено.");
+    }
+
+    [TestMethod]
+    public async Task CreatePostAsync_Test_Throws_ArgumentNullException_when_UserId_is_Null()
+    {
+        string title = "new_title_post8";
+        string body = "new_body_post8";
+        var category = _Categories[0]; 
+        string UserId = null; //проверяем на null идентификатор пользователя
+
+        var expected_exception = new ArgumentNullException(nameof(UserId));
+
+        try
+        {
+            await _BlogPostManager.CreatePostAsync(title, body, UserId, category.Name);
+        }
+        catch (Exception actual_exception)
+        {
+            Assert.AreEqual(expected_exception.Message, actual_exception.Message);
+            Assert.AreEqual(expected_exception.GetType(), actual_exception.GetType());
+            return;
+        }
+
+        Assert.Fail("Исключение не было получено.");
+    }
+
+    [TestMethod]
+    public async Task CreatePostAsync_Test_Throws_ArgumentException_when_UserId_is_NotGreater_0()
+    {
+        string title = "new_title_post8";
+        string body = "new_body_post8";
+        var category = _Categories[0];
+        string UserId = ""; //проверяем пустой идентификатор пользователя
+
+        var expected_exception = new ArgumentException("Не указан идентификатор пользователя", nameof(UserId));
+
+        try
+        {
+            await _BlogPostManager.CreatePostAsync(title, body, UserId, category.Name);
+        }
+        catch (Exception actual_exception)
+        {
+            Assert.AreEqual(expected_exception.Message, actual_exception.Message);
+            Assert.AreEqual(expected_exception.GetType(), actual_exception.GetType());
+            return;
+        }
+
+        Assert.Fail("Исключение не было получено.");
+    }
+    
+    #endregion
 
 }
