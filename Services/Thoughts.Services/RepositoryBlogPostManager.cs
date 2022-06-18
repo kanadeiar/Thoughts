@@ -211,8 +211,12 @@ public class RepositoryBlogPostManager : IBlogPostManager
                         : new Category { Name = Category },
         };
 
-        await _postRepo.Update(post, Cancel).ConfigureAwait(false);
-        return await _postRepo.Add(post,Cancel).ConfigureAwait(false);
+        //await _postRepo.Update(post, Cancel).ConfigureAwait(false);
+        await _postRepo.Add(post,Cancel).ConfigureAwait(false);
+        
+        return post;
+
+        //return await _postRepo.Add(post, Cancel).ConfigureAwait(false); // <- пришлось отказаться от такой реализации, так как в тесте не возвращался пост, хоть на Add настроен мок
     }
 
     #endregion
