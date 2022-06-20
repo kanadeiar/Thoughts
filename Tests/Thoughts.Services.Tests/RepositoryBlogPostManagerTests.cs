@@ -131,6 +131,15 @@ public class RepositoryBlogPostManagerTests
                 Category = _Categories[1],
                 User = _Users.First(u => u.Id == "1"),
             },
+            new Post
+            {
+                Id = 8,
+                Title = "Title8",
+                Body = "Body8",
+                Tags = null,
+                Category = _Categories[1],
+                User = _Users.First(u => u.Id == "2"),
+            },
         };
 
         _Post_Repo_Mock = new Mock<IRepository<Post>>();
@@ -471,8 +480,6 @@ public class RepositoryBlogPostManagerTests
         _Post_Repo_Mock.Verify();
         _Category_Repo_Mock.Verify();
         _User_Repo_Mock.Verify();
-
-        //_Post_Repo_Mock.VerifyNoOtherCalls(); //<- здесь так же возникала ошибка
     }
 
     [TestMethod]
@@ -842,5 +849,97 @@ public class RepositoryBlogPostManagerTests
         _Tag_Repo_Mock.Verify();
     }
 
+    #endregion
+
+    #region Tag - GetBlogTags, GetPostsByTag
+
+    [TestMethod]
+    public async Task GetBlogTagsAsync_Test_Returns_List_of_Tags()
+    {
+        var post = _Posts[6];
+        var expected_tags = post.Tags.ToArray();
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+
+        var actual_tags = await _BlogPostManager.GetBlogTagsAsync(post.Id);
+
+        CollectionAssert.AreEqual(expected_tags, actual_tags.ToArray());
+        _Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task GetBlogTagsAsync_Test_Returns_EmptyList()
+    {
+        var post = _Posts[7];
+        var expected_tags = post.Tags;
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+
+        var actual_tags = await _BlogPostManager.GetBlogTagsAsync(post.Id);
+
+        Assert.AreEqual(expected_tags, actual_tags);
+        _Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task GetPostsByTag_Test_Returns_List_of_Posts()
+    {
+        var tag = new Tag {
+            Id = 4, 
+            Name = "NewTag",
+            Posts = new[] { _Posts[0], _Posts[3], _Posts[4] }
+            };
+
+        var expected_posts = tag.Posts;
+
+        _Tag_Repo_Mock.Setup(c => c.GetByName(tag.Name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(tag);
+
+        var actual_posts = await _BlogPostManager.GetPostsByTag(tag.Name);
+
+        Assert.AreEqual(expected_posts, actual_posts);
+        _Tag_Repo_Mock.Verify(c => c.GetByName(tag.Name, It.IsAny<CancellationToken>()));
+        _Tag_Repo_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task GetPostsByTag_Test_Returns_Empty_List_When_is_Tag_is_NotFound()
+    {
+        var tag_name = "not_founded_tag";
+
+        var expected_list = Enumerable.Empty<Post>();   //null
+
+        _Tag_Repo_Mock.Setup(c => c.GetByName(tag_name, It.IsAny<CancellationToken>()));
+
+        var actual_posts = await _BlogPostManager.GetPostsByTag(tag_name);
+
+        Assert.AreEqual(expected_list.Count(), actual_posts.Count());
+        _Tag_Repo_Mock.Verify(c => c.GetByName(tag_name, It.IsAny<CancellationToken>()));
+        _Tag_Repo_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task GetPostsByTag_Test_Returns_ArgumentNullException_When_tagName_is_null()
+    {
+        string Tag = null; //проверяем Tag на null
+        var expected_exception = new ArgumentNullException(nameof(Tag));
+
+        try
+        {
+            await _BlogPostManager.GetPostsByTag(Tag);
+        }
+        catch (Exception actual_exception)
+        {
+            Assert.AreEqual(expected_exception.Message, actual_exception.Message);
+            Assert.AreEqual(expected_exception.GetType(), actual_exception.GetType());
+            return;
+        }
+
+        Assert.Fail("Исключение не было получено.");
+    }
     #endregion
 }
