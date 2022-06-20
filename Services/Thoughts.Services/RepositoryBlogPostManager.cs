@@ -102,9 +102,9 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <returns> Количество всех постов пользователя </returns>
     public async Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
     {
-        var all_posts = await _postRepo.GetAll(Cancel);
+        var all_posts = await GetAllPostsByUserIdAsync(UserId, Cancel).ConfigureAwait(false);
 
-        var count = all_posts.Count(p => p.User.Id == UserId); // todo: надо обучить репозиторий выдавать записи по id указанного пользователя
+        var count = all_posts.Count(); // todo: надо обучить репозиторий выдавать записи по id указанного пользователя
         
         return count;
     }
@@ -236,9 +236,22 @@ public class RepositoryBlogPostManager : IBlogPostManager
         
         if (post is null) return false;
 
-        var tag = await _tagRepo.ExistName(Tag, Cancel).ConfigureAwait(false)
-                ? await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false)
-                : new Tag { Name = Tag };
+        //var tag = await _tagRepo.ExistName(Tag, Cancel).ConfigureAwait(false)
+        //        ? await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false)
+        //        : new Tag { Name = Tag };
+
+        Tag tag;
+
+        if(await _tagRepo.ExistName(Tag, Cancel).ConfigureAwait(false))
+        {
+            tag = await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false);
+            await _tagRepo.Update(tag, Cancel).ConfigureAwait(false);
+        }
+        else
+        {
+            tag = new Tag { Name = Tag };
+            await _tagRepo.Add(tag, Cancel).ConfigureAwait(false);
+        }
 
         if (post.Tags.Contains(tag))
             return true;              //  <- наверное всё же true, так как тег с таким именем уже есть в посте
