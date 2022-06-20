@@ -260,16 +260,16 @@ public class RepositoryBlogPostManager : IBlogPostManager
         if (Tag is null) throw new ArgumentNullException(nameof(Tag));
 
         var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
+        if (post is null) return false;
+        
         var tag = await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false);
-
-        if (post is null || Tag is null) return false;
 
         if (!post.Tags.Contains(tag))
             return false;
 
-        tag.Posts.Remove(post); // тут я подумал, а почему нет, раз есть в тегах есть ссылка на посты, которые связаны с этим тегом
+        //tag.Posts.Remove(post); // тут я подумал, а почему нет, раз есть в тегах есть ссылка на посты, которые связаны с этим тегом
 
-        //post.Tags.Remove(tag);
+        post.Tags.Remove(tag); //но пришлось всё же использовать этот путь
 
         await _postRepo.Update(post, Cancel).ConfigureAwait(false);
         await _tagRepo.Update(tag, Cancel).ConfigureAwait(false); //нужно ли тут репозиторий тега обновлять
