@@ -348,17 +348,29 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <exception cref="InvalidOperationException"> Не найденный пост </exception>
     public async Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
     {
+        if(CategoryName is null) throw new ArgumentNullException(nameof(CategoryName));
+
         var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
         
         if (post is null)
             throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
 
-        post.Category = await _categoryRepo.ExistName(CategoryName, Cancel).ConfigureAwait(false)
-                      ? await _categoryRepo.GetByName(CategoryName, Cancel).ConfigureAwait(false)
-                      : new Category { Name = CategoryName };
+        //post.Category = await _categoryRepo.ExistName(CategoryName, Cancel).ConfigureAwait(false)
+        //              ? await _categoryRepo.GetByName(CategoryName, Cancel).ConfigureAwait(false)
+        //              : new Category { Name = CategoryName };
+
+        if (await _categoryRepo.ExistName(CategoryName, Cancel).ConfigureAwait(false))
+        {
+            post.Category = await _categoryRepo.GetByName(CategoryName, Cancel).ConfigureAwait(false);
+            await _categoryRepo.Update(post.Category, Cancel).ConfigureAwait(false);
+        }
+        else
+        {
+            post.Category = new Category { Name = CategoryName };
+            await _categoryRepo.Add(post.Category, Cancel).ConfigureAwait(false);
+        }
 
         await _postRepo.Update(post, Cancel).ConfigureAwait(false);
-        await _categoryRepo.Update(post.Category, Cancel).ConfigureAwait(false);
 
         return post.Category;
     }
