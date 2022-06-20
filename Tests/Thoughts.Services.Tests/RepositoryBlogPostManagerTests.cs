@@ -170,6 +170,9 @@ public class RepositoryBlogPostManagerTests
         var actual_posts = await _BlogPostManager.GetAllPostsAsync();
 
         CollectionAssert.AreEqual(expected_posts, actual_posts.ToArray());
+
+        _Post_Repo_Mock.Verify(c => c.GetAll(It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
@@ -184,6 +187,9 @@ public class RepositoryBlogPostManagerTests
         var actual_posts_count = await _BlogPostManager.GetAllPostsCountAsync();
 
         Assert.AreEqual(expected_posts_count, actual_posts_count);
+
+        _Post_Repo_Mock.Verify(c => c.GetCount(It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
@@ -193,9 +199,6 @@ public class RepositoryBlogPostManagerTests
         int take = 0; //проверяем If: Take == 0
 
         var expected_page = _Posts.ToArray().Skip(skip).Take(take);
-
-        _Post_Repo_Mock.Setup(c => c.Get(skip, take, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expected_page);
 
         var actual_page = await _BlogPostManager.GetAllPostsSkipTakeAsync(skip, take);
 
@@ -216,6 +219,9 @@ public class RepositoryBlogPostManagerTests
         var actual_page = await _BlogPostManager.GetAllPostsSkipTakeAsync(skip, take);
 
         CollectionAssert.AreEqual(expected_page.ToArray(), actual_page.ToArray());
+
+        _Post_Repo_Mock.Verify(c => c.Get(skip, take, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
@@ -228,11 +234,14 @@ public class RepositoryBlogPostManagerTests
 
         var expected_page = new Page<Post>(Enumerable.Empty<Post>(), pageIndex, pageSize, total_count);
 
-        _Post_Repo_Mock.Setup(c => c.GetPage(pageIndex, pageSize, It.IsAny<CancellationToken>())).ReturnsAsync(expected_page);
+        _Post_Repo_Mock.Setup(c => c.GetCount(It.IsAny<CancellationToken>())).ReturnsAsync(total_count);
 
         var actual_page = await _BlogPostManager.GetAllPostsPageAsync(pageIndex, pageSize);
 
         Assert.AreEqual(expected_page.Items, actual_page.Items);
+
+        _Post_Repo_Mock.Verify(c => c.GetCount(It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
@@ -250,11 +259,16 @@ public class RepositoryBlogPostManagerTests
 
         _Post_Repo_Mock.Setup(c => c.GetPage(pageIndex, pageSize, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected_page);
+        _Post_Repo_Mock.Setup(c => c.GetCount(It.IsAny<CancellationToken>())).ReturnsAsync(total_count);
 
         var actual_page = await _BlogPostManager.GetAllPostsPageAsync(pageIndex, pageSize);
 
         //Assert.IsTrue(ReferenceEquals(expected_page, actual_page));
         Assert.AreEqual(expected_page, actual_page);
+
+        _Post_Repo_Mock.Verify(c => c.GetPage(pageIndex, pageSize, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Verify(c => c.GetCount(It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
     }
 
     #endregion
@@ -274,6 +288,9 @@ public class RepositoryBlogPostManagerTests
         var actual_posts = await _BlogPostManager.GetAllPostsByUserIdAsync(user_id);
 
         CollectionAssert.AreEqual(expected_posts.ToArray(), actual_posts.ToArray());
+
+        _Post_Repo_Mock.Verify(c => c.GetAll(It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
@@ -283,12 +300,15 @@ public class RepositoryBlogPostManagerTests
         var posts = _Posts.Where(p => p.UserId == user_id);
         var expected_posts_count = posts.Count();
 
-        _Post_Repo_Mock.Setup(c => c.GetCount(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expected_posts_count);
+        _Post_Repo_Mock.Setup(c => c.GetAll(It.IsAny<CancellationToken>()))
+                                    .ReturnsAsync(posts);
 
         var actual_posts_count = await _BlogPostManager.GetUserPostsCountAsync(user_id);
 
         Assert.AreEqual(expected_posts_count, actual_posts_count);
+
+        _Post_Repo_Mock.Verify(c => c.GetAll(It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
@@ -299,9 +319,6 @@ public class RepositoryBlogPostManagerTests
         var take = 0; //проверяем If: Take == 0
 
         var expected_page = _Posts.Where(p => p.User.Id == user_id).Skip(skip).Take(take);
-
-        _Post_Repo_Mock.Setup(c => c.Get(skip, take, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expected_page);
 
         var actual_page = await _BlogPostManager.GetAllPostsByUserIdSkipTakeAsync(user_id, skip, take);
 
@@ -323,25 +340,31 @@ public class RepositoryBlogPostManagerTests
         var actual_page = await _BlogPostManager.GetAllPostsByUserIdSkipTakeAsync(user_id, skip, take);
 
         CollectionAssert.AreEqual(expected_page.ToArray(), actual_page.ToArray());
+
+        _Post_Repo_Mock.Verify(c => c.GetAll(It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
     public async Task GetAllPostsByUserIdPageAsync_Test_Returns_EmptyPage_when_pageSize_eq_0()
     {
         var user_id = "1";
-        var total_count = _Posts.Where(c => c.User.Id == user_id).Count();
-
+        var total_user_posts = _Posts.Where(c => c.User.Id == user_id);
+        var total_count = total_user_posts.Count();
         int pageIndex = 2;
         int pageSize = 0;
 
         var expected_page = new Page<Post>(Enumerable.Empty<Post>(), pageIndex, pageSize, total_count);
 
-        _Post_Repo_Mock.Setup(c => c.GetPage(pageIndex, pageSize, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expected_page);
+        _Post_Repo_Mock.Setup(c => c.GetAll(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(total_user_posts);
 
         var actual_page = await _BlogPostManager.GetAllPostsByUserIdPageAsync(user_id, pageIndex, pageSize);
 
         Assert.AreEqual(expected_page.Items, actual_page.Items);
+
+        _Post_Repo_Mock.Verify(c => c.GetAll(It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
@@ -366,6 +389,9 @@ public class RepositoryBlogPostManagerTests
         Assert.AreEqual(pageIndex, actual_page.PageNumber);
         Assert.AreEqual(pageSize, actual_page.PageSize);
         Assert.AreEqual(total_count, actual_page.TotalCount);
+
+        _Post_Repo_Mock.Verify(c => c.GetAll(It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
     }
 
     #endregion
@@ -384,6 +410,9 @@ public class RepositoryBlogPostManagerTests
         var actual_post = await _BlogPostManager.GetPostAsync(post_id);
 
         Assert.AreEqual(expected_post, actual_post);
+
+        _Post_Repo_Mock.Verify(p => p.GetById(post_id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
@@ -407,10 +436,10 @@ public class RepositoryBlogPostManagerTests
             .ReturnsAsync(posts);
         var actual_posts = await _BlogPostManager.GetAllPostsAsync();
 
-
         Assert.AreEqual(expecting_result, actual_result);
         CollectionAssert.AreNotEqual(_Posts, posts);
         CollectionAssert.AreEqual(posts, actual_posts.ToArray());
+
         _Post_Repo_Mock.Verify(c => c.DeleteById(post_id, It.IsAny<CancellationToken>()));
         _Post_Repo_Mock.Verify(c => c.GetById(post_id, It.IsAny<CancellationToken>()));
         _Post_Repo_Mock.Verify(c => c.GetAll(It.IsAny<CancellationToken>()));
@@ -433,6 +462,10 @@ public class RepositoryBlogPostManagerTests
         var actual_result = await _BlogPostManager.DeletePostAsync(post_id);
 
         Assert.AreEqual(expecting_result, actual_result);
+
+        _Post_Repo_Mock.Verify(p => p.GetById(post_id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Verify(c => c.DeleteById(post_id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
     }
     #endregion
 
@@ -477,9 +510,12 @@ public class RepositoryBlogPostManagerTests
         //Assert.AreEqual(expected_post, actual_post); // <- любые прямые сравнения объектов у меня не сработали
         // в общем, полностью сравнивать объекты не получается
 
-        _Post_Repo_Mock.Verify();
-        _Category_Repo_Mock.Verify();
-        _User_Repo_Mock.Verify();
+        _User_Repo_Mock.Verify(c => c.GetById(user_id, It.IsAny<CancellationToken>()));
+        _Category_Repo_Mock.Verify(c => c.ExistName(new_category, It.IsAny<CancellationToken>()));
+        //_Post_Repo_Mock.Verify(c => c.Add(expected_post, It.IsAny<CancellationToken>())); //Add не проходит верификацию
+        _User_Repo_Mock.VerifyNoOtherCalls();
+        //_Post_Repo_Mock.VerifyNoOtherCalls();
+        _Category_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
@@ -519,12 +555,15 @@ public class RepositoryBlogPostManagerTests
         Assert.AreEqual(expected_post.Body, actual_post.Body);
         Assert.AreEqual(expected_post.User.Id, actual_post.User.Id);
         Assert.AreEqual(expected_post.Category.Name, actual_post.Category.Name);
-
         Assert.AreEqual(expected_category, actual_post.Category);
 
-        _Post_Repo_Mock.Verify();
-        _Category_Repo_Mock.Verify();
-        _User_Repo_Mock.Verify();
+        _User_Repo_Mock.Verify(c => c.GetById(user_id, It.IsAny<CancellationToken>()));
+        _Category_Repo_Mock.Verify(c => c.ExistName(old_category, It.IsAny<CancellationToken>()));
+        _Category_Repo_Mock.Verify(c => c.GetByName(old_category, It.IsAny<CancellationToken>()));
+        //_Post_Repo_Mock.Verify(c => c.Add(expected_post, It.IsAny<CancellationToken>())); //Add не проходит верификацию
+        _User_Repo_Mock.VerifyNoOtherCalls();
+        //_Post_Repo_Mock.VerifyNoOtherCalls();
+        _Category_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
@@ -657,33 +696,39 @@ public class RepositoryBlogPostManagerTests
     {
         var post = _Posts[0];
         post.Tags = post.Tags.ToList(); //иначе Add не сработает
-        var tag_name = "Tag3";
         var expected_tag = _Tags[2];  // <- существующий "Tag3"
         var expected_result = true;
 
         _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(post);
-        _Tag_Repo_Mock.Setup(c => c.ExistName(tag_name, It.IsAny<CancellationToken>()))
+        _Tag_Repo_Mock.Setup(c => c.ExistName(expected_tag.Name, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
-        _Tag_Repo_Mock.Setup(c => c.GetByName(tag_name, It.IsAny<CancellationToken>()))
+        _Tag_Repo_Mock.Setup(c => c.GetByName(expected_tag.Name, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected_tag);
-        _Tag_Repo_Mock.Setup(c => c.Add(expected_tag, It.IsAny<CancellationToken>()))
+        _Tag_Repo_Mock.Setup(c => c.Update(expected_tag, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected_tag);
         _Post_Repo_Mock.Setup(c => c.Update(post, It.IsAny<CancellationToken>()))
             .ReturnsAsync(post);
 
-        var actual_result = await _BlogPostManager.AssignTagAsync(post.Id, tag_name);
+        var actual_result = await _BlogPostManager.AssignTagAsync(post.Id, expected_tag.Name);
 
         Assert.AreEqual(expected_result, actual_result);
-        Assert.IsTrue(post.Tags.Count() == 2); 
-        
-        _Tag_Repo_Mock.Verify();
-        _Post_Repo_Mock.Verify();
+        Assert.IsTrue(post.Tags.Count() == 2);
+
+        _Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        _Tag_Repo_Mock.Verify(c => c.ExistName(expected_tag.Name, It.IsAny<CancellationToken>()));
+        _Tag_Repo_Mock.Verify(c => c.GetByName(expected_tag.Name, It.IsAny<CancellationToken>()));
+        _Tag_Repo_Mock.Verify(c => c.Update(expected_tag, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Verify(c => c.Update(post, It.IsAny<CancellationToken>()));
+
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+        _Tag_Repo_Mock.VerifyNoOtherCalls();
     }
 
-    [TestMethod]
-    public async Task AssignTagAsync_Test_Returns_True_when_Tag_Is_NewTag()
+    [TestMethod] // !!!
+    public async Task AssignTagAsync_Test_Returns_True_when_Tag_Is_NewTag() 
     {
+        //todo: не срабатывает верификация метода Add для репозитория тегов
         var post = _Posts[1];
         post.Tags = post.Tags.ToList();
         var tag_name = "Tag4";
@@ -694,8 +739,6 @@ public class RepositoryBlogPostManagerTests
             .ReturnsAsync(post);
         _Tag_Repo_Mock.Setup(c => c.ExistName(tag_name, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
-        _Tag_Repo_Mock.Setup(c => c.GetByName(tag_name, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expected_tag);
         _Tag_Repo_Mock.Setup(c => c.Add(expected_tag, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected_tag);
         _Post_Repo_Mock.Setup(c => c.Update(post, It.IsAny<CancellationToken>()))
@@ -704,9 +747,14 @@ public class RepositoryBlogPostManagerTests
         var actual_result = await _BlogPostManager.AssignTagAsync(post.Id, tag_name);
 
         Assert.AreEqual(expected_result, actual_result);
-        Assert.IsTrue(post.Tags.Count() == 2); 
-        _Tag_Repo_Mock.Verify();
-        _Post_Repo_Mock.Verify();
+        Assert.IsTrue(post.Tags.Count() == 2);
+
+        _Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        _Tag_Repo_Mock.Verify(c => c.ExistName(tag_name, It.IsAny<CancellationToken>()));
+        //_Tag_Repo_Mock.Verify(c => c.Add(expected_tag, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Verify(c => c.Update(post, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+        //_Tag_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]  //судя по отладчику, тест работает неправильно
@@ -730,7 +778,12 @@ public class RepositoryBlogPostManagerTests
         var actual_result = await _BlogPostManager.AssignTagAsync(post.Id, expected_tag.Name);
 
         Assert.AreEqual(expected_result, actual_result);
-        _Tag_Repo_Mock.Verify();
+        
+        //_Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        //_Tag_Repo_Mock.Verify(c => c.ExistName(expected_tag.Name, It.IsAny<CancellationToken>()));
+        //_Tag_Repo_Mock.Verify(c => c.GetByName(expected_tag.Name, It.IsAny<CancellationToken>()));
+        //_Post_Repo_Mock.VerifyNoOtherCalls();
+        //_Tag_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
@@ -794,8 +847,12 @@ public class RepositoryBlogPostManagerTests
         Assert.IsTrue(post.Tags.Count() == 1);
         Assert.IsTrue(_Tags.Length == 3);
 
-        _Post_Repo_Mock.Verify();
-        _Tag_Repo_Mock.Verify();
+        _Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        _Tag_Repo_Mock.Verify(c => c.GetByName(tag.Name, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Verify(c => c.Update(post, It.IsAny<CancellationToken>()));
+        _Tag_Repo_Mock.Verify(c => c.Update(tag, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+        _Tag_Repo_Mock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
@@ -845,8 +902,10 @@ public class RepositoryBlogPostManagerTests
         var actual_result = await _BlogPostManager.RemoveTagAsync(post.Id, tag.Name);
 
         Assert.IsFalse(actual_result);
-        _Post_Repo_Mock.Verify();
-        _Tag_Repo_Mock.Verify();
+        _Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        _Tag_Repo_Mock.Verify(c => c.GetByName(tag.Name, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+        _Tag_Repo_Mock.VerifyNoOtherCalls();
     }
 
     #endregion
