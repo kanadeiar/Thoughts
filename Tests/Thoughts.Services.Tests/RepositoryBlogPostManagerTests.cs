@@ -760,4 +760,87 @@ public class RepositoryBlogPostManagerTests
     }
 
     #endregion
+
+    #region Tag - RemoveTag (4 tests)
+
+    [TestMethod]
+    public async Task RemoveTagAsync_Test_Returns_True()
+    {
+        var post = _Posts[6];
+        post.Tags = post.Tags.ToList();
+        var tag = _Tags[0];
+        var expected_result = true;
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+        _Tag_Repo_Mock.Setup(c => c.GetByName(tag.Name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(tag);
+        _Post_Repo_Mock.Setup(c => c.Update(post, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+        _Tag_Repo_Mock.Setup(c => c.Update(tag, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(tag);
+
+        var actual_result = await _BlogPostManager.RemoveTagAsync(post.Id, tag.Name);
+
+        Assert.AreEqual(expected_result, actual_result);
+        CollectionAssert.Contains(_Tags, _Tags[0]);
+        Assert.IsTrue(post.Tags.Count() == 1);
+        Assert.IsTrue(_Tags.Length == 3);
+
+        _Post_Repo_Mock.Verify();
+        _Tag_Repo_Mock.Verify();
+    }
+
+    [TestMethod]
+    public async Task RemoveTagAsync_Test_Returns_ArgumentNullException_When_TagName_is_Null()
+    {
+        var post = _Posts[0];
+        string Tag = null; //проверяем Tag на null
+        var expected_exception = new ArgumentNullException(nameof(Tag));
+
+        try
+        {
+            await _BlogPostManager.RemoveTagAsync(post.Id, Tag);
+        }
+        catch (Exception actual_exception)
+        {
+            Assert.AreEqual(expected_exception.Message, actual_exception.Message);
+            Assert.AreEqual(expected_exception.GetType(), actual_exception.GetType());
+            return;
+        }
+
+        Assert.Fail("Исключение не было получено.");
+    }
+
+    [TestMethod]
+    public async Task RemoveTagAsync_Test_Returns_False_When_Post_is_Null()
+    {
+        var post_id = 10;
+        var tag = _Tags[0];
+
+        var actual_result = await _BlogPostManager.RemoveTagAsync(post_id, tag.Name);
+
+        Assert.IsFalse(actual_result);
+    }
+
+    [TestMethod]
+    public async Task RemoveTagAsync_Test_Returns_False_When_Post_NotContains_Tag()
+    {
+        var post = _Posts[0];
+        post.Tags = post.Tags.ToList();
+        var tag = _Tags[2];  // этот тег не прикреплён к посту
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+        _Tag_Repo_Mock.Setup(c => c.GetByName(tag.Name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(tag);
+
+        var actual_result = await _BlogPostManager.RemoveTagAsync(post.Id, tag.Name);
+
+        Assert.IsFalse(actual_result);
+        _Post_Repo_Mock.Verify();
+        _Tag_Repo_Mock.Verify();
+    }
+
+    #endregion
 }
