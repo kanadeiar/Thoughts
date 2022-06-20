@@ -538,7 +538,7 @@ public class RepositoryBlogPostManagerTests
         catch (Exception actual_exception)
         {
             Assert.AreEqual(expected_exception.Message, actual_exception.Message);
-            Assert.AreEqual(expected_exception.GetType(), actual_exception.GetType());\
+            Assert.AreEqual(expected_exception.GetType(), actual_exception.GetType());
             return;
         }
 
@@ -640,7 +640,124 @@ public class RepositoryBlogPostManagerTests
 
         Assert.Fail("Исключение не было получено.");
     }
-    
+
     #endregion
 
+    #region Tag - AssignTag (5 tests)
+
+    [TestMethod]
+    public async Task AssignTagAsync_Test_Returns_True_when_Tag_Was_Found()
+    {
+        var post = _Posts[0];
+        post.Tags = post.Tags.ToList(); //иначе Add не сработает
+        var tag_name = "Tag3";
+        var expected_tag = _Tags[2];  // <- существующий "Tag3"
+        var expected_result = true;
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+        _Tag_Repo_Mock.Setup(c => c.ExistName(tag_name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+        _Tag_Repo_Mock.Setup(c => c.GetByName(tag_name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_tag);
+        _Tag_Repo_Mock.Setup(c => c.Add(expected_tag, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_tag);
+        _Post_Repo_Mock.Setup(c => c.Update(post, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+
+        var actual_result = await _BlogPostManager.AssignTagAsync(post.Id, tag_name);
+
+        Assert.AreEqual(expected_result, actual_result);
+        Assert.IsTrue(post.Tags.Count() == 2); 
+        
+        _Tag_Repo_Mock.Verify();
+        _Post_Repo_Mock.Verify();
+    }
+
+    [TestMethod]
+    public async Task AssignTagAsync_Test_Returns_True_when_Tag_Is_NewTag()
+    {
+        var post = _Posts[1];
+        post.Tags = post.Tags.ToList();
+        var tag_name = "Tag4";
+        var expected_tag = new Tag { Name = tag_name }; // новый тег
+        var expected_result = true;
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+        _Tag_Repo_Mock.Setup(c => c.ExistName(tag_name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+        _Tag_Repo_Mock.Setup(c => c.GetByName(tag_name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_tag);
+        _Tag_Repo_Mock.Setup(c => c.Add(expected_tag, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_tag);
+        _Post_Repo_Mock.Setup(c => c.Update(post, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+
+        var actual_result = await _BlogPostManager.AssignTagAsync(post.Id, tag_name);
+
+        Assert.AreEqual(expected_result, actual_result);
+        Assert.IsTrue(post.Tags.Count() == 2); 
+        _Tag_Repo_Mock.Verify();
+        _Post_Repo_Mock.Verify();
+    }
+
+    [TestMethod]  //судя по отладчику, тест работает неправильно
+    public async Task AssignTagAsync_Test_Returns_True_when_Tag_Is_AlreadyAssigned()
+    {
+        //todo: тест судя по отладчику неправильно отрабатывает - нет захода в блок, где возврат true при изначальном наличии в посте тега
+        //строка 243-244
+
+        var post = _Posts[6];
+        post.Tags = post.Tags.ToList();
+        var expected_tag = _Tags[0]; //уже существующий и прикреплённый тег к посту
+        var expected_result = true;
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+        _Tag_Repo_Mock.Setup(c => c.ExistName(expected_tag.Name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+        _Tag_Repo_Mock.Setup(c => c.GetByName(expected_tag.Name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_tag);
+
+        var actual_result = await _BlogPostManager.AssignTagAsync(post.Id, expected_tag.Name);
+
+        Assert.AreEqual(expected_result, actual_result);
+        _Tag_Repo_Mock.Verify();
+    }
+
+    [TestMethod]
+    public async Task AssignTagAsync_Test_Returns_ArgumentNullException_when_Tag_is_Null()
+    {
+        var post_id = 1;
+        string Tag = null;
+
+        var expected_exception = new ArgumentNullException(nameof(Tag));
+
+        try
+        {
+            await _BlogPostManager.AssignTagAsync(post_id, Tag);
+        }
+        catch (Exception actual_exception)
+        {
+            Assert.AreEqual(expected_exception.Message, actual_exception.Message);
+            Assert.AreEqual(expected_exception.GetType(), actual_exception.GetType());
+            return;
+        }
+
+        Assert.Fail("Исключение не было получено.");
+    }
+
+    [TestMethod]
+    public async Task AssignTagAsync_Test_Returns_False_when_Post_is_Null()
+    {
+        var post_id = 10; //идентификатор несуществующего поста
+        var tag = _Tags[0];
+
+        var expexted_result = await _BlogPostManager.AssignTagAsync(post_id, tag.Name);
+
+        Assert.AreEqual(false, expexted_result);
+    }
+
+    #endregion
 }
