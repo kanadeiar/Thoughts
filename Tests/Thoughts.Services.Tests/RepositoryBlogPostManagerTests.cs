@@ -941,5 +941,114 @@ public class RepositoryBlogPostManagerTests
 
         Assert.Fail("Исключение не было получено.");
     }
+
+    #endregion
+
+    #region Edit ChangePostTitleAsync ChangePostBodyAsync
+
+    [TestMethod]
+    public async Task ChangePostTitleAsync_Test_Returns_True()
+    {
+        var post = _Posts[0];
+        var new_title = "new title";
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+        _Post_Repo_Mock.Setup(c => c.Update(post, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+
+        var actual_post = await _BlogPostManager.ChangePostTitleAsync(post.Id, new_title);
+
+        Assert.IsTrue(actual_post);
+        Assert.AreEqual(post.Title, new_title);
+
+        _Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Verify(c => c.Update(post, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task ChangePostTitleAsync_Test_Returns_False_When_Post_Not_Found()
+    {
+        var post_id = 10;
+        var new_title = "new title";
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post_id, It.IsAny<CancellationToken>()));
+
+        var actual_post = await _BlogPostManager.ChangePostTitleAsync(post_id, new_title);
+
+        Assert.IsFalse(actual_post);
+        _Post_Repo_Mock.Verify(c => c.GetById(post_id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task ChangePostTitleAsync_Test_Returns_False_When_Title_is_Null()
+    {
+        var post = _Posts[0];
+        string new_title = null;
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+
+        var actual_post = await _BlogPostManager.ChangePostTitleAsync(post.Id, new_title);
+
+        Assert.IsFalse(actual_post);
+        _Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+    }
+
+
+    [TestMethod]
+    public async Task ChangePostBodyAsync_Test_Returns_True()
+    {
+        var post = _Posts[0];
+        var new_body = "new title";
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+        _Post_Repo_Mock.Setup(c => c.Update(post, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+
+        var actual_post = await _BlogPostManager.ChangePostBodyAsync(post.Id, new_body);
+
+        Assert.IsTrue(actual_post);
+        Assert.AreEqual(post.Body, new_body);
+
+        _Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Verify(c => c.Update(post, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task ChangePostBodyAsync_Test_Returns_False_When_Post_Not_Found()
+    {
+        var post_id = 10;
+        var new_body = "new title";
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post_id, It.IsAny<CancellationToken>()));
+
+        var actual_post = await _BlogPostManager.ChangePostTitleAsync(post_id, new_body);
+
+        Assert.IsFalse(actual_post);
+        _Post_Repo_Mock.Verify(c => c.GetById(post_id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task ChangePostTitleAsync_Test_Returns_False_When_Body_is_Null()
+    {
+        var post = _Posts[0];
+        string new_body = null;
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+
+        var actual_post = await _BlogPostManager.ChangePostTitleAsync(post.Id, new_body);
+
+        Assert.IsFalse(actual_post);
+        _Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+    }
     #endregion
 }
