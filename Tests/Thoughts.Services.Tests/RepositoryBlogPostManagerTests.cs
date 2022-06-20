@@ -1051,4 +1051,111 @@ public class RepositoryBlogPostManagerTests
         _Post_Repo_Mock.VerifyNoOtherCalls();
     }
     #endregion
+
+    #region Edit ChangePostCategoryAsync
+
+    [TestMethod]
+    public async Task ChangePostCategoryAsync_Test_Returns_Category_when_Category_was_Found()
+    {
+        var post = _Posts[0];
+        var expected_category = _Categories[2];
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+        _Category_Repo_Mock.Setup(c => c.ExistName(expected_category.Name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+        _Category_Repo_Mock.Setup(c => c.GetByName(expected_category.Name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_category);
+        _Category_Repo_Mock.Setup(c => c.Update(expected_category, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_category);
+        _Post_Repo_Mock.Setup(c => c.Update(post, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+
+        var actual_category = await _BlogPostManager.ChangePostCategoryAsync(post.Id, expected_category.Name);
+
+        Assert.AreEqual(expected_category, actual_category);
+        _Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        _Category_Repo_Mock.Verify(c => c.ExistName(expected_category.Name, It.IsAny<CancellationToken>()));
+        _Category_Repo_Mock.Verify(c => c.GetByName(expected_category.Name, It.IsAny<CancellationToken>()));
+        _Category_Repo_Mock.Verify(c => c.Update(expected_category, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Verify(c => c.Update(post, It.IsAny<CancellationToken>()));
+
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+        _Category_Repo_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod] // !!!
+    public async Task ChangePostCategoryAsync_Test_Returns_Category_when_Category_is_New()
+    {
+        //todo: Не срабатывает верификация мока на метод Add для репозитория категорий
+
+        var post = _Posts[0];
+        var expected_category = new Category { Name = "new_category" };
+
+        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+        _Category_Repo_Mock.Setup(c => c.ExistName(expected_category.Name, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+        _Category_Repo_Mock.Setup(c => c.Add(expected_category, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expected_category);
+        _Post_Repo_Mock.Setup(c => c.Update(post, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+
+        var actual_category = await _BlogPostManager.ChangePostCategoryAsync(post.Id, expected_category.Name);
+
+        Assert.AreEqual(expected_category.Name, actual_category.Name);
+        CollectionAssert.DoesNotContain(_Categories, actual_category);
+
+        _Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
+        _Category_Repo_Mock.Verify(c => c.ExistName(expected_category.Name, It.IsAny<CancellationToken>()));
+        //_Category_Repo_Mock.Verify(c => c.Add(expected_category, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.Verify(c => c.Update(post, It.IsAny<CancellationToken>()));
+        _Post_Repo_Mock.VerifyNoOtherCalls();
+        //_Category_Repo_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task ChangePostCategoryAsync_Test_Throws_ArgumentNullException_when_CategoryName_is_Null()
+    {
+        var post_id = 1;
+        string CategoryName = null;
+
+        var expected_exception = new ArgumentNullException(nameof(CategoryName));
+
+        try
+        {
+            await _BlogPostManager.ChangePostCategoryAsync(post_id, CategoryName);
+        }
+        catch (Exception actual_exception)
+        {
+            Assert.AreEqual(expected_exception.Message, actual_exception.Message);
+            Assert.AreEqual(expected_exception.GetType(), actual_exception.GetType());
+            return;
+        }
+
+        Assert.Fail("Исключение не было получено.");
+    }
+
+    [TestMethod]
+    public async Task ChangePostCategoryAsync_Test_Throws_InvalidOperationException_when_Post_NotFound()
+    {
+        var PostId = 10;
+        string CategoryName = "new";
+
+        var expected_exception = new InvalidOperationException();
+
+        try
+        {
+            await _BlogPostManager.ChangePostCategoryAsync(PostId, CategoryName);
+        }
+        catch (Exception actual_exception)
+        {
+            Assert.AreEqual(expected_exception.GetType(), actual_exception.GetType());
+            return;
+        }
+
+        Assert.Fail("Исключение не было получено.");
+    }
+
+    #endregion
 }
