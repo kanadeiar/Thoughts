@@ -1,11 +1,20 @@
 ﻿using Thoughts.Extensions.Base;
-
 using PostDal = Thoughts.DAL.Entities.Post;
 using StatusDal = Thoughts.DAL.Entities.Status;
 using CategoryDal = Thoughts.DAL.Entities.Category;
+using CommentDal = Thoughts.DAL.Entities.Comment;
+using RoleDal = Thoughts.DAL.Entities.Role;
+using TagDal = Thoughts.DAL.Entities.Tag;
+using UserDal = Thoughts.DAL.Entities.User;
 using PostDom = Thoughts.Domain.Base.Entities.Post;
 using StatusDom = Thoughts.Domain.Base.Entities.Status;
 using CategoryDom = Thoughts.Domain.Base.Entities.Category;
+using CommentDom = Thoughts.Domain.Base.Entities.Comment;
+using RoleDom = Thoughts.Domain.Base.Entities.Role;
+using TagDom = Thoughts.Domain.Base.Entities.Tag;
+using UserDom = Thoughts.Domain.Base.Entities.User;
+using Thoughts.Interfaces.Base.Entities;
+using Thoughts.Domain.Base;
 
 namespace Thoughts.Extensions.Maps
 {
@@ -13,25 +22,174 @@ namespace Thoughts.Extensions.Maps
     {
         public PostDom Map(PostDal item)
         {
-            int st = (int)item.Status;
-            return new PostDom()
+            if (item is null) return new PostDom();
+
+            var post = new PostDom()
             {
                 Id = item.Id,
-                Status = (StatusDom)st,
+                Status = (StatusDom)item.Status,
                 Date = item.Date,
-                User = new Domain.Base.Entities.User(),//
-                UserId = item.User.Id,//
+                UserId = item.User.Id,
                 Title = item.Title,
                 Body = item.Body,
-                Category = new CategoryDom(),//
-                Tags = item.Tags()
+                PublicationsDate = item.PublicationDate,
             };
+            MapsCash.PostDomCash.Add(post);
+
+            var tmpUser = MapsCash.UserDomCash.FirstOrDefault(x => x.Id == item.User.Id);
+            if (tmpUser is null)
+            {
+                post.User = new UserMapper().Map(item.User);
+            }
+            post.User = tmpUser!;
+
+            var tmpCat = MapsCash.CategoryDomCash.FirstOrDefault(x => x.Id == item.Category.Id);
+            if(tmpCat is null)
+            {
+                post.Category = new CategoryMapper().Map(item.Category);
+            }
+            post.Category = tmpCat!;
+
+            foreach (var tag in item.Tags)
+            {
+                var tmpTag = MapsCash.TagDomCash.FirstOrDefault(x=> x.Id == tag.Id);
+                if(tmpTag is null)
+                {
+                    tmpTag = new TagMapper().Map(tag);
+                }
+                post.Tags.Add(tmpTag);
+            }
+
+            foreach (var comment in item.Comments)
+            {
+                var tmpComment = MapsCash.CommentDomCash.FirstOrDefault(x => x.Id == comment.Id);
+                if( tmpComment is null)
+                {
+                    tmpComment = new CommentMapper().Map(comment);
+                }
+                post.Comments.Add(tmpComment);
+            }
+
+            return post;
         }
-        public PostDal Map(PostDom item) => throw new NotImplementedException();
+        public PostDal Map(PostDom item)
+        {
+            if(item is null) return new PostDal();
+
+            var post = new PostDal()
+            {
+                Id = item.Id,
+                Status = (StatusDal)item.Status,
+                Date = item.Date,
+                Title = item.Title,
+                Body = item.Body,
+                PublicationDate = item.PublicationsDate,
+            };
+            MapsCash.PostDalCash.Add(post);
+
+            var tmpUser = MapsCash.UserDalCash.FirstOrDefault(x => x.Id == item.User.Id);
+            if (tmpUser is null)
+            {
+                post.User = new UserMapper().Map(item.User);
+            }
+            post.User = tmpUser!;
+
+            var tmpCat = MapsCash.CategoryDalCash.FirstOrDefault(x => x.Id == item.Category.Id);
+            if (tmpCat is null)
+            {
+                post.Category = new CategoryMapper().Map(item.Category);
+            }
+            post.Category = tmpCat!;
+
+            foreach (var tag in item.Tags)
+            {
+                var tmpTag = MapsCash.TagDalCash.FirstOrDefault(x => x.Id == tag.Id);
+                if (tmpTag is null)
+                {
+                    tmpTag = new TagMapper().Map(tag);
+                }
+                post.Tags.Add(tmpTag);
+            }
+
+            foreach (var comment in item.Comments)
+            {
+                var tmpComment = MapsCash.CommentDalCash.FirstOrDefault(x => x.Id == comment.Id);
+                if (tmpComment is null)
+                {
+                    tmpComment = new CommentMapper().Map(comment);
+                }
+                post.Comments.Add(tmpComment);
+            }
+
+            return post;
+        }
     }
     public class CategoryMapper : IMapper<CategoryDal, CategoryDom>, IMapper<CategoryDom, CategoryDal>
     {
-        public CategoryDal Map(CategoryDom item) => throw new NotImplementedException();
-        public CategoryDom Map(CategoryDal item) => throw new NotImplementedException();
+        public CategoryDal Map(CategoryDom item)
+        {
+            var cat = new CategoryDal()
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Status = (StatusDal)item.Status,
+            };
+            MapsCash.CategoryDalCash.Add(cat);
+
+            foreach (var post in item.Posts)
+            {
+                var tmpPost = MapsCash.PostDalCash.FirstOrDefault(i => i.Id == post.Id);
+                if(tmpPost is null)
+                {
+                    tmpPost = new PostMapper().Map(post);
+                }
+                cat.Posts.Add(tmpPost);
+            }
+
+            return cat;
+        }
+        public CategoryDom Map(CategoryDal item)
+        {
+            var cat = new CategoryDom()
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Status = (StatusDom)item.Status,
+            };
+            MapsCash.CategoryDomCash.Add(cat);
+
+            foreach (var post in item.Posts)
+            {
+                var tmpPost = MapsCash.PostDomCash.FirstOrDefault(i => i.Id == post.Id);
+                if (tmpPost is null)
+                {
+                    tmpPost = new PostMapper().Map(post);
+                }
+                cat.Posts.Add(tmpPost);
+            }
+
+            return cat;
+        }
+    }
+
+    public class CommentMapper : IMapper<CommentDal, CommentDom>, IMapper<CommentDom, CommentDal>
+    {
+        public CommentDal Map(CommentDom item) => throw new NotImplementedException();
+        public CommentDom Map(CommentDal item) => throw new NotImplementedException();
+    }
+    public class RoleMapper : IMapper<RoleDal, RoleDom>, IMapper<RoleDom, RoleDal>
+    {
+        public RoleDom Map(RoleDal item) => throw new NotImplementedException();
+        public RoleDal Map(RoleDom item) => throw new NotImplementedException();
+    }
+    public class TagMapper : IMapper<TagDal, TagDom>, IMapper<TagDom, TagDal>
+    {
+        public TagDal Map(TagDom item) => throw new NotImplementedException();
+        public TagDom Map(TagDal item) => throw new NotImplementedException();
+    }
+    public class UserMapper : IMapper<UserDal, UserDom>, IMapper<UserDom, UserDal>
+    {
+        public UserDal Map(UserDom item) => throw new NotImplementedException();
+        public UserDom Map(UserDal item) => throw new NotImplementedException();
     }
 }
