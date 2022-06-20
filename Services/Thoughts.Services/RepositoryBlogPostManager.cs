@@ -234,7 +234,7 @@ public class RepositoryBlogPostManager : IBlogPostManager
 
         var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
         
-        if( post is null || Tag is null ) return false;
+        if (post is null) return false;
 
         var tag = await _tagRepo.ExistName(Tag, Cancel).ConfigureAwait(false)
                 ? await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false)
