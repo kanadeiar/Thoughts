@@ -47,4 +47,18 @@ public class DbRepositoryTests
 
         CollectionAssert.AreEqual(expected_tags, actual_tags.ToArray());
     }
+
+    [TestMethod]
+    public async Task GetPage_Returns_Page()
+    {
+        const int pageNumber = 2;
+        const int pageSize = 3;
+        var count = _tags.Length;
+        var tags = _tags.Skip(pageNumber * pageSize).Take(pageSize).ToArray();
+        var expected_page = new Page<Tag>(tags, pageNumber, pageSize, count);
+
+        var actual_page = await _tags_Repository.GetPage(pageNumber, pageSize);
+
+        CollectionAssert.AreEqual(expected_page.Items.ToArray(), actual_page.Items.ToArray());
+    }
 }
