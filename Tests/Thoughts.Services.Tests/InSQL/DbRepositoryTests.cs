@@ -39,6 +39,9 @@ public class DbRepositoryTests
 
         await _db.Tags.AddRangeAsync(_tags);
 
+        _posts = Enumerable.Empty<Post>().ToArray();
+        await _db.Posts.AddRangeAsync(_posts);
+
         await _db.SaveChangesAsync();
         
         _tags_Repository = new DbRepository<Tag>(_db, _Logger_Tag_Mock.Object);
@@ -89,5 +92,28 @@ public class DbRepositoryTests
         _Logger_Tag_Mock.VerifyNoOtherCalls();
     }
 
+    [TestMethod]
+    public async Task GetAll_Returns_All_Items()
+    {
+        var expected_tags = _tags.ToArray();
+
+        var actual_tags = await _tags_Repository.GetAll();
+
+        CollectionAssert.AreEqual(expected_tags, actual_tags.ToArray());
+
+        _Logger_Tag_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task GetAll_Returns_Empty_Enum_when_Repo_is_Empty()
+    {
+        var expected_empty_posts = _posts;
+
+        var actual_empty_posts = await _posts_Repository.GetAll();
+
+        Assert.AreEqual(expected_empty_posts.Length, actual_empty_posts.Count());
+        Assert.IsTrue(actual_empty_posts.Count() == 0);
+        _Logger_Post_Mock.VerifyNoOtherCalls();
+    }
 
 }

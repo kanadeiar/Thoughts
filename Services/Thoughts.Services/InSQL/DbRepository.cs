@@ -25,13 +25,34 @@ public class DbRepository<T, TKey> : IRepository<T, TKey> where T : class, IEnti
         Set = _db.Set<T>();
     }
 
-    public async Task<bool> ExistId(TKey Id, CancellationToken Cancel = default) => throw new NotImplementedException();
+    public async Task<bool> ExistId(TKey Id, CancellationToken Cancel = default)
+    {
+        throw new NotImplementedException();
+    }
 
-    public async Task<bool> Exist(T item, CancellationToken Cancel = default) => throw new NotImplementedException();
+    public async Task<bool> Exist(T item, CancellationToken Cancel = default)
+    {
+        throw new NotImplementedException();
+    }
 
-    public async Task<int> GetCount(CancellationToken Cancel = default) => throw new NotImplementedException();
+    public async Task<int> GetCount(CancellationToken Cancel = default)
+    {
+        throw new NotImplementedException();
+    }
 
-    public async Task<IEnumerable<T>> GetAll(CancellationToken Cancel = default) => throw new NotImplementedException();
+    public async Task<IEnumerable<T>> GetAll(CancellationToken Cancel = default)
+    {
+        var query = Items;
+
+        if(query is null) return Enumerable.Empty<T>();
+
+        if(query is not IOrderedQueryable<T>)
+            query = query.OrderBy(item => item.Id);
+
+        var result = await query.ToArrayAsync(Cancel).ConfigureAwait(false);
+        
+        return result;
+    }
 
     public async Task<IEnumerable<T>> Get(int Skip, int Count, CancellationToken Cancel = default)
     {
@@ -77,11 +98,20 @@ public class DbRepository<T, TKey> : IRepository<T, TKey> where T : class, IEnti
         return page;
     }
 
-    public async Task<T> GetById(TKey Id, CancellationToken Cancel = default) => throw new NotImplementedException();
+    public async Task<T> GetById(TKey Id, CancellationToken Cancel = default)
+    {
+        throw new NotImplementedException();
+    }
 
-    public async Task<T> Add(T item, CancellationToken Cancel = default) => throw new NotImplementedException();
+    public async Task<T> Add(T item, CancellationToken Cancel = default)
+    {
+        throw new NotImplementedException();
+    }
 
-    public async Task AddRange(IEnumerable<T> items, CancellationToken Cancel = default) => throw new NotImplementedException();
+    public async Task AddRange(IEnumerable<T> items, CancellationToken Cancel = default)
+    {
+        throw new NotImplementedException();
+    }
 
     public async Task<T> Update(T item, CancellationToken Cancel = default)
     {
@@ -94,13 +124,25 @@ public class DbRepository<T, TKey> : IRepository<T, TKey> where T : class, IEnti
         return item;
     }
 
-    public async Task UpdateRange(IEnumerable<T> items, CancellationToken Cancel = default) => throw new NotImplementedException();
+    public async Task UpdateRange(IEnumerable<T> items, CancellationToken Cancel = default)
+    {
+        throw new NotImplementedException();
+    }
 
-    public async Task<T> Delete(T item, CancellationToken Cancel = default) => throw new NotImplementedException();
+    public async Task<T> Delete(T item, CancellationToken Cancel = default)
+    {
+        throw new NotImplementedException();
+    }
 
-    public async Task DeleteRange(IEnumerable<T> items, CancellationToken Cancel = default) => throw new NotImplementedException();
+    public async Task DeleteRange(IEnumerable<T> items, CancellationToken Cancel = default)
+    {
+        throw new NotImplementedException();
+    }
 
-    public async Task<T> DeleteById(TKey id, CancellationToken Cancel = default) => throw new NotImplementedException();
+    public async Task<T> DeleteById(TKey id, CancellationToken Cancel = default)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public class DbRepository<T> : DbRepository<T, int> where T : class, IEntity<int>
