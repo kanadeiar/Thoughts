@@ -25,7 +25,7 @@ public class DbRepositoryTests
            .UseInMemoryDatabase("TestDB")
            .Options;
 
-        await using var _db = new ThoughtsDB(_options);
+        var _db = new ThoughtsDB(_options);
         //using var _db = new ThoughtsDB(_options);
 
         _tags = Enumerable.Range(1, 10)
