@@ -116,4 +116,19 @@ public class DbRepositoryTests
         _Logger_Post_Mock.VerifyNoOtherCalls();
     }
 
+
+    [TestMethod]
+    public async Task Update_Returns_Item()
+    {
+        var tag = _tags[0];
+        tag.Name = "new_tag_name";
+
+        var actual_item = await _tags_Repository.Update(tag);
+
+        Assert.IsNotNull(actual_item);
+        Assert.AreEqual(tag.Name, actual_item.Name);
+
+        _Logger_Tag_Mock.VerifyNoOtherCalls();
+    }
+
 }
