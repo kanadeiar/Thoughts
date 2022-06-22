@@ -8,11 +8,19 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>
+      0219;
+      8600;8604;8618;8625;
+      1701;1702
+    </NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Using Include="System"/>
-    <Using Include="System.Threading.Tasks"/>
-    <Using Include="Moq"/>
-    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting"/>
+    <Using Include="System" />
+    <Using Include="System.Threading.Tasks" />
+    <Using Include="Moq" />
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,6 @@
-﻿using Thoughts.Interfaces;
+﻿using System.Diagnostics;
+
+using Thoughts.Interfaces;
 using Thoughts.Interfaces.Base.Repositories;
 
 using Thoughts.Domain;
@@ -235,6 +237,8 @@ public class RepositoryBlogPostManager : IBlogPostManager
         var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
         
         if (post is null) return false;
+
+        Debug.WriteLine("PostId = {0} --", PostId);
 
         //var tag = await _tagRepo.ExistName(Tag, Cancel).ConfigureAwait(false)
         //        ? await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false)

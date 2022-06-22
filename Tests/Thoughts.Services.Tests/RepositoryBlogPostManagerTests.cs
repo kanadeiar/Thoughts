@@ -568,9 +568,9 @@ public class RepositoryBlogPostManagerTests
     [TestMethod]
     public async Task CreatePostAsync_Test_Throws_ArgumentNullException_when_Title_is_Null()
     {
-        string Title = null; //проверяем на null заголовок
+        string? Title = null; //проверяем на null заголовок
 
-        string body = "new_body_post8";
+        var body = "new_body_post8";
         var category = _Categories[0];
         var user = _Users[0];
 
@@ -578,7 +578,7 @@ public class RepositoryBlogPostManagerTests
 
         try
         {
-            await _BlogPostManager.CreatePostAsync(Title, body, user.Id, category.Name);
+            await _BlogPostManager.CreatePostAsync(Title!, body, user.Id, category.Name);
         }
         catch (Exception actual_exception)
         {
@@ -591,9 +591,29 @@ public class RepositoryBlogPostManagerTests
     }
 
     [TestMethod]
+    public async Task CreatePostAsync_Test_Throws_ArgumentNullException_when_Title_is_Null2()
+    {
+        string? Title = null; //проверяем на null заголовок
+
+        var body = "new_body_post8";
+        var category = _Categories[0];
+        var user = _Users[0];
+
+        const string expected_argument = "Title";
+
+        var actual_exception = await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () =>
+        {
+            await _BlogPostManager.CreatePostAsync(Title!, body, user.Id, category.Name);
+        });
+
+        Assert.IsTrue(actual_exception.ParamName is { Length: > 0 });
+        Assert.AreEqual(expected_argument, actual_exception.ParamName);
+    }
+
+    [TestMethod]
     public async Task CreatePostAsync_Test_Throws_ArgumentNullException_when_Body_is_Null()
     {
-        string title = "new_title_post8";
+        var title = "new_title_post8";
         string Body = null; //проверяем на null тело поста
         var category = _Categories[0];
         var user = _Users[0];
@@ -763,7 +783,7 @@ public class RepositoryBlogPostManagerTests
         post.Tags = post.Tags.ToList();
         var expected_tag = _Tags[0]; //уже существующий и прикреплённый тег к посту
         var expected_result = true;
-
+            
         _Post_Repo_Mock.Setup(c => c.GetById(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(post);
         _Tag_Repo_Mock.Setup(c => c.ExistName(It.IsAny<string>(), It.IsAny<CancellationToken>()))
