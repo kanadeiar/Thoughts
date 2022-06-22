@@ -287,4 +287,19 @@ public class DbRepositoryTests
 
         Assert.AreEqual(expected_tags[0].Name, actual_tag.Name);
     }
+
+    [TestMethod]
+    public async Task Delete_Returns_Deleted_Item()
+    {
+        var expected_tag = _tags[0];
+
+        var actual_tag = await _tags_Repository.Delete(expected_tag);
+
+        var actual_items = await _tags_Repository.GetAll();
+
+        Assert.IsNotNull(actual_tag);
+        Assert.AreEqual(expected_tag, actual_tag);
+
+        CollectionAssert.DoesNotContain(actual_items.ToArray(), actual_tag);
+    }
 }

@@ -172,7 +172,12 @@ public class DbRepository<T, TKey> : IRepository<T, TKey> where T : class, IEnti
 
     public async Task<T> Delete(T item, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        if (item is null) throw new ArgumentNullException(nameof(item));
+
+        _db.Remove(item);
+        await _db.SaveChangesAsync();
+
+        return item;
     }
 
     public async Task DeleteRange(IEnumerable<T> items, CancellationToken Cancel = default)
