@@ -210,4 +210,24 @@ public class DbRepositoryTests
 
         CollectionAssert.DoesNotContain(actual_items.ToArray(), actual_tag);
     }
+
+    [TestMethod]
+    public async Task ExistId_Returns_True_when_Item_WasFound()
+    {
+        var expected_tag = _tags[5];
+
+        var actual_result = await _tags_Repository.ExistId(expected_tag.Id);
+
+        Assert.IsTrue(actual_result);
+    }
+
+    [TestMethod]
+    public async Task ExistId_Returns_False_when_Item_WasFound()
+    {
+        var expected_id = 30;
+
+        var actual_result = await _tags_Repository.ExistId(expected_id);
+
+        Assert.IsFalse(actual_result);
+    }
 }

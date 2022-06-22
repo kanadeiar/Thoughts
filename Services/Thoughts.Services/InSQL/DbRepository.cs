@@ -27,7 +27,15 @@ public class DbRepository<T, TKey> : IRepository<T, TKey> where T : class, IEnti
 
     public async Task<bool> ExistId(TKey Id, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        if(Id == null) throw new ArgumentNullException(nameof(Id));
+
+        var query = Items;
+
+        var item = await Items.SingleOrDefaultAsync(p => p.Id!.Equals(Id));
+
+        if(item == null) return false;
+
+        return true;
     }
 
     public async Task<bool> Exist(T item, CancellationToken Cancel = default)
