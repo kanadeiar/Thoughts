@@ -764,17 +764,19 @@ public class RepositoryBlogPostManagerTests
         var expected_tag = _Tags[0]; //уже существующий и прикреплённый тег к посту
         var expected_result = true;
 
-        _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
+        _Post_Repo_Mock.Setup(c => c.GetById(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(post);
-        _Tag_Repo_Mock.Setup(c => c.ExistName(expected_tag.Name, It.IsAny<CancellationToken>()))
+        _Tag_Repo_Mock.Setup(c => c.ExistName(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
-        _Tag_Repo_Mock.Setup(c => c.GetByName(expected_tag.Name, It.IsAny<CancellationToken>()))
+        _Tag_Repo_Mock.Setup(c => c.GetByName(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected_tag);
 
         var actual_result = await _BlogPostManager.AssignTagAsync(post.Id, expected_tag.Name);
 
         Assert.AreEqual(expected_result, actual_result);
-        
+
+        _Post_Repo_Mock.Verify(c => c.GetById(It.Is<int>(id => id == post.Id), It.IsAny<CancellationToken>()));
+
         //_Post_Repo_Mock.Verify(c => c.GetById(post.Id, It.IsAny<CancellationToken>()));
         //_Tag_Repo_Mock.Verify(c => c.ExistName(expected_tag.Name, It.IsAny<CancellationToken>()));
         //_Tag_Repo_Mock.Verify(c => c.GetByName(expected_tag.Name, It.IsAny<CancellationToken>()));
