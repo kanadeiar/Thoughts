@@ -182,7 +182,10 @@ public class DbRepository<T, TKey> : IRepository<T, TKey> where T : class, IEnti
 
     public async Task DeleteRange(IEnumerable<T> items, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        if (items is null) throw new ArgumentNullException(nameof(items));
+
+        _db.RemoveRange(items);
+        await _db.SaveChangesAsync();
     }
 
     public async Task<T> DeleteById(TKey id, CancellationToken Cancel = default)

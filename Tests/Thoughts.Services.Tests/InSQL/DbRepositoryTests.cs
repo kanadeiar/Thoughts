@@ -302,4 +302,19 @@ public class DbRepositoryTests
 
         CollectionAssert.DoesNotContain(actual_items.ToArray(), actual_tag);
     }
+
+    [TestMethod]
+    public async Task DeleteRange_Returns_Success_Task()
+    {
+        var expected_tags = new[] { _tags[0], _tags[2], _tags[5] };
+
+        var expected_range = _tags.Length;
+
+        await _tags_Repository.DeleteRange(expected_tags);
+
+        var actual_range = await _tags_Repository.GetCount();
+
+        Assert.AreNotEqual(expected_range, actual_range);
+
+    }
 }
