@@ -267,7 +267,24 @@ public class DbRepositoryTests
 
         var actual_tags = await _tags_Repository.GetAll();
 
-
         Assert.AreEqual(expected_count, actual_tags.Count());
+    }
+
+    [TestMethod]
+    public async Task UpdateRange_Returns_Success_Task()
+    {
+        var expected_tags = new[] { _tags[0], _tags[2], _tags[5] };
+
+        foreach (var tag in expected_tags)
+        {
+            var i = tag.Id;
+            tag.Name = $"new_name_{i}";
+        }
+
+        await _tags_Repository.UpdateRange(expected_tags);
+
+        var actual_tag = await _tags_Repository.GetById(expected_tags[0].Id);
+
+        Assert.AreEqual(expected_tags[0].Name, actual_tag.Name);
     }
 }
