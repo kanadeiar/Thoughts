@@ -222,11 +222,31 @@ public class DbRepositoryTests
     }
 
     [TestMethod]
-    public async Task ExistId_Returns_False_when_Item_WasFound()
+    public async Task ExistId_Returns_False_when_Item_WasNotFound()
     {
         var expected_id = 30;
 
         var actual_result = await _tags_Repository.ExistId(expected_id);
+
+        Assert.IsFalse(actual_result);
+    }
+
+    [TestMethod]
+    public async Task Exist_Returns_True_when_Item_WasFound()
+    {
+        var expected_tag = _tags[5];
+
+        var actual_result = await _tags_Repository.Exist(expected_tag);
+
+        Assert.IsTrue(actual_result);
+    }
+
+    [TestMethod]
+    public async Task Exist_Returns_False_when_Item_WasNotFound()
+    {
+        var expected_item = new Tag { Name = "you_will_not_found_me"};
+
+        var actual_result = await _tags_Repository.Exist(expected_item);
 
         Assert.IsFalse(actual_result);
     }

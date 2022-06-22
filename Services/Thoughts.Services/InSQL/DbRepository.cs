@@ -40,7 +40,15 @@ public class DbRepository<T, TKey> : IRepository<T, TKey> where T : class, IEnti
 
     public async Task<bool> Exist(T item, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        if (item is null) throw new ArgumentNullException(nameof(item));
+
+        var query = Items;
+
+        var new_item = await Items.SingleOrDefaultAsync(p => p.Equals(item));
+
+        if (new_item is null) return false;
+
+        return true;
     }
 
     public async Task<int> GetCount(CancellationToken Cancel = default)
