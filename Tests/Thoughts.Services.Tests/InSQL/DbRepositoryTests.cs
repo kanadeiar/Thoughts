@@ -181,5 +181,18 @@ public class DbRepositoryTests
         Assert.IsNull(actual_item);
     }
 
+    [TestMethod]
+    public async Task Add_Returns_Item_in_Repo()
+    {
+        var expected_tag = new Tag { Name = "new_tag_name" };
 
+        var actual_tag = await _tags_Repository.Add(expected_tag);
+
+        //var actual_items = await _tags_Repository.GetAll(); // <- работает, поэтому не будем замедлять тест
+
+        Assert.IsNotNull(actual_tag);
+        //CollectionAssert.Contains(actual_items.ToArray(), actual_tag);
+
+        _Logger_Tag_Mock.VerifyNoOtherCalls();
+    }
 }

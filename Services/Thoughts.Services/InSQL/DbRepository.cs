@@ -119,7 +119,12 @@ public class DbRepository<T, TKey> : IRepository<T, TKey> where T : class, IEnti
 
     public async Task<T> Add(T item, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        if(item is null) throw new ArgumentNullException(nameof(item));
+
+        await _db.AddAsync(item);
+        await _db.SaveChangesAsync();
+
+        return item;
     }
 
     public async Task AddRange(IEnumerable<T> items, CancellationToken Cancel = default)
