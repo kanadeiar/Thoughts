@@ -156,4 +156,30 @@ public class DbRepositoryTests
 
         _Logger_Post_Mock.VerifyNoOtherCalls();
     }
+
+    [TestMethod]
+    public async Task GetById_Returns_Item()
+    {
+        var expected_item = _tags[3];
+        var item_id = expected_item.Id;
+
+        var actual_item = await _tags_Repository.GetById(item_id);
+
+        Assert.IsNotNull(actual_item);
+        Assert.AreEqual(expected_item, actual_item);
+
+        _Logger_Tag_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task GetById_Throws_Exception_when_Repo_is_Empty()
+    {
+        var id = 1;
+
+        var actual_item = await _posts_Repository.GetById(id);
+
+        Assert.IsNull(actual_item);
+    }
+
+
 }

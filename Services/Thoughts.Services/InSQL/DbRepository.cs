@@ -106,7 +106,15 @@ public class DbRepository<T, TKey> : IRepository<T, TKey> where T : class, IEnti
 
     public async Task<T> GetById(TKey Id, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        if (Id is null) throw new ArgumentNullException(nameof(Id));
+
+        var query = Items;
+
+        //if (query.Count() == 0) throw new InvalidOperationException(nameof(query));
+
+        var item = await query.SingleOrDefaultAsync(p => p.Id!.Equals(Id));
+
+        return item!;
     }
 
     public async Task<T> Add(T item, CancellationToken Cancel = default)
