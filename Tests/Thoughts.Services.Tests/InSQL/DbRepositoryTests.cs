@@ -195,4 +195,19 @@ public class DbRepositoryTests
 
         _Logger_Tag_Mock.VerifyNoOtherCalls();
     }
+
+    [TestMethod]
+    public async Task DeleteById_Returns_Item_from_Repo()
+    {
+        var expected_tag = _tags[0];
+
+        var actual_tag = await _tags_Repository.DeleteById(expected_tag.Id);
+        
+        var actual_items = await _tags_Repository.GetAll(); 
+
+        Assert.IsNotNull(actual_tag);
+        Assert.AreEqual(expected_tag, actual_tag);
+
+        CollectionAssert.DoesNotContain(actual_items.ToArray(), actual_tag);
+    }
 }

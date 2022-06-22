@@ -160,7 +160,14 @@ public class DbRepository<T, TKey> : IRepository<T, TKey> where T : class, IEnti
 
     public async Task<T> DeleteById(TKey id, CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        if(id is null) throw new ArgumentNullException(nameof(id));
+
+        var item = await GetById(id, Cancel).ConfigureAwait(false);
+
+        _db.Remove(item);
+        await _db.SaveChangesAsync();
+
+        return item;
     }
 }
 
