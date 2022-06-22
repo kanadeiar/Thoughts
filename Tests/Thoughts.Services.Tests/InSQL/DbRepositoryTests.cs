@@ -131,4 +131,29 @@ public class DbRepositoryTests
         _Logger_Tag_Mock.VerifyNoOtherCalls();
     }
 
+    [TestMethod]
+    public async Task GetCount_Returns_Count()
+    {
+        var expected_tags_count = _tags.Length;
+
+        var actual_tags_count = await _tags_Repository.GetCount();
+
+        Assert.AreEqual(expected_tags_count, actual_tags_count);
+        Assert.IsNotNull(actual_tags_count);
+
+        _Logger_Tag_Mock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public async Task GetCount_Returns_0_when_Repo_is_Empty()
+    {
+        var expected_post_count = _posts.Length;
+
+        var actual_post_count = await _posts_Repository.GetCount();
+
+        Assert.AreEqual(expected_post_count, actual_post_count);
+        Assert.IsTrue(actual_post_count == 0);
+
+        _Logger_Post_Mock.VerifyNoOtherCalls();
+    }
 }

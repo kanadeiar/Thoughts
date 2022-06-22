@@ -37,7 +37,13 @@ public class DbRepository<T, TKey> : IRepository<T, TKey> where T : class, IEnti
 
     public async Task<int> GetCount(CancellationToken Cancel = default)
     {
-        throw new NotImplementedException();
+        var query = Items;
+
+        if (query is null) return 0;
+
+        var result = await query.CountAsync();
+
+        return result;
     }
 
     public async Task<IEnumerable<T>> GetAll(CancellationToken Cancel = default)
