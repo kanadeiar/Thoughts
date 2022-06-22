@@ -43,7 +43,7 @@ public class DbRepositoryTests
         await _db.Posts.AddRangeAsync(_posts);
 
         await _db.SaveChangesAsync();
-        
+
         _tags_Repository = new DbRepository<Tag>(_db, _Logger_Tag_Mock.Object);
         _posts_Repository = new DbRepository<Post>(_db, _Logger_Post_Mock.Object);
     }
@@ -58,7 +58,7 @@ public class DbRepositoryTests
         var actual_tags = await _tags_Repository.Get(skip, count);
 
         CollectionAssert.AreEqual(expected_tags, actual_tags.ToArray());
-        
+
         _Logger_Tag_Mock.VerifyNoOtherCalls();
     }
 
@@ -88,7 +88,7 @@ public class DbRepositoryTests
         var actual_page = await _tags_Repository.GetPage(pageNumber, pageSize);
 
         CollectionAssert.AreEqual(expected_page.Items.ToArray(), actual_page.Items.ToArray());
-        
+
         _Logger_Tag_Mock.VerifyNoOtherCalls();
     }
 
@@ -202,8 +202,8 @@ public class DbRepositoryTests
         var expected_tag = _tags[0];
 
         var actual_tag = await _tags_Repository.DeleteById(expected_tag.Id);
-        
-        var actual_items = await _tags_Repository.GetAll(); 
+
+        var actual_items = await _tags_Repository.GetAll();
 
         Assert.IsNotNull(actual_tag);
         Assert.AreEqual(expected_tag, actual_tag);
@@ -244,10 +244,30 @@ public class DbRepositoryTests
     [TestMethod]
     public async Task Exist_Returns_False_when_Item_WasNotFound()
     {
-        var expected_item = new Tag { Name = "you_will_not_found_me"};
+        var expected_item = new Tag { Name = "you_will_not_found_me" };
 
         var actual_result = await _tags_Repository.Exist(expected_item);
 
         Assert.IsFalse(actual_result);
+    }
+
+    [TestMethod]
+    public async Task AddRange_Returns_Success_Task()
+    {
+        var expected_tags = new Tag[]
+        {
+            new(){ Name = "new-Tag1", },
+            new(){ Name = "new-Tag2", },
+            new(){ Name = "new-Tag3", },
+        };
+
+        var expected_count = _tags.Length + expected_tags.Length;
+
+        await _tags_Repository.AddRange(expected_tags);
+
+        var actual_tags = await _tags_Repository.GetAll();
+
+
+        Assert.AreEqual(expected_count, actual_tags.Count());
     }
 }
