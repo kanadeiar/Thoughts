@@ -147,7 +147,6 @@ public class RepositoryBlogPostManagerTests
         _Category_Repo_Mock = new Mock<INamedRepository<Category>>();
         _User_Repo_Mock = new Mock<IRepository<User, string>>();
 
-
         _BlogPostManager = new RepositoryBlogPostManager(
             _Post_Repo_Mock.Object,
             _Tag_Repo_Mock.Object,
@@ -760,9 +759,6 @@ public class RepositoryBlogPostManagerTests
     [TestMethod]  //судя по отладчику, тест работает неправильно
     public async Task AssignTagAsync_Test_Returns_True_when_Tag_Is_AlreadyAssigned()
     {
-        //todo: тест судя по отладчику неправильно отрабатывает - нет захода в блок, где возврат true при изначальном наличии в посте тега
-        //строка 243-244
-
         var post = _Posts[6];
         post.Tags = post.Tags.ToList();
         var expected_tag = _Tags[0]; //уже существующий и прикреплённый тег к посту
@@ -771,7 +767,7 @@ public class RepositoryBlogPostManagerTests
         _Post_Repo_Mock.Setup(c => c.GetById(post.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(post);
         _Tag_Repo_Mock.Setup(c => c.ExistName(expected_tag.Name, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
+            .ReturnsAsync(true);
         _Tag_Repo_Mock.Setup(c => c.GetByName(expected_tag.Name, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected_tag);
 
