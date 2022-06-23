@@ -1,21 +1,31 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Thoughts.UI.MVC.Models;
-
-namespace Thoughts.UI.MVC.Controllers;
+﻿namespace Thoughts.UI.MVC.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly IBlogPostManager _postManager;
+    private readonly IConfiguration _configuration;
+    private readonly int _countOnHomeView;
+    private readonly int _lengthText;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(IBlogPostManager postManager, IConfiguration configuration)
     {
-        _logger = logger;
+        _postManager = postManager;
+        _configuration = configuration;
+        _countOnHomeView = _configuration.GetValue<int>("CountPostsOnHomeView");
+        _lengthText = _configuration.GetValue<int>("LengthTextOnHomeView");
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var countPosts = await _postManager.GetAllPostsCountAsync();
+        var skipPosts = (countPosts < _countOnHomeView) ? _countOnHomeView : countPosts - _countOnHomeView;
+        var posts = (await _postManager.GetAllPostsSkipTakeAsync(skipPosts, _countOnHomeView)).OrderByDescending(x => x.Date).ToArray();
+        StringTools.CutBodyTextInPosts(posts, _lengthText);
+        var model = new HomeIndexWebModel
+        {
+            Posts = posts,
+        };
+        return View(model);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

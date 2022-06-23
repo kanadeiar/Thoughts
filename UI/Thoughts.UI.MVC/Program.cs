@@ -1,18 +1,10 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-
-using Thoughts.DAL;
-using Thoughts.DAL.Sqlite;
-using Thoughts.DAL.SqlServer;
-using Thoughts.Services.InSQL;
-using Thoughts.UI.MVC.Infrastructure.Extensions;
-
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 var services = builder.Services;
 
-services.AddControllersWithViews();
+
+services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 var db_type = configuration["Database"];
 
@@ -30,6 +22,7 @@ switch (db_type)
 }
 
 services.AddTransient<ThoughtsDbInitializer>();
+services.AddScoped<IBlogPostManager, SqlBlogPostManager>();
 
 var app = builder.Build();
 

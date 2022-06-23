@@ -136,8 +136,8 @@ public static class Mapper
         User = post.User.UserToDomain()!,
         Status = post.Status.StatusToDomain()!,
         Category = post.Category.CategoryToDomain()!,
-        Tags = (ICollection<TagDomain>)post.Tags.TagToDomain(),
-        Comments = (ICollection<CommentDomain>)post.Comments.CommentToDomain(),
+        //Tags = (ICollection<TagDomain>)post.Tags.TagToDomain(),
+        //Comments = (ICollection<CommentDomain>)post.Comments.CommentToDomain(),
         PublicationsDate = post.PublicationDate,
         Date = post.Date,
     };
