@@ -27,4 +27,19 @@ public class BlogController : Controller
         };
         return View(model);
     }
+
+    /// <summary>
+    /// Данные детальные по одному элемпенту
+    /// </summary>
+    /// <param name="id">Идентификатор элемента</param>
+    /// <returns>Вьюха с детальными данными по посту</returns>
+    public async Task<IActionResult> Details(int id)
+    {
+        var post = await _postManager.GetPostAsync(id);
+        var model = new BlogDetailsWebModel
+        {
+            Post = post,
+        };
+        return View(model);
+    }
 }

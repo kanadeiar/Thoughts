@@ -51,7 +51,7 @@ public class TestDbData
             {
                 Title = "Title1",
                 Body = "Body1. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
-                Tags = new[] { tags[1] },
+                Tags = new[] { tags[1], tags[0] },
                 Category = categories[0],
                 User = users[0],
             },

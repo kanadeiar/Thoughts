@@ -64,6 +64,7 @@ public class SqlBlogPostManager : IBlogPostManager
 
         var db_posts = await _DB.Posts
             .Include(x => x.User)
+            .OrderByDescending(x => x.Date)
             .Skip(Skip)
             .Take(Take)
             .ToArrayAsync(Cancel)
@@ -167,6 +168,7 @@ public class SqlBlogPostManager : IBlogPostManager
     public async Task<Post?> GetPostAsync(int Id, CancellationToken Cancel = default)
     {
         var db_post = await _DB.Posts
+           .Include(x => x.User)
            .Include(post => post.Category)
            .Include(post => post.Tags)
            .FirstOrDefaultAsync(p => p.Id == Id, Cancel)

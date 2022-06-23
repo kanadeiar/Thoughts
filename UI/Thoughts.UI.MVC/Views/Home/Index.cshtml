@@ -17,7 +17,7 @@
             <p>@e.Body</p>
             <p>Автор: @e.User.NickName</p>
             <ul class="actions">
-                <li><a href="#" class="button">More</a></li>
+                <li><a asp-controller="Blog" asp-action="Details" asp-route-id="@e.Id" class="button">More</a></li>
             </ul>
         </article>
     }
