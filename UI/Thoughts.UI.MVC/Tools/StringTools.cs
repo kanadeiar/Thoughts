@@ -15,7 +15,8 @@ public class StringTools
         {
             if (e.Body.Length > length)
             {
-                e.Body = string.Concat(e.Body[..length], " ...");
+                var ind = e.Body.IndexOf(" ", length);
+                e.Body = string.Concat(e.Body[..ind], "...");
             }
         }
     }
