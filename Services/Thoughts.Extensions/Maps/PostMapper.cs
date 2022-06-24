@@ -320,8 +320,52 @@ namespace Thoughts.Extensions.Maps
     }
     public class TagMapper : IMapper<TagDal, TagDom>, IMapper<TagDom, TagDal>
     {
-        public TagDal Map(TagDom item) => throw new NotImplementedException();
-        public TagDom Map(TagDal item) => throw new NotImplementedException();
+        public TagDal Map(TagDom item)
+        {
+            if (item is null) return default;
+
+            var tag = new TagDal()
+            {
+                Id = item.Id,
+                Name = item.Name,
+            };
+            MapsCash.TagDalCash.Add(tag);
+
+            foreach (var post in item.Posts)
+            {
+                var tmpPost = MapsCash.PostDalCash.FirstOrDefault(i => i.Id == post.Id);
+                if (tmpPost is null)
+                {
+                    tmpPost = new PostMapper().Map(post);
+                }
+                tag.Posts.Add(tmpPost);
+            }
+
+            return tag;
+        }
+        public TagDom Map(TagDal item)
+        {
+            if (item is null) return default;
+
+            var tag = new TagDom()
+            {
+                Id = item.Id,
+                Name = item.Name,
+            };
+            MapsCash.TagDomCash.Add(tag);
+
+            foreach (var post in item.Posts)
+            {
+                var tmpPost = MapsCash.PostDomCash.FirstOrDefault(i => i.Id == post.Id);
+                if (tmpPost is null)
+                {
+                    tmpPost = new PostMapper().Map(post);
+                }
+                tag.Posts.Add(tmpPost);
+            }
+
+            return tag;
+        }
     }
     public class UserMapper : IMapper<UserDal, UserDom>, IMapper<UserDom, UserDal>
     {
