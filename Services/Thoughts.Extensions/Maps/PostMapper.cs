@@ -13,8 +13,6 @@ using CommentDom = Thoughts.Domain.Base.Entities.Comment;
 using RoleDom = Thoughts.Domain.Base.Entities.Role;
 using TagDom = Thoughts.Domain.Base.Entities.Tag;
 using UserDom = Thoughts.Domain.Base.Entities.User;
-using Thoughts.Interfaces.Base.Entities;
-using Thoughts.Domain.Base;
 
 namespace Thoughts.Extensions.Maps
 {
@@ -36,42 +34,19 @@ namespace Thoughts.Extensions.Maps
             };
             MapsCash.PostDomCash.Add(post);
 
-            var tmpUser = MapsCash.UserDomCash.FirstOrDefault(x => x.Id == item.User.Id);
-            if (tmpUser is null)
-            {
-                tmpUser = new UserMapper().Map(item.User);
-            }
-            post.User = tmpUser;
+            post.User = MapsHelper.FindUserOrMapNew(item.User);
 
-            var tmpCat = MapsCash.CategoryDomCash.FirstOrDefault(x => x.Id == item.Category.Id);
-            if(tmpCat is null)
-            {
-                tmpCat = new CategoryMapper().Map(item.Category);
-            }
-            post.Category = tmpCat;
+            post.Category = MapsHelper.FindCategoryOrMapNew(item.Category);
 
             foreach (var tag in item.Tags)
-            {
-                var tmpTag = MapsCash.TagDomCash.FirstOrDefault(x=> x.Id == tag.Id);
-                if(tmpTag is null)
-                {
-                    tmpTag = new TagMapper().Map(tag);
-                }
-                post.Tags.Add(tmpTag);
-            }
+                post.Tags.Add(MapsHelper.FindTagOrMapNew(tag));
 
             foreach (var comment in item.Comments)
-            {
-                var tmpComment = MapsCash.CommentDomCash.FirstOrDefault(x => x.Id == comment.Id);
-                if( tmpComment is null)
-                {
-                    tmpComment = new CommentMapper().Map(comment);
-                }
-                post.Comments.Add(tmpComment);
-            }
+                post.Comments.Add(MapsHelper.FindCommentOrMapNew(comment));
 
             return post;
         }
+
         public PostDal Map(PostDom item)
         {
             if(item is null) return default;
@@ -87,43 +62,20 @@ namespace Thoughts.Extensions.Maps
             };
             MapsCash.PostDalCash.Add(post);
 
-            var tmpUser = MapsCash.UserDalCash.FirstOrDefault(x => x.Id == item.User.Id);
-            if (tmpUser is null)
-            {
-                post.User = new UserMapper().Map(item.User);
-            }
-            post.User = tmpUser!;
+            post.User = MapsHelper.FindUserOrMapNew(item.User);
 
-            var tmpCat = MapsCash.CategoryDalCash.FirstOrDefault(x => x.Id == item.Category.Id);
-            if (tmpCat is null)
-            {
-                post.Category = new CategoryMapper().Map(item.Category);
-            }
-            post.Category = tmpCat!;
+            post.Category = MapsHelper.FindCategoryOrMapNew(item.Category);
 
             foreach (var tag in item.Tags)
-            {
-                var tmpTag = MapsCash.TagDalCash.FirstOrDefault(x => x.Id == tag.Id);
-                if (tmpTag is null)
-                {
-                    tmpTag = new TagMapper().Map(tag);
-                }
-                post.Tags.Add(tmpTag);
-            }
+                post.Tags.Add(MapsHelper.FindTagOrMapNew(tag));
 
             foreach (var comment in item.Comments)
-            {
-                var tmpComment = MapsCash.CommentDalCash.FirstOrDefault(x => x.Id == comment.Id);
-                if (tmpComment is null)
-                {
-                    tmpComment = new CommentMapper().Map(comment);
-                }
-                post.Comments.Add(tmpComment);
-            }
+                post.Comments.Add(MapsHelper.FindCommentOrMapNew(comment));
 
             return post;
         }
     }
+
     public class CategoryMapper : IMapper<CategoryDal, CategoryDom>, IMapper<CategoryDom, CategoryDal>
     {
         public CategoryDal Map(CategoryDom item)
@@ -138,17 +90,11 @@ namespace Thoughts.Extensions.Maps
             MapsCash.CategoryDalCash.Add(cat);
 
             foreach (var post in item.Posts)
-            {
-                var tmpPost = MapsCash.PostDalCash.FirstOrDefault(i => i.Id == post.Id);
-                if(tmpPost is null)
-                {
-                    tmpPost = new PostMapper().Map(post);
-                }
-                cat.Posts.Add(tmpPost);
-            }
+                cat.Posts.Add(MapsHelper.FindPostOrMapNew(post));
 
             return cat;
         }
+
         public CategoryDom Map(CategoryDal item)
         {
             if (item is null) return default;
@@ -161,14 +107,7 @@ namespace Thoughts.Extensions.Maps
             MapsCash.CategoryDomCash.Add(cat);
 
             foreach (var post in item.Posts)
-            {
-                var tmpPost = MapsCash.PostDomCash.FirstOrDefault(i => i.Id == post.Id);
-                if (tmpPost is null)
-                {
-                    tmpPost = new PostMapper().Map(post);
-                }
-                cat.Posts.Add(tmpPost);
-            }
+                cat.Posts.Add(MapsHelper.FindPostOrMapNew(post));
 
             return cat;
         }
@@ -189,39 +128,18 @@ namespace Thoughts.Extensions.Maps
             };
             MapsCash.CommentDalCash.Add(com);
 
-            var tmpPost = MapsCash.PostDalCash.FirstOrDefault(x => x.Id == item.Post.Id);
-            if(tmpPost is null)
-            {
-                tmpPost = new PostMapper().Map(item.Post);
-            }
-            com.Post = tmpPost;
+            com.Post = MapsHelper.FindPostOrMapNew(item.Post);
 
-            var tmpParentComment = MapsCash.CommentDalCash.FirstOrDefault(x => x.Id == item.ParentComment?.Id);
-            if (tmpParentComment is null)
-            {
-                tmpParentComment = new CommentMapper().Map(item.ParentComment);
-            }
-            com.ParentComment = tmpParentComment;
+            com.ParentComment = MapsHelper.FindCommentOrMapNew(item.ParentComment);
 
-            var tmpUser = MapsCash.UserDalCash.FirstOrDefault(x => x.Id == item.User.Id);
-            if(tmpUser is null)
-            {
-                tmpUser = new UserMapper().Map(item.User);
-            }
-            com.User = tmpUser;
+            com.User = MapsHelper.FindUserOrMapNew(item.User);
 
             foreach (var comment in item.ChildrenComment)
-            {
-                var tmpComment = MapsCash.CommentDalCash.FirstOrDefault(x => x.Id == comment.Id);
-                if(tmpComment is null)
-                {
-                    tmpComment = new CommentMapper().Map(comment);
-                }
-                com.ChildrenComment.Add(tmpComment);
-            }
+                com.ChildrenComment.Add(MapsHelper.FindCommentOrMapNew(comment));
 
             return com;
         }
+
         public CommentDom Map(CommentDal item)
         {
             if (item is null) return default;
@@ -235,40 +153,19 @@ namespace Thoughts.Extensions.Maps
             };
             MapsCash.CommentDomCash.Add(com);
 
-            var tmpPost = MapsCash.PostDomCash.FirstOrDefault(x => x.Id == item.Post.Id);
-            if (tmpPost is null)
-            {
-                tmpPost = new PostMapper().Map(item.Post);
-            }
-            com.Post = tmpPost;
+            com.Post = MapsHelper.FindPostOrMapNew(item.Post);
 
-            var tmpParentComment = MapsCash.CommentDomCash.FirstOrDefault(x => x.Id == item.ParentComment?.Id);
-            if (tmpParentComment is null)
-            {
-                tmpParentComment = new CommentMapper().Map(item.ParentComment);
-            }
-            com.ParentComment = tmpParentComment;
+            com.ParentComment = MapsHelper.FindCommentOrMapNew(item.ParentComment);
 
-            var tmpUser = MapsCash.UserDomCash.FirstOrDefault(x => x.Id == item.User.Id);
-            if (tmpUser is null)
-            {
-                tmpUser = new UserMapper().Map(item.User);
-            }
-            com.User = tmpUser;
+            com.User = MapsHelper.FindUserOrMapNew(item.User);
 
             foreach (var comment in item.ChildrenComment)
-            {
-                var tmpComment = MapsCash.CommentDomCash.FirstOrDefault(x => x.Id == comment.Id);
-                if (tmpComment is null)
-                {
-                    tmpComment = new CommentMapper().Map(comment);
-                }
-                com.ChildrenComment.Add(tmpComment);
-            }
+                com.ChildrenComment.Add(MapsHelper.FindCommentOrMapNew(comment));
 
             return com;
         }
     }
+
     public class RoleMapper : IMapper<RoleDal, RoleDom>, IMapper<RoleDom, RoleDal>
     {
         public RoleDom Map(RoleDal item)
@@ -283,17 +180,11 @@ namespace Thoughts.Extensions.Maps
             MapsCash.RoleDomCash.Add(role);
 
             foreach (var user in item.Users)
-            {
-                var tmpUser = MapsCash.UserDomCash.FirstOrDefault(x => x.Id == user.Id);
-                if (tmpUser is null)
-                {
-                    tmpUser = new UserMapper().Map(user);
-                }
-                role.Users.Add(tmpUser);
-            }
+                role.Users.Add(MapsHelper.FindUserOrMapNew(user));
 
             return role;
         }
+
         public RoleDal Map(RoleDom item)
         {
             if (item is null) return default;
@@ -306,18 +197,12 @@ namespace Thoughts.Extensions.Maps
             MapsCash.RoleDalCash.Add(role);
 
             foreach (var user in item.Users)
-            {
-                var tmpUser = MapsCash.UserDalCash.FirstOrDefault(x => x.Id == user.Id);
-                if (tmpUser is null)
-                {
-                    tmpUser = new UserMapper().Map(user);
-                }
-                role.Users.Add(tmpUser);
-            }
+                role.Users.Add(MapsHelper.FindUserOrMapNew(user));
 
             return role;
         }
     }
+
     public class TagMapper : IMapper<TagDal, TagDom>, IMapper<TagDom, TagDal>
     {
         public TagDal Map(TagDom item)
@@ -332,17 +217,11 @@ namespace Thoughts.Extensions.Maps
             MapsCash.TagDalCash.Add(tag);
 
             foreach (var post in item.Posts)
-            {
-                var tmpPost = MapsCash.PostDalCash.FirstOrDefault(i => i.Id == post.Id);
-                if (tmpPost is null)
-                {
-                    tmpPost = new PostMapper().Map(post);
-                }
-                tag.Posts.Add(tmpPost);
-            }
+                tag.Posts.Add(MapsHelper.FindPostOrMapNew(post));
 
             return tag;
         }
+
         public TagDom Map(TagDal item)
         {
             if (item is null) return default;
@@ -355,18 +234,12 @@ namespace Thoughts.Extensions.Maps
             MapsCash.TagDomCash.Add(tag);
 
             foreach (var post in item.Posts)
-            {
-                var tmpPost = MapsCash.PostDomCash.FirstOrDefault(i => i.Id == post.Id);
-                if (tmpPost is null)
-                {
-                    tmpPost = new PostMapper().Map(post);
-                }
-                tag.Posts.Add(tmpPost);
-            }
+                tag.Posts.Add(MapsHelper.FindPostOrMapNew(post));
 
             return tag;
         }
     }
+
     public class UserMapper : IMapper<UserDal, UserDom>, IMapper<UserDom, UserDal>
     {
         public UserDal Map(UserDom item)
@@ -386,17 +259,11 @@ namespace Thoughts.Extensions.Maps
             MapsCash.UserDalCash.Add(user);
 
             foreach (var role in item.Roles)
-            {
-                var tmpRole = MapsCash.RoleDalCash.FirstOrDefault(x => x.Id == role.Id);
-                if(tmpRole is null)
-                {
-                    tmpRole = new RoleMapper().Map(role);
-                }
-                user.Roles.Add(tmpRole);
-            }
+                user.Roles.Add(MapsHelper.FindRoleOrMapNew(role));
 
             return user;
         }
+
         public UserDom Map(UserDal item)
         {
             if (item is null) return default;
@@ -414,14 +281,7 @@ namespace Thoughts.Extensions.Maps
             MapsCash.UserDomCash.Add(user);
 
             foreach (var role in item.Roles)
-            {
-                var tmpRole = MapsCash.RoleDomCash.FirstOrDefault(x => x.Id == role.Id);
-                if (tmpRole is null)
-                {
-                    tmpRole = new RoleMapper().Map(role);
-                }
-                user.Roles.Add(tmpRole);
-            }
+                user.Roles.Add(MapsHelper.FindRoleOrMapNew(role));
 
             return user;
         }
