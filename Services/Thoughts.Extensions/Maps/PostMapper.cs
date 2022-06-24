@@ -271,8 +271,52 @@ namespace Thoughts.Extensions.Maps
     }
     public class RoleMapper : IMapper<RoleDal, RoleDom>, IMapper<RoleDom, RoleDal>
     {
-        public RoleDom Map(RoleDal item) => throw new NotImplementedException();
-        public RoleDal Map(RoleDom item) => throw new NotImplementedException();
+        public RoleDom Map(RoleDal item)
+        {
+            if (item is null) return default;
+
+            var role = new RoleDom()
+            {
+                Id = item.Id,
+                Name = item.Name,
+            };
+            MapsCash.RoleDomCash.Add(role);
+
+            foreach (var user in item.Users)
+            {
+                var tmpUser = MapsCash.UserDomCash.FirstOrDefault(x => x.Id == user.Id);
+                if (tmpUser is null)
+                {
+                    tmpUser = new UserMapper().Map(user);
+                }
+                role.Users.Add(tmpUser);
+            }
+
+            return role;
+        }
+        public RoleDal Map(RoleDom item)
+        {
+            if (item is null) return default;
+
+            var role = new RoleDal()
+            {
+                Id = item.Id,
+                Name = item.Name,
+            };
+            MapsCash.RoleDalCash.Add(role);
+
+            foreach (var user in item.Users)
+            {
+                var tmpUser = MapsCash.UserDalCash.FirstOrDefault(x => x.Id == user.Id);
+                if (tmpUser is null)
+                {
+                    tmpUser = new UserMapper().Map(user);
+                }
+                role.Users.Add(tmpUser);
+            }
+
+            return role;
+        }
     }
     public class TagMapper : IMapper<TagDal, TagDom>, IMapper<TagDom, TagDal>
     {
