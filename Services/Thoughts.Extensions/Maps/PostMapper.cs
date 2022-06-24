@@ -22,7 +22,7 @@ namespace Thoughts.Extensions.Maps
     {
         public PostDom Map(PostDal item)
         {
-            if (item is null) return new PostDom();
+            if (item is null) return default;
 
             var post = new PostDom()
             {
@@ -39,16 +39,16 @@ namespace Thoughts.Extensions.Maps
             var tmpUser = MapsCash.UserDomCash.FirstOrDefault(x => x.Id == item.User.Id);
             if (tmpUser is null)
             {
-                post.User = new UserMapper().Map(item.User);
+                tmpUser = new UserMapper().Map(item.User);
             }
-            post.User = tmpUser!;
+            post.User = tmpUser;
 
             var tmpCat = MapsCash.CategoryDomCash.FirstOrDefault(x => x.Id == item.Category.Id);
             if(tmpCat is null)
             {
-                post.Category = new CategoryMapper().Map(item.Category);
+                tmpCat = new CategoryMapper().Map(item.Category);
             }
-            post.Category = tmpCat!;
+            post.Category = tmpCat;
 
             foreach (var tag in item.Tags)
             {
@@ -74,7 +74,7 @@ namespace Thoughts.Extensions.Maps
         }
         public PostDal Map(PostDom item)
         {
-            if(item is null) return new PostDal();
+            if(item is null) return default;
 
             var post = new PostDal()
             {
@@ -128,6 +128,7 @@ namespace Thoughts.Extensions.Maps
     {
         public CategoryDal Map(CategoryDom item)
         {
+            if (item is null) return default;
             var cat = new CategoryDal()
             {
                 Id = item.Id,
@@ -150,6 +151,7 @@ namespace Thoughts.Extensions.Maps
         }
         public CategoryDom Map(CategoryDal item)
         {
+            if (item is null) return default;
             var cat = new CategoryDom()
             {
                 Id = item.Id,
@@ -174,8 +176,98 @@ namespace Thoughts.Extensions.Maps
 
     public class CommentMapper : IMapper<CommentDal, CommentDom>, IMapper<CommentDom, CommentDal>
     {
-        public CommentDal Map(CommentDom item) => throw new NotImplementedException();
-        public CommentDom Map(CommentDal item) => throw new NotImplementedException();
+        public CommentDal Map(CommentDom item)
+        {
+            if (item is null) return default;
+
+            var com = new CommentDal()
+            {
+                Id = item.Id,
+                Body = item.Body,
+                IsDeleted = item.IsDeleted,
+                Date = item.Date,
+            };
+            MapsCash.CommentDalCash.Add(com);
+
+            var tmpPost = MapsCash.PostDalCash.FirstOrDefault(x => x.Id == item.Post.Id);
+            if(tmpPost is null)
+            {
+                tmpPost = new PostMapper().Map(item.Post);
+            }
+            com.Post = tmpPost;
+
+            var tmpParentComment = MapsCash.CommentDalCash.FirstOrDefault(x => x.Id == item.ParentComment?.Id);
+            if (tmpParentComment is null)
+            {
+                tmpParentComment = new CommentMapper().Map(item.ParentComment);
+            }
+            com.ParentComment = tmpParentComment;
+
+            var tmpUser = MapsCash.UserDalCash.FirstOrDefault(x => x.Id == item.User.Id);
+            if(tmpUser is null)
+            {
+                tmpUser = new UserMapper().Map(item.User);
+            }
+            com.User = tmpUser;
+
+            foreach (var comment in item.ChildrenComment)
+            {
+                var tmpComment = MapsCash.CommentDalCash.FirstOrDefault(x => x.Id == comment.Id);
+                if(tmpComment is null)
+                {
+                    tmpComment = new CommentMapper().Map(comment);
+                }
+                com.ChildrenComment.Add(tmpComment);
+            }
+
+            return com;
+        }
+        public CommentDom Map(CommentDal item)
+        {
+            if (item is null) return default;
+
+            var com = new CommentDom()
+            {
+                Id = item.Id,
+                Body = item.Body,
+                IsDeleted = item.IsDeleted,
+                Date = item.Date,
+            };
+            MapsCash.CommentDomCash.Add(com);
+
+            var tmpPost = MapsCash.PostDomCash.FirstOrDefault(x => x.Id == item.Post.Id);
+            if (tmpPost is null)
+            {
+                tmpPost = new PostMapper().Map(item.Post);
+            }
+            com.Post = tmpPost;
+
+            var tmpParentComment = MapsCash.CommentDomCash.FirstOrDefault(x => x.Id == item.ParentComment?.Id);
+            if (tmpParentComment is null)
+            {
+                tmpParentComment = new CommentMapper().Map(item.ParentComment);
+            }
+            com.ParentComment = tmpParentComment;
+
+            var tmpUser = MapsCash.UserDomCash.FirstOrDefault(x => x.Id == item.User.Id);
+            if (tmpUser is null)
+            {
+                tmpUser = new UserMapper().Map(item.User);
+            }
+            com.User = tmpUser;
+
+            foreach (var comment in item.ChildrenComment)
+            {
+                var tmpComment = MapsCash.CommentDomCash.FirstOrDefault(x => x.Id == comment.Id);
+                if (tmpComment is null)
+                {
+                    tmpComment = new CommentMapper().Map(comment);
+                }
+                com.ChildrenComment.Add(tmpComment);
+            }
+
+            return com;
+        }
     }
     public class RoleMapper : IMapper<RoleDal, RoleDom>, IMapper<RoleDom, RoleDal>
     {
