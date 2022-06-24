@@ -369,7 +369,61 @@ namespace Thoughts.Extensions.Maps
     }
     public class UserMapper : IMapper<UserDal, UserDom>, IMapper<UserDom, UserDal>
     {
-        public UserDal Map(UserDom item) => throw new NotImplementedException();
-        public UserDom Map(UserDal item) => throw new NotImplementedException();
+        public UserDal Map(UserDom item)
+        {
+            if (item is null) return default;
+
+            var user = new UserDal()
+            {
+                Id = item.Id,
+                NickName = item.NickName,
+                LastName = item.LastName,
+                FirstName = item.FirstName,
+                Patronymic = item.Patronymic,
+                Birthday = item.Birthday,
+                Status = (StatusDal)item.Status,
+            };
+            MapsCash.UserDalCash.Add(user);
+
+            foreach (var role in item.Roles)
+            {
+                var tmpRole = MapsCash.RoleDalCash.FirstOrDefault(x => x.Id == role.Id);
+                if(tmpRole is null)
+                {
+                    tmpRole = new RoleMapper().Map(role);
+                }
+                user.Roles.Add(tmpRole);
+            }
+
+            return user;
+        }
+        public UserDom Map(UserDal item)
+        {
+            if (item is null) return default;
+
+            var user = new UserDom()
+            {
+                Id = item.Id,
+                NickName = item.NickName,
+                LastName = item.LastName,
+                FirstName = item.FirstName,
+                Patronymic = item.Patronymic,
+                Birthday = item.Birthday,
+                Status = (StatusDom)item.Status,
+            };
+            MapsCash.UserDomCash.Add(user);
+
+            foreach (var role in item.Roles)
+            {
+                var tmpRole = MapsCash.RoleDomCash.FirstOrDefault(x => x.Id == role.Id);
+                if (tmpRole is null)
+                {
+                    tmpRole = new RoleMapper().Map(role);
+                }
+                user.Roles.Add(tmpRole);
+            }
+
+            return user;
+        }
     }
 }
