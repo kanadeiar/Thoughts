@@ -1,7 +1,7 @@
 ﻿namespace Thoughts.Extensions.Base
 {
-    public interface IMapper<T, R>
+    public interface IMapper<in TSource, out TResult>
     {
-        T Map(R item);
+        TResult Map(TSource item);
     }
 }
