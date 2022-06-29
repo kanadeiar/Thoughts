@@ -57,12 +57,10 @@ namespace Thoughts.DAL.Sqlite.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("StatusId")
+                    b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("StatusId");
 
                     b.HasIndex(new[] { "Name" }, "NameIndex")
                         .IsUnique();
@@ -80,7 +78,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTimeOffset>("Date")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsDeleted")
@@ -107,42 +105,6 @@ namespace Thoughts.DAL.Sqlite.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Thoughts.DAL.Entities.ContentFile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<byte[]>("FileBody")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
-
-                    b.Property<string>("FileDescription")
-                        .HasColumnType("TEXT");
-
-                    b.Property<byte[]>("FileHash")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("BLOB");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("PostId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex(new[] { "FileHash" }, "NameIndex")
-                        .IsUnique()
-                        .HasDatabaseName("NameIndex1");
-
-                    b.ToTable("ContentFile");
-                });
-
             modelBuilder.Entity("Thoughts.DAL.Entities.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -156,17 +118,13 @@ namespace Thoughts.DAL.Sqlite.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTimeOffset>("Date")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
+                    b.Property<DateTimeOffset?>("PublicationDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("PublicationDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("StatusId")
+                    b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
@@ -180,8 +138,6 @@ namespace Thoughts.DAL.Sqlite.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("StatusId");
 
                     b.HasIndex("UserId");
 
@@ -202,28 +158,9 @@ namespace Thoughts.DAL.Sqlite.Migrations
 
                     b.HasIndex(new[] { "Name" }, "NameIndex")
                         .IsUnique()
-                        .HasDatabaseName("NameIndex2");
+                        .HasDatabaseName("NameIndex1");
 
                     b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("Thoughts.DAL.Entities.Status", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex(new[] { "Name" }, "NameIndex")
-                        .IsUnique()
-                        .HasDatabaseName("NameIndex3");
-
-                    b.ToTable("Statuses");
                 });
 
             modelBuilder.Entity("Thoughts.DAL.Entities.Tag", b =>
@@ -240,7 +177,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
 
                     b.HasIndex(new[] { "Name" }, "NameIndex")
                         .IsUnique()
-                        .HasDatabaseName("NameIndex4");
+                        .HasDatabaseName("NameIndex2");
 
                     b.ToTable("Tags");
                 });
@@ -250,8 +187,8 @@ namespace Thoughts.DAL.Sqlite.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Birthday")
-                        .HasColumnType("TEXT");
+                    b.Property<DateTime?>("Birthday")
+                        .HasColumnType("date");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -268,16 +205,14 @@ namespace Thoughts.DAL.Sqlite.Migrations
                     b.Property<string>("Patronymic")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("StatusId")
+                    b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StatusId");
-
                     b.HasIndex(new[] { "LastName", "FirstName", "Patronymic" }, "NameIndex")
                         .IsUnique()
-                        .HasDatabaseName("NameIndex5");
+                        .HasDatabaseName("NameIndex3");
 
                     b.ToTable("Users");
                 });
@@ -312,17 +247,6 @@ namespace Thoughts.DAL.Sqlite.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Thoughts.DAL.Entities.Category", b =>
-                {
-                    b.HasOne("Thoughts.DAL.Entities.Status", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Status");
-                });
-
             modelBuilder.Entity("Thoughts.DAL.Entities.Comment", b =>
                 {
                     b.HasOne("Thoughts.DAL.Entities.Comment", "ParentComment")
@@ -332,13 +256,13 @@ namespace Thoughts.DAL.Sqlite.Migrations
                     b.HasOne("Thoughts.DAL.Entities.Post", "Post")
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
                     b.HasOne("Thoughts.DAL.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
                     b.Navigation("ParentComment");
@@ -346,13 +270,6 @@ namespace Thoughts.DAL.Sqlite.Migrations
                     b.Navigation("Post");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Thoughts.DAL.Entities.ContentFile", b =>
-                {
-                    b.HasOne("Thoughts.DAL.Entities.Post", null)
-                        .WithMany("Files")
-                        .HasForeignKey("PostId");
                 });
 
             modelBuilder.Entity("Thoughts.DAL.Entities.Post", b =>
@@ -363,34 +280,15 @@ namespace Thoughts.DAL.Sqlite.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Thoughts.DAL.Entities.Status", "Status")
-                        .WithMany("Posts")
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Thoughts.DAL.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Posts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
 
-                    b.Navigation("Status");
-
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Thoughts.DAL.Entities.User", b =>
-                {
-                    b.HasOne("Thoughts.DAL.Entities.Status", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Thoughts.DAL.Entities.Category", b =>
@@ -406,12 +304,12 @@ namespace Thoughts.DAL.Sqlite.Migrations
             modelBuilder.Entity("Thoughts.DAL.Entities.Post", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Files");
                 });
 
-            modelBuilder.Entity("Thoughts.DAL.Entities.Status", b =>
+            modelBuilder.Entity("Thoughts.DAL.Entities.User", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618

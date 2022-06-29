@@ -16,12 +16,16 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-    //endpoints.MapControllerRoute(
-    //    name: "default",
-    //    pattern: "{controller=Home}/{action=Index}/{id?}");
-});
+app.MapControllers();
+
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers();
+//    //endpoints.MapControllerRoute(
+//    //    name: "default",
+//    //    pattern: "{controller=Home}/{action=Index}/{id?}");
+//});
 
 app.Run();
+
+public partial class Program { }

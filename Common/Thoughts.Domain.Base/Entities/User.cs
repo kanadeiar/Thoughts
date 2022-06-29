@@ -7,7 +7,7 @@ public class User : EntityModel<string>
 {
     /// <summary>Статус пользователя</summary>
     [Required]
-    public Status Status { get; set; } = null!;
+    public Status Status { get; set; }
 
     /// <summary>Фамилия</summary>
     [Required, MinLength(2)]
@@ -18,10 +18,10 @@ public class User : EntityModel<string>
     public string FirstName { get; set; } = null!;
 
     /// <summary>Отчество</summary>
-    public string? Patronymic { get; set; } = null!;
+    public string? Patronymic { get; set; }
 
     /// <summary>Дата рождения</summary>
-    public DateTime Birthday { get; set; }
+    public DateOnly? Birthday { get; set; }
 
     /// <summary>Псевдоним (отображаемое имя автора)</summary>
     [Required]
@@ -29,17 +29,6 @@ public class User : EntityModel<string>
 
     /// <summary>Роли пользователя</summary>
     public ICollection<Role> Roles { get; set; } = new HashSet<Role>();
-
-    public User() { }
-
-    public User(string LastName, string FirstName, string Patronymic, DateTime Birthday, string NickName)
-    {
-        this.LastName = LastName;
-        this.FirstName = FirstName;
-        this.Patronymic = Patronymic;
-        this.Birthday = Birthday;
-        this.NickName = NickName;
-    }
 
     public override string ToString() => $"[id:{Id}] {string.Join(' ', LastName, FirstName, Patronymic)}";
 }

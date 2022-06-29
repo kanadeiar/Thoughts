@@ -1,4 +1,6 @@
-﻿using Thoughts.Interfaces.Base.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+using Thoughts.Interfaces.Base.Entities;
 
 namespace Thoughts.DAL.Entities.Base;
 
@@ -7,6 +9,7 @@ namespace Thoughts.DAL.Entities.Base;
 public abstract class Entity<TKey> : IEntity<TKey>, IEquatable<Entity<TKey>> where TKey : IEquatable<TKey>
 {
     /// <summary>Первичный ключ</summary>
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public TKey Id { get; set; } = default!;
 
     protected Entity() { }

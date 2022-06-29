@@ -1,15 +1,13 @@
-using Microsoft.EntityFrameworkCore;
-
-using Thoughts.DAL;
-using Thoughts.DAL.Sqlite;
-using Thoughts.DAL.SqlServer;
+using Thoughts.Interfaces.Base.Repositories;
+using Thoughts.Services.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 var services = builder.Services;
 
-services.AddControllersWithViews();
+
+services.AddControllersWithViews();//.AddRazorRuntimeCompilation();
 
 var db_type = configuration["Database"];
 
@@ -26,22 +24,19 @@ switch (db_type)
         break;
 }
 
+services.AddTransient<ThoughtsDbInitializer>();
+services.AddScoped<IBlogPostManager, SqlBlogPostManager>();
+
+services.AddScoped<IRepository<Post>, MappingRepository<Thoughts.DAL.Entities.Post, Post>>();
+services.AddScoped<IRepository<Category>, MappingRepository<Thoughts.DAL.Entities.Category, Category>>();
+services.AddScoped<IRepository<Tag>, MappingRepository<Thoughts.DAL.Entities.Tag, Tag>>();
+services.AddScoped<IRepository<Comment>, MappingRepository<Thoughts.DAL.Entities.Comment, Comment>>();
+
+services.AddScoped(typeof(IRepository<>), typeof(DbRepository<>));
+
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ThoughtsDB>();
-    await db.Database.MigrateAsync();
-
-    //var statuses = await db.Statuses.ToArrayAsync();
-    //var roles = await db.Roles.ToArrayAsync();
-
-    //var db_factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ThoughtsDB>>();
-    //using (var db = db_factory.CreateDbContext())
-    //{
-    //    // выполнение операций над БД и его уничтожение
-    //}
-}
+await app.InitializeDatabase();
 
 if (!app.Environment.IsDevelopment())
 {

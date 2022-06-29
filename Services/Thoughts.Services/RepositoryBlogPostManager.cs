@@ -1,4 +1,6 @@
-﻿using Thoughts.Interfaces;
+﻿using System.Diagnostics;
+
+using Thoughts.Interfaces;
 using Thoughts.Interfaces.Base.Repositories;
 
 using Thoughts.Domain;
@@ -11,20 +13,17 @@ public class RepositoryBlogPostManager : IBlogPostManager
     private readonly IRepository<Post> _postRepo;
     private readonly INamedRepository<Tag> _tagRepo;
     private readonly INamedRepository<Category> _categoryRepo;
-    private readonly INamedRepository<Status> _statusRepo;
     private readonly IRepository<User, string> _userRepo;
 
-
-    public RepositoryBlogPostManager(IRepository<Post> PostRepo,
-                                     INamedRepository<Tag> TagRepo,
-                                     INamedRepository<Category> CategoryRepo,
-                                     INamedRepository<Status> StatusRepo,
-                                     IRepository<User, string> UserRepo)
+    public RepositoryBlogPostManager(
+        IRepository<Post> PostRepo,
+        INamedRepository<Tag> TagRepo,
+        INamedRepository<Category> CategoryRepo,
+        IRepository<User, string> UserRepo)
     {
         _postRepo = PostRepo;
         _tagRepo = TagRepo;
         _categoryRepo = CategoryRepo;
-        _statusRepo = StatusRepo;
         _userRepo = UserRepo;
     }
 
@@ -74,14 +73,13 @@ public class RepositoryBlogPostManager : IBlogPostManager
 
         //var total_count = await GetAllPostsCountAsync(Cancel).ConfigureAwait(false);
 
-        if(PageIndex == 0)
+        if(PageSize == 0)
             return new Page<Post>(Enumerable.Empty<Post>(), PageIndex, PageSize, total_count);
 
         var page = await _postRepo.GetPage(PageIndex, PageSize, Cancel).ConfigureAwait(false);
 
         //здесь не уверен, всё же в конструкторе страницы обязательно указывать общее количество, а в интерфейсе репозитория общее количество не указывается
         return page;
-
     }
 
     #endregion
@@ -94,10 +92,10 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <returns> Все пользовательские посты </returns>
     public async Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
     {
-        var user_posts = _postRepo.GetAll(Cancel).Result.Where(p => p.User.Id == UserId); //без Result никак
-        return await Task.FromResult(user_posts).ConfigureAwait(false);
+        var all_posts = await _postRepo.GetAll(Cancel);
 
-        //return GetAllPostsAsync(Cancel).Result.Where(p => p.User.Id == UserId); <- или всё же так, с использованием предыдущего метода?
+        var user_posts = all_posts.Where(p => p.User.Id == UserId);
+        return user_posts;
     }
 
     /// <summary> Получение количества всех постов пользователя </summary>
@@ -106,10 +104,11 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <returns> Количество всех постов пользователя </returns>
     public async Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
     {
-        var count = _postRepo.GetAll(Cancel).Result.Where(p => p.User.Id == UserId).Count();
-        //var count = GetAllPostsByUserIdAsync(UserId, Cancel).Result.Count();
+        var all_posts = await GetAllPostsByUserIdAsync(UserId, Cancel).ConfigureAwait(false);
+
+        var count = all_posts.Count(); // todo: надо обучить репозиторий выдавать записи по id указанного пользователя
         
-        return await Task.FromResult(count).ConfigureAwait(false);
+        return count;
     }
 
     /// <summary> Получение выборки постов для пагинации конкретного пользователя </summary>
@@ -123,9 +122,11 @@ public class RepositoryBlogPostManager : IBlogPostManager
         if (Take == 0)
             return Enumerable.Empty<Post>();
 
-        var page = GetAllPostsByUserIdAsync(UserId, Cancel).Result.Where(p => p.User.Id == UserId).Skip(Skip).Take(Take);
+        var all_posts_by_user_id = await GetAllPostsByUserIdAsync(UserId, Cancel);
+
+        var page = all_posts_by_user_id.Skip(Skip).Take(Take);
         
-        return await Task.FromResult(page).ConfigureAwait(false);
+        return page;
     }
 
     /// <summary> Получение страницы постов пользователя </summary>
@@ -138,10 +139,13 @@ public class RepositoryBlogPostManager : IBlogPostManager
     {
         var count = await GetUserPostsCountAsync(UserId,Cancel).ConfigureAwait(false);
 
-        if (PageIndex == 0)
+        if (PageSize == 0)
             return new Page<Post>(Enumerable.Empty<Post>(), PageIndex, PageSize, count);
 
-        var posts = await GetAllPostsByUserIdAsync(UserId, Cancel).ConfigureAwait(false); //здесь не как в GetAllPostsPageAsync - метод GetPage из IRepository не даёт сделать выборку по Id
+        //var user_posts = await GetAllPostsByUserIdAsync(UserId, Cancel).ConfigureAwait(false); //здесь не как в GetAllPostsPageAsync - метод GetPage из IRepository не даёт сделать выборку по Id
+        var user_posts = await _postRepo.GetAll(Cancel).ConfigureAwait(false);
+
+        var posts = user_posts.Where(p => p.User.Id == UserId).Skip(PageIndex * PageSize).Take(PageSize);
 
         return new Page<Post>(posts, PageIndex, PageSize, count);
     }
@@ -209,8 +213,12 @@ public class RepositoryBlogPostManager : IBlogPostManager
                         : new Category { Name = Category },
         };
 
-        await _postRepo.Update(post, Cancel).ConfigureAwait(false);
-        return await _postRepo.Add(post,Cancel).ConfigureAwait(false);
+        //await _postRepo.Update(post, Cancel).ConfigureAwait(false);
+        await _postRepo.Add(post,Cancel).ConfigureAwait(false);
+        
+        return post;
+
+        //return await _postRepo.Add(post, Cancel).ConfigureAwait(false); // <- пришлось отказаться от такой реализации, так как в тесте не возвращался пост, хоть на Add настроен мок
     }
 
     #endregion
@@ -228,11 +236,26 @@ public class RepositoryBlogPostManager : IBlogPostManager
 
         var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
         
-        if( post is null || Tag is null ) return false;
+        if (post is null) return false;
 
-        var tag = await _tagRepo.ExistName(Tag, Cancel).ConfigureAwait(false)
-                ? await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false)
-                : new Tag { Name = Tag };
+        Debug.WriteLine("PostId = {0} --", PostId);
+
+        //var tag = await _tagRepo.ExistName(Tag, Cancel).ConfigureAwait(false)
+        //        ? await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false)
+        //        : new Tag { Name = Tag };
+
+        Tag tag;
+
+        if(await _tagRepo.ExistName(Tag, Cancel).ConfigureAwait(false))
+        {
+            tag = await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false);
+            await _tagRepo.Update(tag, Cancel).ConfigureAwait(false);
+        }
+        else
+        {
+            tag = new Tag { Name = Tag };
+            await _tagRepo.Add(tag, Cancel).ConfigureAwait(false);
+        }
 
         if (post.Tags.Contains(tag))
             return true;              //  <- наверное всё же true, так как тег с таким именем уже есть в посте
@@ -254,16 +277,16 @@ public class RepositoryBlogPostManager : IBlogPostManager
         if (Tag is null) throw new ArgumentNullException(nameof(Tag));
 
         var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
+        if (post is null) return false;
+        
         var tag = await _tagRepo.GetByName(Tag, Cancel).ConfigureAwait(false);
-
-        if (post is null || Tag is null) return false;
 
         if (!post.Tags.Contains(tag))
             return false;
 
-        tag.Posts.Remove(post); // тут я подумал, а почему нет, раз есть в тегах есть ссылка на посты, которые связаны с этим тегом
+        //tag.Posts.Remove(post); // тут я подумал, а почему нет, раз есть в тегах есть ссылка на посты, которые связаны с этим тегом
 
-        //post.Tags.Remove(tag);
+        post.Tags.Remove(tag); //но пришлось всё же использовать этот путь
 
         await _postRepo.Update(post, Cancel).ConfigureAwait(false);
         await _tagRepo.Update(tag, Cancel).ConfigureAwait(false); //нужно ли тут репозиторий тега обновлять
@@ -334,29 +357,6 @@ public class RepositoryBlogPostManager : IBlogPostManager
         return true;
     }
 
-    /// <summary> Изменение статуса поста </summary>
-    /// <param name="PostId"> Идентификатор поста </param>
-    /// <param name="Status"> Текст статуса </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Возврат статуса поста </returns>
-    /// <exception cref="NotImplementedException"> Не найденный пост </exception>
-    public async Task<Status> ChangePostStatusAsync(int PostId, string Status, CancellationToken Cancel = default)
-    {
-        var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
-
-        if (post is null)
-            throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
-
-        post.Status = await _statusRepo.ExistName(Status, Cancel).ConfigureAwait(false)
-                    ? await _statusRepo.GetByName(Status, Cancel).ConfigureAwait(false)
-                    : new Status { Name = Status };
-
-        await _postRepo.Update(post, Cancel).ConfigureAwait(false);
-        await _statusRepo.Update(post.Status, Cancel).ConfigureAwait(false);
-
-        return post.Status;
-    }
-
     /// <summary> Изменение категории поста </summary>
     /// <param name="PostId"> Идентификатор поста </param>
     /// <param name="CategoryName"> Название категории </param>
@@ -365,17 +365,29 @@ public class RepositoryBlogPostManager : IBlogPostManager
     /// <exception cref="InvalidOperationException"> Не найденный пост </exception>
     public async Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
     {
+        if(CategoryName is null) throw new ArgumentNullException(nameof(CategoryName));
+
         var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
         
         if (post is null)
             throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
 
-        post.Category = await _categoryRepo.ExistName(CategoryName, Cancel).ConfigureAwait(false)
-                      ? await _categoryRepo.GetByName(CategoryName, Cancel).ConfigureAwait(false)
-                      : new Category { Name = CategoryName };
+        //post.Category = await _categoryRepo.ExistName(CategoryName, Cancel).ConfigureAwait(false)
+        //              ? await _categoryRepo.GetByName(CategoryName, Cancel).ConfigureAwait(false)
+        //              : new Category { Name = CategoryName };
+
+        if (await _categoryRepo.ExistName(CategoryName, Cancel).ConfigureAwait(false))
+        {
+            post.Category = await _categoryRepo.GetByName(CategoryName, Cancel).ConfigureAwait(false);
+            await _categoryRepo.Update(post.Category, Cancel).ConfigureAwait(false);
+        }
+        else
+        {
+            post.Category = new Category { Name = CategoryName };
+            await _categoryRepo.Add(post.Category, Cancel).ConfigureAwait(false);
+        }
 
         await _postRepo.Update(post, Cancel).ConfigureAwait(false);
-        await _categoryRepo.Update(post.Category, Cancel).ConfigureAwait(false);
 
         return post.Category;
     }

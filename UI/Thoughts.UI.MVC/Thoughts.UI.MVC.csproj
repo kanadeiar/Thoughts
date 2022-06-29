@@ -8,7 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -19,6 +20,7 @@
     <ProjectReference Include="..\..\Data\Thoughts.DAL.Sqlite\Thoughts.DAL.Sqlite.csproj" />
     <ProjectReference Include="..\..\Data\Thoughts.DAL.SqlServer\Thoughts.DAL.SqlServer.csproj" />
     <ProjectReference Include="..\..\Services\Thoughts.Interfaces\Thoughts.Interfaces.csproj" />
+    <ProjectReference Include="..\..\Services\Thoughts.Services\Thoughts.Services.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
