@@ -7,11 +7,11 @@ namespace Thoughts.Extensions.Maps;
 
 public class TagMapper : IMapper<TagDom, Tag>, IMapper<Tag, TagDom>
 {
-    public Tag Map(TagDom item)
+    public Tag? Map(TagDom? item)
     {
         if (item is null) return default;
 
-        var tag = new Tag()
+        var tag = new Tag
         {
             Id = item.Id,
             Name = item.Name,
@@ -24,11 +24,11 @@ public class TagMapper : IMapper<TagDom, Tag>, IMapper<Tag, TagDom>
         return tag;
     }
 
-    public TagDom Map(Tag item)
+    public TagDom? Map(Tag? item)
     {
         if (item is null) return default;
 
-        var tag = new Domain.Base.Entities.Tag()
+        var tag = new Domain.Base.Entities.Tag
         {
             Id = item.Id,
             Name = item.Name,

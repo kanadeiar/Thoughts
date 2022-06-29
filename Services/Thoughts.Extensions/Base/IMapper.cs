@@ -1,7 +1,10 @@
-﻿namespace Thoughts.Extensions.Base
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Thoughts.Extensions.Base
 {
     public interface IMapper<in TSource, out TResult>
     {
-        TResult Map(TSource item);
+        [return: NotNullIfNotNull("item")]
+        TResult? Map(TSource? item);
     }
 }

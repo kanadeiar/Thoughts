@@ -1,16 +1,26 @@
 ﻿using Thoughts.DAL.Entities;
 using Thoughts.Extensions.Base;
 
+using PostDAL = Thoughts.DAL.Entities.Post;
+using PostDom = Thoughts.Domain.Base.Entities.Post;
 using CategoryDom = Thoughts.Domain.Base.Entities.Category;
 
 namespace Thoughts.Extensions.Maps;
 
 public class CategoryMapper : IMapper<CategoryDom, Category>, IMapper<Category, CategoryDom>
 {
-    public Category Map(CategoryDom item)
+    //private readonly IMapper<PostDom, Post> _PostMapper;
+    //private readonly Dictionary<int, PostDAL> _PostsDAL = new();
+
+    //public CategoryMapper(IMapper<PostDom, PostDAL> PostMapper)
+    //{
+    //    _PostMapper = PostMapper;
+    //}
+
+    public Category? Map(CategoryDom? item)
     {
         if (item is null) return default;
-        var cat = new Category()
+        var cat = new Category
         {
             Id = item.Id,
             Name = item.Name,
@@ -19,15 +29,29 @@ public class CategoryMapper : IMapper<CategoryDom, Category>, IMapper<Category, 
         MapsCash.CategoryDalCash.Add(cat);
 
         foreach (var post in item.Posts)
+        {
             cat.Posts.Add(MapsHelper.FindPostOrMapNew(post));
+            // todo: использование локального кеша данных маппера
+            //if (_PostsDAL.TryGetValue(post.Id, out var post_dom)) 
+            //    cat.Posts.Add(post_dom);
+            //else
+            //{
+            //    post_dom = _PostMapper.Map(post);
+            //    _PostsDAL.Add(post.Id, post_dom);
+            //    cat.Posts.Add(post_dom);
+            //}
+        }
 
         return cat;
     }
 
-    public CategoryDom Map(Category item)
+    //private readonly Dictionary<int, PostDom> _PostsDom = new();
+
+    public CategoryDom? Map(Category? item)
     {
         if (item is null) return default;
-        var cat = new Domain.Base.Entities.Category()
+
+        var cat = new CategoryDom
         {
             Id = item.Id,
             Name = item.Name,

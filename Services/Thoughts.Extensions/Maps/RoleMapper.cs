@@ -7,11 +7,11 @@ namespace Thoughts.Extensions.Maps;
 
 public class RoleMapper : IMapper<RoleDom, Role>, IMapper<Role, RoleDom>
 {
-    public RoleDom Map(Role item)
+    public RoleDom? Map(Role? item)
     {
         if (item is null) return default;
 
-        var role = new RoleDom()
+        var role = new RoleDom
         {
             Id = item.Id,
             Name = item.Name,
@@ -24,11 +24,11 @@ public class RoleMapper : IMapper<RoleDom, Role>, IMapper<Role, RoleDom>
         return role;
     }
 
-    public Role Map(RoleDom item)
+    public Role? Map(RoleDom? item)
     {
         if (item is null) return default;
 
-        var role = new Role()
+        var role = new Role
         {
             Id = item.Id,
             Name = item.Name,

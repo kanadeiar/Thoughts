@@ -17,19 +17,19 @@ namespace Thoughts.Extensions
 {
     public static class MapsCash
     {
-        public static HashSet<PostDal> PostDalCash { get; } = new HashSet<PostDal>();
-        public static HashSet<StatusDal> StatusDalCash { get; } = new HashSet<StatusDal>();
-        public static HashSet<CategoryDal> CategoryDalCash { get; } = new HashSet<CategoryDal>();
-        public static HashSet<CommentDal> CommentDalCash { get; } = new HashSet<CommentDal>();
-        public static HashSet<RoleDal> RoleDalCash { get; } = new HashSet<RoleDal>();
-        public static HashSet<TagDal> TagDalCash { get; } = new HashSet<TagDal>();
-        public static HashSet<UserDal> UserDalCash { get; } = new HashSet<UserDal>();
-        public static HashSet<PostDom> PostDomCash { get; } = new HashSet<PostDom>();
-        public static HashSet<StatusDom> StatusDomCash { get; } = new HashSet<StatusDom>();
-        public static HashSet<CategoryDom> CategoryDomCash { get; } = new HashSet<CategoryDom>();
-        public static HashSet<CommentDom> CommentDomCash { get; } = new HashSet<CommentDom>();
-        public static HashSet<RoleDom> RoleDomCash { get; } = new HashSet<RoleDom>();
-        public static HashSet<TagDom> TagDomCash { get; } = new HashSet<TagDom>();
-        public static HashSet<UserDom> UserDomCash { get; } = new HashSet<UserDom>();
+        public static HashSet<PostDal> PostDalCash { get; } = new();
+        public static HashSet<StatusDal> StatusDalCash { get; } = new();
+        public static HashSet<CategoryDal> CategoryDalCash { get; } = new();
+        public static HashSet<CommentDal> CommentDalCash { get; } = new();
+        public static HashSet<RoleDal> RoleDalCash { get; } = new();
+        public static HashSet<TagDal> TagDalCash { get; } = new();
+        public static HashSet<UserDal> UserDalCash { get; } = new();
+        public static HashSet<PostDom> PostDomCash { get; } = new();
+        public static HashSet<StatusDom> StatusDomCash { get; } = new();
+        public static HashSet<CategoryDom> CategoryDomCash { get; } = new();
+        public static HashSet<CommentDom> CommentDomCash { get; } = new();
+        public static HashSet<RoleDom> RoleDomCash { get; } = new();
+        public static HashSet<TagDom> TagDomCash { get; } = new();
+        public static HashSet<UserDom> UserDomCash { get; } = new();
     }
 }

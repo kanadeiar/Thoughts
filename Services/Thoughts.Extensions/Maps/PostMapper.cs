@@ -9,11 +9,11 @@ namespace Thoughts.Extensions.Maps;
 
 public class PostMapper : IMapper<PostDom, PostDal>, IMapper<PostDal, PostDom>
 {
-    public PostDom Map(PostDal item)
+    public PostDom? Map(PostDal? item)
     {
         if (item is null) return default;
 
-        var post = new PostDom()
+        var post = new PostDom
         {
             Id = item.Id,
             Status = (StatusDom)item.Status,
@@ -41,11 +41,11 @@ public class PostMapper : IMapper<PostDom, PostDal>, IMapper<PostDal, PostDom>
         return post;
     }
 
-    public PostDal Map(PostDom item)
+    public PostDal? Map(PostDom? item)
     {
         if(item is null) return default;
 
-        var post = new PostDal()
+        var post = new PostDal
         {
             Id = item.Id,
             Status = (StatusDal)item.Status,

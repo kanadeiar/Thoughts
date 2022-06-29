@@ -7,11 +7,11 @@ namespace Thoughts.Extensions.Maps;
 
 public class CommentMapper : IMapper<CommentDom, Comment>, IMapper<Comment, CommentDom>
 {
-    public Comment Map(CommentDom item)
+    public Comment? Map(CommentDom? item)
     {
         if (item is null) return default;
 
-        var com = new Comment()
+        var com = new Comment
         {
             Id = item.Id,
             Body = item.Body,
@@ -32,11 +32,11 @@ public class CommentMapper : IMapper<CommentDom, Comment>, IMapper<Comment, Comm
         return com;
     }
 
-    public CommentDom Map(Comment item)
+    public CommentDom? Map(Comment? item)
     {
         if (item is null) return default;
 
-        var com = new Domain.Base.Entities.Comment()
+        var com = new CommentDom
         {
             Id = item.Id,
             Body = item.Body,

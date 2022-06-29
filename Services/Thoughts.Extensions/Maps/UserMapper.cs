@@ -7,11 +7,11 @@ namespace Thoughts.Extensions.Maps;
 
 public class UserMapper : IMapper<UserDom, User>, IMapper<User, UserDom>
 {
-    public User Map(UserDom item)
+    public User? Map(UserDom? item)
     {
         if (item is null) return default;
 
-        var user = new User()
+        var user = new User
         {
             Id = item.Id,
             NickName = item.NickName,
@@ -29,11 +29,11 @@ public class UserMapper : IMapper<UserDom, User>, IMapper<User, UserDom>
         return user;
     }
 
-    public UserDom Map(User item)
+    public UserDom? Map(User? item)
     {
         if (item is null) return default;
 
-        var user = new Domain.Base.Entities.User()
+        var user = new UserDom
         {
             Id = item.Id,
             NickName = item.NickName,
