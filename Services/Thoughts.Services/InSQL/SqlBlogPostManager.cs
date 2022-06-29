@@ -35,7 +35,8 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Возвращает все посты </returns>
     public Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken Cancel = default)
     {
-        var db_posts = _DB.Posts;
+        var db_posts = _DB.Posts
+            .Include(x => x.User);
 
         var domain_posts = db_posts.PostToDomain();
 
@@ -62,6 +63,8 @@ public class SqlBlogPostManager : IBlogPostManager
             return Enumerable.Empty<Post>();
 
         var db_posts = await _DB.Posts
+            .Include(x => x.User)
+            .OrderByDescending(x => x.Date)
             .Skip(Skip)
             .Take(Take)
             .ToArrayAsync(Cancel)
@@ -165,6 +168,7 @@ public class SqlBlogPostManager : IBlogPostManager
     public async Task<Post?> GetPostAsync(int Id, CancellationToken Cancel = default)
     {
         var db_post = await _DB.Posts
+           .Include(x => x.User)
            .Include(post => post.Category)
            .Include(post => post.Tags)
            .FirstOrDefaultAsync(p => p.Id == Id, Cancel)

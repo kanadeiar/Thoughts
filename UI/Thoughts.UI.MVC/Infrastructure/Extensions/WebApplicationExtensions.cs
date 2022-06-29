@@ -1,6 +1,4 @@
-﻿using Thoughts.Services.InSQL;
-
-namespace Thoughts.UI.MVC.Infrastructure.Extensions;
+﻿namespace Thoughts.UI.MVC.Infrastructure.Extensions;
 
 internal static class WebApplicationExtensions
 {
