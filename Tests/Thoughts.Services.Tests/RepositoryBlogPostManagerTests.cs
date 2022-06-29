@@ -279,7 +279,7 @@ public class RepositoryBlogPostManagerTests
     {
         var user_id = "1";
 
-        var expected_posts = _Posts.Where(p => p.UserId == user_id);
+        var expected_posts = _Posts.Where(p => p.User.Id == user_id).ToArray();
 
         _Post_Repo_Mock.Setup(c => c.GetAll(It.IsAny<CancellationToken>()))
                                     .ReturnsAsync(expected_posts);
@@ -296,8 +296,8 @@ public class RepositoryBlogPostManagerTests
     public async Task GetUserPostsCountAsync_Test_Returns_UserPostsCount()
     {
         var user_id = "2";
-        var posts = _Posts.Where(p => p.UserId == user_id);
-        var expected_posts_count = posts.Count();
+        var posts = _Posts.Where(p => p.User.Id == user_id).ToArray();
+        var expected_posts_count = posts.Length;
 
         _Post_Repo_Mock.Setup(c => c.GetAll(It.IsAny<CancellationToken>()))
                                     .ReturnsAsync(posts);

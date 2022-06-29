@@ -27,7 +27,10 @@ namespace Thoughts.Extensions.Maps
                 Id = item.Id,
                 Status = (StatusDom)item.Status,
                 Date = item.Date,
-                UserId = item.User.Id,
+                User = new UserDom
+                {
+                    Id = item.User.Id,
+                },
                 Title = item.Title,
                 Body = item.Body,
                 PublicationsDate = item.PublicationDate,
