@@ -1,4 +1,5 @@
-﻿using Thoughts.Extensions.Base;
+﻿using Thoughts.Interfaces.Base;
+
 using PostDal = Thoughts.DAL.Entities.Post;
 using StatusDal = Thoughts.DAL.Entities.Status;
 using PostDom = Thoughts.Domain.Base.Entities.Post;

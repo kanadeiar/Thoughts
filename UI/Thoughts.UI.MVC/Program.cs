@@ -1,3 +1,6 @@
+using Thoughts.Interfaces.Base.Repositories;
+using Thoughts.Services.Mapping;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
@@ -23,6 +26,13 @@ switch (db_type)
 
 services.AddTransient<ThoughtsDbInitializer>();
 services.AddScoped<IBlogPostManager, SqlBlogPostManager>();
+
+services.AddScoped<IRepository<Post>, MappingRepository<Thoughts.DAL.Entities.Post, Post>>();
+services.AddScoped<IRepository<Category>, MappingRepository<Thoughts.DAL.Entities.Category, Category>>();
+services.AddScoped<IRepository<Tag>, MappingRepository<Thoughts.DAL.Entities.Tag, Tag>>();
+services.AddScoped<IRepository<Comment>, MappingRepository<Thoughts.DAL.Entities.Comment, Comment>>();
+
+services.AddScoped(typeof(IRepository<>), typeof(DbRepository<>));
 
 var app = builder.Build();
 

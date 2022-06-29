@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Thoughts.Extensions.Base
+namespace Thoughts.Interfaces.Base
 {
     public interface IMapper<in TSource, out TResult>
     {

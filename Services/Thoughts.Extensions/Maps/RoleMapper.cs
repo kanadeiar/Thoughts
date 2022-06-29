@@ -1,5 +1,5 @@
 ﻿using Thoughts.DAL.Entities;
-using Thoughts.Extensions.Base;
+using Thoughts.Interfaces.Base;
 
 using RoleDom = Thoughts.Domain.Base.Entities.Role;
 

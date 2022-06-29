@@ -1,5 +1,5 @@
 ﻿using Thoughts.DAL.Entities;
-using Thoughts.Extensions.Base;
+using Thoughts.Interfaces.Base;
 
 using TagDom = Thoughts.Domain.Base.Entities.Tag;
 

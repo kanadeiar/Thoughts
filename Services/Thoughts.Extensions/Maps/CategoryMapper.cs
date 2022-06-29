@@ -1,5 +1,5 @@
 ﻿using Thoughts.DAL.Entities;
-using Thoughts.Extensions.Base;
+using Thoughts.Interfaces.Base;
 
 using PostDAL = Thoughts.DAL.Entities.Post;
 using PostDom = Thoughts.Domain.Base.Entities.Post;
