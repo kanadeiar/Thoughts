@@ -4,7 +4,7 @@ var configuration = builder.Configuration;
 var services = builder.Services;
 
 
-services.AddControllersWithViews().AddRazorRuntimeCompilation();
+services.AddControllersWithViews();//.AddRazorRuntimeCompilation();
 
 var db_type = configuration["Database"];
 

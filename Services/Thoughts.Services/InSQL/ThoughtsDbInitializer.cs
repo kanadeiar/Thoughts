@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using Thoughts.DAL;
@@ -50,6 +52,14 @@ public class ThoughtsDbInitializer
 
     private async Task InitializeTestDataAsync(CancellationToken Cancel = default)
     {
+        if (await _db.Users.AnyAsync(Cancel).ConfigureAwait(false))
+        {
+            _Log.LogInformation("В базе данных есть пользователи - в инициализации тестовыми данными не нуждается");
+            return;
+        }
+
+        var timer = Stopwatch.StartNew();
+
         await using var transaction = await _db.Database.BeginTransactionAsync(Cancel).ConfigureAwait(false);
 
         await _db.AddRangeAsync(TestDbData.Categories, Cancel);
@@ -60,5 +70,7 @@ public class ThoughtsDbInitializer
         await _db.SaveChangesAsync(Cancel);
 
         await transaction.CommitAsync(Cancel);
+
+        _Log.LogInformation("Инициализация БД тестовыми данными выполнена успешно за {0} мс", timer.ElapsedMilliseconds);
     }
 }

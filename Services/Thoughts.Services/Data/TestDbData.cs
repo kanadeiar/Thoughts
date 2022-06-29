@@ -27,6 +27,13 @@ public class TestDbData
         {
             new()
             {
+                FirstName = "Админ",
+                LastName = "Админович",
+                Patronymic = "Админов",
+                NickName="Admin"
+            },
+            new()
+            {
                 FirstName = "User1",
                 LastName = "User1",
                 NickName="User1"
@@ -90,7 +97,9 @@ public class TestDbData
             new Post
             {
                 Title = "Title6",
-                Body = "Body6. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
+                Body = "Body6. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. "
+                    + "Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam."
+                    + "<br/><img src=\"https://catholicsar.ru/wp-content/uploads/1516116812_ryzhiy-maine-coon.jpg\" alt=\"картинка\"/>",
                 Tags = new[] { tags[2] },
                 Category = categories[0],
                 User = users[2],

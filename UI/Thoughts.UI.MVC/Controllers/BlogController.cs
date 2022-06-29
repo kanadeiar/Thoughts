@@ -42,4 +42,9 @@ public class BlogController : Controller
         };
         return View(model);
     }
+
+    public async Task<IActionResult> Edit(int id)
+    {
+        throw new NotImplementedException("Редактирование записи блога не реализовано");
+    }
 }

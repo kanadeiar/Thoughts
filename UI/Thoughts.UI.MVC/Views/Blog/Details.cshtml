@@ -18,7 +18,7 @@
     <article>
         <h3>@Model.Post.Title</h3>
         <p>Дата: @Model.Post.Date.ToString("dd.MM.yyyy")</p>
-        <p>@Model.Post.Body</p>
+        <p>@Html.Raw(Model.Post.Body)</p>
         <p>Автор: @Model.Post.User?.NickName</p>
         <p>Категория: @Model.Post.Category?.Name</p>
         <h3>Теги:</h3>
