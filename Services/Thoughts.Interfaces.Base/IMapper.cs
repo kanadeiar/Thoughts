@@ -2,9 +2,12 @@
 
 namespace Thoughts.Interfaces.Base
 {
-    public interface IMapper<in TSource, out TResult>
+    public interface IMapper<TSource, TResult>
     {
         [return: NotNullIfNotNull("item")]
         TResult? Map(TSource? item);
+
+        //[return: NotNullIfNotNull("item")] // todo: Посмотреть варианты реализации
+        //TSource? MapBack(TResult? item);
     }
 }
