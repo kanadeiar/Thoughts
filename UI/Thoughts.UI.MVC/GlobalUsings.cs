@@ -1,4 +1,5 @@
 ﻿global using System.Diagnostics;
+global using System.Text.RegularExpressions;
 
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
