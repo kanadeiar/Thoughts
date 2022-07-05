@@ -1,0 +1,9 @@
+﻿@model IEnumerable<Comment>
+
+<h3>Комментарии:</h3>
+<div>
+    @foreach (var e in Model)
+    {
+        <p>Дата: @e.Date.ToString("dd.MM.yyyy") @e.Body Автор: @e.User?.NickName</p>
+    }
+</div>

@@ -11,14 +11,6 @@
 <div class="posts">
     @foreach (var e in Model.Posts)
     {
-        <article>
-            <h3>@e.Title</h3>
-            <p>Дата: @e.Date.ToString("dd.MM.yyyy")</p>
-            <rawhtml text="@e.Body"/>
-            <p>Автор: @e.User.NickName</p>
-            <ul class="actions">
-                <li><a asp-controller="Blog" asp-action="Details" asp-route-id="@e.Id" class="button">Подробнее ...</a></li>
-            </ul>
-        </article>
+        <vc:post-cart post="e"></vc:post-cart>
     }
 </div>
