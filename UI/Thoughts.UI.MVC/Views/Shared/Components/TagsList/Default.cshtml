@@ -1,0 +1,9 @@
+﻿@model IEnumerable<Tag>
+
+<h3>Теги:</h3>
+<div>
+    @foreach (var e in Model)
+    {
+        <span>@e.Name</span>
+    }
+</div>

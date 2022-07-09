@@ -16,24 +16,8 @@
 
 <div class="posts">
     <article>
-        <h3>@Model.Post.Title</h3>
-        <p>Дата: @Model.Post.Date.ToString("dd.MM.yyyy")</p>
-        <rawhtml text="@Model.Post.Body"/>
-        <p>Автор: @Model.Post.User?.NickName</p>
-        <p>Категория: @Model.Post.Category?.Name</p>
-        <h3>Теги:</h3>
-        <div>
-            @foreach (var e in Model.Post.Tags)
-            {
-                <span>@e.Name</span>
-            }
-        </div>
-        <h3>Комментарии:</h3>
-        <div>
-            @foreach (var e in Model.Post.Comments)
-            {
-                <p>Дата: @e.Date.ToString("dd.MM.yyyy") @e.Body Автор: @e.User?.NickName</p>
-            }
-        </div>
+        <vc:details-cart post="@Model.Post"></vc:details-cart>
+        <vc:tags-list tags="@Model.Post.Tags"></vc:tags-list>
+        <vc:comments-list comments="@Model.Post.Comments"></vc:comments-list>
     </article>
 </div>
