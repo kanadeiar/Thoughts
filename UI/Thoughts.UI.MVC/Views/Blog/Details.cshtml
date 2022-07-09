@@ -10,7 +10,7 @@
 
 <div>
     <a class="button" asp-controller="Blog" asp-action="Index">
-        Back to Thoughts
+        Назад к ленте
     </a>
 </div>
 
@@ -18,7 +18,7 @@
     <article>
         <h3>@Model.Post.Title</h3>
         <p>Дата: @Model.Post.Date.ToString("dd.MM.yyyy")</p>
-        <p>@Html.Raw(Model.Post.Body)</p>
+        <rawhtml text="@Model.Post.Body"/>
         <p>Автор: @Model.Post.User?.NickName</p>
         <p>Категория: @Model.Post.Category?.Name</p>
         <h3>Теги:</h3>

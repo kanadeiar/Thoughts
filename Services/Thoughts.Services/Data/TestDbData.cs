@@ -56,48 +56,48 @@ public class TestDbData
         {
             new Post
             {
-                Title = "Title1",
-                Body = "Body1. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
+                Title = "Заголовок 1",
+                Body = "<h4>Тело 1.</h4><img src=\"https://catholicsar.ru/wp-content/uploads/1516116812_ryzhiy-maine-coon.jpg\" alt=\"картинка\"/> Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
                 Tags = new[] { tags[1], tags[0] },
                 Category = categories[0],
                 User = users[0],
             },
             new Post
             {
-                Title = "Title2",
-                Body = "Body2. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
+                Title = "Заголовок 2",
+                Body = "Тело 2. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
                 Tags = new[] { tags[1] },
                 Category = categories[0],
                 User = users[0],
             },
             new Post
             {
-                Title = "Title3",
-                Body = "Body3. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
+                Title = "Заголовок 3",
+                Body = "Тело 3. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
                 Tags = new[] { tags[2] },
                 Category = categories[0],
                 User = users[1],
             },
             new Post
             {
-                Title = "Title4",
-                Body = "Body4. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
+                Title = "Заголовок 4",
+                Body = "Тело 4. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
                 Tags = new[] { tags[0] },
                 Category = categories[2],
                 User = users[2],
             },
             new Post
             {
-                Title = "Title5",
-                Body = "Body5. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
+                Title = "Заголовок 5",
+                Body = "Тело 5. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
                 Tags = new[] { tags[1] },
                 Category = categories[2],
                 User = users[2],
             },
             new Post
             {
-                Title = "Title6",
-                Body = "Body6. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. "
+                Title = "Заголовок 6",
+                Body = "Тело 6. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. "
                     + "Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam."
                     + "<br/><img src=\"https://catholicsar.ru/wp-content/uploads/1516116812_ryzhiy-maine-coon.jpg\" alt=\"картинка\"/>",
                 Tags = new[] { tags[2] },
@@ -106,48 +106,48 @@ public class TestDbData
             },
             new Post
             {
-                Title = "Title7",
-                Body = "Body7. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
+                Title = "Заголовок 7",
+                Body = "Тело 7. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
                 Tags = new[] { tags[0], tags[2] },
                 Category = categories[1],
                 User = users[0],
             },
             new Post
             {
-                Title = "Title8",
-                Body = "Body8. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
+                Title = "Заголовок 8",
+                Body = "Тело 8. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
                 Tags = new[] { tags[2] },
                 Category = categories[0],
                 User = users[2],
             },
             new Post
             {
-                Title = "Title9",
-                Body = "Body9. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
+                Title = "Заголовок 9",
+                Body = "Тело 9. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
                 Tags = new[] { tags[0], tags[2] },
                 Category = categories[1],
                 User = users[0],
             },
             new Post
             {
-                Title = "Title10",
-                Body = "Body10. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
+                Title = "Заголовок 10",
+                Body = "Тело 10. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
                 Tags = new[] { tags[2] },
                 Category = categories[0],
                 User = users[2],
             },
             new Post
             {
-                Title = "Title11",
-                Body = "Body11. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
+                Title = "Заголовок 11",
+                Body = "Тело 11. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
                 Tags = new[] { tags[0], tags[2] },
                 Category = categories[1],
                 User = users[0],
             },
             new Post
             {
-                Title = "Title12",
-                Body = "Body12. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
+                Title = "Заголовок 12",
+                Body = "Тело 12. Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.",
                 Tags = new[] { tags[2] },
                 Category = categories[0],
                 User = users[2],
@@ -165,7 +165,6 @@ public class TestDbData
     public static ICollection<Category> Categories { get; }
 
     public static ICollection<User> Users { get; }
-
 
     public static ICollection<Post> Posts { get; }
 }

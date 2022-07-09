@@ -15,8 +15,9 @@ public class StringTools
         {
             if (e.Body.Length > length)
             {
-                var ind = e.Body.IndexOf(" ", length);
-                e.Body = string.Concat(e.Body[..ind], "...");
+                var text = Regex.Replace(e.Body, "<.*?>", string.Empty);
+                var ind = text.IndexOf(" ", length);
+                e.Body = string.Concat(text[..ind], "...");
             }
         }
     }

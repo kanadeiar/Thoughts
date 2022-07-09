@@ -1,6 +1,9 @@
 ﻿global using System.Diagnostics;
+global using System.Text.RegularExpressions;
 
 global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.AspNetCore.Mvc.Rendering;
+global using Microsoft.AspNetCore.Razor.TagHelpers;
 global using Microsoft.EntityFrameworkCore;
 
 global using Thoughts.DAL.Sqlite;
