@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 using Thoughts.DAL.Entities;
 
@@ -126,6 +127,8 @@ public static class Mapper
     #endregion
 
     #region To Domain
+
+    [return: NotNullIfNotNull("post")]
     public static PostDomain? PostToDomain(this PostDAL? post)
     => post is null ? null
     : new PostDomain
@@ -142,7 +145,7 @@ public static class Mapper
         Date = post.Date,
     };
 
-    public static IEnumerable<PostDomain?> PostToDomain(this IEnumerable<PostDAL?> posts) => posts.Select(PostToDomain);
+    public static IEnumerable<PostDomain> PostToDomain(this IEnumerable<PostDAL> posts) => posts.Select(post => PostToDomain(post));
 
 
     public static UserDomain? UserToDomain(this UserDAL? user)
@@ -168,7 +171,7 @@ public static class Mapper
         _ => throw new InvalidEnumArgumentException(nameof(status), (int)status, typeof(StatusDAL))
     };
 
-
+    [return: NotNullIfNotNull("category")]
     public static CategoryDomain? CategoryToDomain(this CategoryDAL? category)
         => category is null ? null
         : new CategoryDomain
@@ -178,6 +181,7 @@ public static class Mapper
         };
 
 
+    [return:NotNullIfNotNull("tag")]
     public static TagDomain? TagToDomain(this TagDAL? tag)
         => tag is null ? null
         : new TagDomain
@@ -186,7 +190,7 @@ public static class Mapper
             Name = tag.Name,
         };
 
-    public static IEnumerable<TagDomain?> TagToDomain(this IEnumerable<TagDAL?> tags) => tags.Select(TagToDomain);
+    public static IEnumerable<TagDomain> TagToDomain(this IEnumerable<TagDAL> tags) => tags.Select(tag => TagToDomain(tag));
 
 
     public static CommentDomain? CommentToDomain(this CommentDAL? comment)

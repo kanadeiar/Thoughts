@@ -19,9 +19,9 @@ public class SqlBlogPostManager : IBlogPostManager
     private readonly ThoughtsDB _DB;
     private readonly ILogger<SqlBlogPostManager> _Logger;
 
-    /// <summary> Конструктор сервиса </summary>
-    /// <param name="Db"> База данных </param>
-    /// <param name="Logger"> Логгер </param>
+    /// <summary> Конструктор сервиса</summary>
+    /// <param name="Db">База данных</param>
+    /// <param name="Logger">Логгер</param>
     public SqlBlogPostManager(ThoughtsDB Db, ILogger<SqlBlogPostManager> Logger)
     {
         _DB = Db;
@@ -30,33 +30,35 @@ public class SqlBlogPostManager : IBlogPostManager
 
     #region Get all posts
 
-    /// <summary> Получить все посты </summary>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Возвращает все посты </returns>
-    public Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken Cancel = default)
+    /// <summary>Получить все посты</summary>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Возвращает все посты</returns>
+    public async Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken Cancel = default)
     {
-        var db_posts = _DB.Posts
-            .Include(x => x.User);
+        var db_posts = await _DB.Posts
+            .Include(x => x.User)
+           .ToArrayAsync(Cancel)
+           .ConfigureAwait(false);
 
         var domain_posts = db_posts.PostToDomain();
 
-        return Task.FromResult(domain_posts)!;
+        return domain_posts!;
     }
 
-    /// <summary> Получить количество всех постов </summary>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Возвращает количество постов </returns>
+    /// <summary>Получить количество всех постов</summary>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Возвращает количество постов</returns>
     public async Task<int> GetAllPostsCountAsync(CancellationToken Cancel = default)
     {
         var count = await _DB.Posts.CountAsync(Cancel).ConfigureAwait(false);
         return count;
     }
 
-    /// <summary> Получение постов для пагинации (выборка) </summary>
-    /// <param name="Skip"> Пропуск количества заданного диапазона постов </param>
-    /// <param name="Take"> Получение заданного диапазона постов</param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Урезанное перечисление постов (для пагинации) </returns>
+    /// <summary>Получение постов для постраничного разбиения (выборка)</summary>
+    /// <param name="Skip">Пропуск количества заданного диапазона постов</param>
+    /// <param name="Take">Получение заданного диапазона постов</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Урезанное перечисление постов (для постраничного разбиения)</returns>
     public async Task<IEnumerable<Post>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default)
     {
         if (Take == 0)
@@ -75,11 +77,11 @@ public class SqlBlogPostManager : IBlogPostManager
         return domain_posts!;
     }
 
-    /// <summary> Получение страницы постов </summary>
-    /// <param name="PageIndex"> Номер страницы </param>
-    /// <param name="PageSize"> Размер страницы </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Страница постов </returns>
+    /// <summary>Получение страницы постов</summary>
+    /// <param name="PageIndex">Номер страницы</param>
+    /// <param name="PageSize">Размер страницы</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Страница постов</returns>
     public async Task<IPage<Post>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default)
     {
         var total_count = await _DB.Posts.CountAsync(Cancel).ConfigureAwait(false);
@@ -96,23 +98,26 @@ public class SqlBlogPostManager : IBlogPostManager
 
     #region Get user posts
 
-    /// <summary> Получение всех постов пользователя </summary>
-    /// <param name="UserId"> ID пользователя </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Все пользовательские посты </returns>
-    public Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
+    /// <summary>Получение всех постов пользователя</summary>
+    /// <param name="UserId">ID пользователя</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Все пользовательские посты</returns>
+    public async Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
     {
-        var db_posts = _DB.Posts.Where(p => p.User.Id == UserId);
+        var db_posts = await _DB.Posts
+           .Where(p => p.User.Id == UserId)
+           .ToArrayAsync(Cancel)
+           .ConfigureAwait(false);
 
         var domain_posts = db_posts.PostToDomain();
 
-        return Task.FromResult(domain_posts)!;
+        return domain_posts!;
     }
 
-    /// <summary> Получение количества всех постов пользователя </summary>
-    /// <param name="UserId"> ID пользователя </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Количество всех постов пользователя </returns>
+    /// <summary>Получение количества всех постов пользователя</summary>
+    /// <param name="UserId">ID пользователя</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Количество всех постов пользователя</returns>
     public async Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
     {
         var count = await _DB.Posts
@@ -122,12 +127,12 @@ public class SqlBlogPostManager : IBlogPostManager
         return count;
     }
 
-    /// <summary> Получение выборки постов для пагинации конкретного пользователя </summary>
-    /// <param name="UserId"> ID пользователя </param>
-    /// <param name="Skip"> Пропуск количества заданного диапазона постов </param>
-    /// <param name="Take"> Получение заданного диапазона постов</param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Выборка постов для пагинации пользователя </returns>
+    /// <summary>Получение выборки постов для постраничного разбиения конкретного пользователя</summary>
+    /// <param name="UserId">ID пользователя</param>
+    /// <param name="Skip">Пропуск количества заданного диапазона постов</param>
+    /// <param name="Take">Получение заданного диапазона постов</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Выборка постов для постраничного разбиения пользователя</returns>
     public async Task<IEnumerable<Post>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default)
     {
         if (Take == 0)
@@ -139,12 +144,12 @@ public class SqlBlogPostManager : IBlogPostManager
         return page;
     }
 
-    /// <summary> Получение страницы постов пользователя </summary>
-    /// <param name="UserId"> ID пользователя </param>
-    /// <param name="PageIndex"> Номер страницы </param>
-    /// <param name="PageSize"> Размер страницы </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Страница постов пользователя </returns>
+    /// <summary>Получение страницы постов пользователя</summary>
+    /// <param name="UserId">ID пользователя</param>
+    /// <param name="PageIndex">Номер страницы</param>
+    /// <param name="PageSize">Размер страницы</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Страница постов пользователя</returns>
     public async Task<IPage<Post>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default)
     {
         var total_count = await GetUserPostsCountAsync(UserId, Cancel).ConfigureAwait(false);
@@ -161,10 +166,10 @@ public class SqlBlogPostManager : IBlogPostManager
 
     #region Get Create Delete
 
-    /// <summary> Получение поста по его Id </summary>
+    /// <summary>Получение поста по его Id</summary>
     /// <param name="Id"></param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Конкретный пост </returns>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Конкретный пост</returns>
     public async Task<Post?> GetPostAsync(int Id, CancellationToken Cancel = default)
     {
         var db_post = await _DB.Posts
@@ -174,20 +179,18 @@ public class SqlBlogPostManager : IBlogPostManager
            .FirstOrDefaultAsync(p => p.Id == Id, Cancel)
            .ConfigureAwait(false);
 
-        if (db_post is null) return null;
-
-        var domain_post = db_post.PostToDomain();
+        var domain_post = db_post?.PostToDomain();
 
         return domain_post;
     }
 
-    /// <summary> Создание поста </summary>
-    /// <param name="Title"> Заголовок </param>
-    /// <param name="Body"> Тело поста </param>
-    /// <param name="UserId"> Id автора поста </param>
-    /// <param name="Category"> Категория поста </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Созданный пост </returns>
+    /// <summary> Создание поста</summary>
+    /// <param name="Title">Заголовок</param>
+    /// <param name="Body">Тело поста</param>
+    /// <param name="UserId">Id автора поста</param>
+    /// <param name="Category">Категория поста</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Созданный пост</returns>
     public async Task<Post> CreatePostAsync(
         string Title,
         string Body,
@@ -195,17 +198,22 @@ public class SqlBlogPostManager : IBlogPostManager
         string Category,
         CancellationToken Cancel = default)
     {
-        if (Title == null || Body == null || UserId == null || Category == null) throw new InvalidOperationException();
+        if (Title is null) throw new ArgumentNullException(nameof(Title));
+        if (Body is null) throw new ArgumentNullException(nameof(Body));
+        if (UserId is null) throw new ArgumentNullException(nameof(UserId));
+        if (Category is null) throw new ArgumentNullException(nameof(Category));
 
-        var db_category = await _DB.Categories.FirstOrDefaultAsync(c => c.Name == Category, Cancel).ConfigureAwait(false);
+        var db_category = await _DB.Categories
+           .FirstOrDefaultAsync(c => c.Name == Category, Cancel)
+           .ConfigureAwait(false)
+            ?? new DAL.Entities.Category { Name = Category };
 
-        if (db_category is null) db_category = new DAL.Entities.Category { Name = Category };
-
+        var category = db_category.CategoryToDomain();
         var post = new Post
         {
             Title = Title,
             Body = Body,
-            Category = db_category.CategoryToDomain()!,
+            Category = (category.Id, category.Name),
             User = _DB.Users.FirstOrDefault(user => user.Id == UserId).UserToDomain()!,
         };
 
@@ -215,10 +223,10 @@ public class SqlBlogPostManager : IBlogPostManager
         return post;
     }
 
-    /// <summary> Удаление поста </summary>
-    /// <param name="Id"> Идентификатор поста </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Флаг результата удаления </returns>
+    /// <summary> Удаление поста</summary>
+    /// <param name="Id">Идентификатор поста</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Флаг результата удаления</returns>
     public async Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default)
     {
         var db_post = await GetPostAsync(Id, Cancel);
@@ -237,10 +245,10 @@ public class SqlBlogPostManager : IBlogPostManager
     #region Tags
 
     /// <summary>Добавление тэга к посту</summary>
-    /// <param name="PostId"> Идентификатор поста </param>
-    /// <param name="Tag"> Текст тэга </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Флаг результата добавления тэга </returns>
+    /// <param name="PostId">Идентификатор поста</param>
+    /// <param name="Tag">Текст тэга</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Флаг результата добавления тэга</returns>
     public async Task<bool> AssignTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
     {
         var post = await _DB.Posts
@@ -266,19 +274,19 @@ public class SqlBlogPostManager : IBlogPostManager
         return true;
     }
 
-    /// <summary> Удаление тэга из поста </summary>
-    /// <param name="PostId"> Идентификатор поста </param>
-    /// <param name="Tag"> Текст тэга </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Флаг результата удаления тэга </returns>
+    /// <summary> Удаление тэга из поста</summary>
+    /// <param name="PostId">Идентификатор поста</param>
+    /// <param name="Tag">Текст тэга</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Флаг результата удаления тэга</returns>
     public async Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
     {
         var post = await _DB.Posts
            .Select(p => new DAL.Entities.Post { Id = p.Id })
            .FirstOrDefaultAsync(p => p.Id == PostId, Cancel).ConfigureAwait(false);
-        
+
         if (post is null || post.Tags.Count == 0) return false;
-        
+
         var tag = await _DB.Tags
            .Include(t => t.Posts)
            .FirstOrDefaultAsync(t => t.Name == Tag, Cancel);
@@ -292,72 +300,82 @@ public class SqlBlogPostManager : IBlogPostManager
         return true;
     }
 
-    /// <summary> Получение тэгов поста </summary>
-    /// <param name="Id"> Идентификатор тэга </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Перечисление тэгов поста </returns>
-    /// <exception cref="InvalidOperationException"> Не найденный пост (?) </exception>
+    /// <summary>Получение тэгов поста</summary>
+    /// <param name="Id">Идентификатор тэга</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Перечисление тэгов поста</returns>
+    /// <exception cref="InvalidOperationException">Не найденный пост (?)</exception>
     public async Task<IEnumerable<Tag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default)
     {
-        var post = await GetPostAsync(Id, Cancel);
+        var post = await GetPostAsync(Id, Cancel).ConfigureAwait(false);
         if (post is null)
             throw new InvalidOperationException($"Не найдена запись блога с идентификатором {Id}");
 
-        return post.Tags;
+        var tags = await _DB.Tags.Where(tag => post.Tags.Contains(tag.Id)).ToArrayAsync(Cancel);
+
+        return tags.TagToDomain();
     }
 
-    /// <summary> Получение всех постов по тэгу </summary>
-    /// <param name="Tag"> Текст тэга </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Перечисление постов с конкретным тэгом </returns>
+    /// <summary>Получение всех постов по тэгу</summary>
+    /// <param name="Tag">Текст тэга</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Перечисление постов с конкретным тэгом</returns>
     public async Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
     {
         var tag = await _DB.Tags
            .Include(t => t.Posts)
-           .FirstOrDefaultAsync(tag => tag.Name == Tag, Cancel).ConfigureAwait(false);
+           .FirstOrDefaultAsync(tag => tag.Name == Tag, Cancel)
+           .ConfigureAwait(false);
 
         if (tag is null)
             return Enumerable.Empty<Post>();
 
-        return tag.Posts.PostToDomain()!;
+        return tag.Posts.PostToDomain();
     }
 
     #endregion
 
     #region Редактирование
 
-    /// <summary> Изменение категории поста </summary>
-    /// <param name="PostId"> Идентификатор поста </param>
-    /// <param name="CategoryName"> Название категории </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Возврат категории поста </returns>
-    /// <exception cref="InvalidOperationException"> Не найденный пост </exception>
+    /// <summary> Изменение категории поста</summary>
+    /// <param name="PostId">Идентификатор поста</param>
+    /// <param name="CategoryName">Название категории</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Возврат категории поста</returns>
+    /// <exception cref="InvalidOperationException">Не найденный пост</exception>
     public async Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
     {
-        var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
-
-        if (post is null)
+        if (await _DB.Posts.FirstOrDefaultAsync(p => p.Id == PostId, Cancel).ConfigureAwait(false) is not { } post)
             throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
 
-        var new_category = new Category { Name = CategoryName };
+        if (await _DB.Categories.FirstOrDefaultAsync(c => c.Name == CategoryName, Cancel) is not { } category)
+        {
+            category = new() { Name = CategoryName };
+            _DB.Add(category);
+            await _DB.SaveChangesAsync(Cancel);
+        }
 
-        post.Category = new_category;   // - тут всё же не уверен
+        if (post.Category.Id == category.Id)
+            return category.CategoryToDomain();
 
-        await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
+        post.Category = category;
+        await _DB.SaveChangesAsync(Cancel);
 
-        return post.Category!;
+        return category.CategoryToDomain();
     }
 
-    /// <summary> Изменение заголовка поста </summary>
-    /// <param name="PostId"> Идентификатор поста </param>
-    /// <param name="Title"> Заголовок поста </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Возврат флага результата изменения заголовка поста</returns>
+    /// <summary> Изменение заголовка поста</summary>
+    /// <param name="PostId">Идентификатор поста</param>
+    /// <param name="Title">Заголовок поста</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Возврат флага результата изменения заголовка поста</returns>
     public async Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default)
     {
-        var post = await GetPostAsync(PostId, Cancel);
+        if (await _DB.Posts.FirstOrDefaultAsync(p => p.Id == PostId, Cancel).ConfigureAwait(false) is not { } post)
+            throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
 
-        if (post is null) return false;
+        if (Equals(post.Title, Title))
+            return false;
 
         post.Title = Title;
         await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
@@ -365,16 +383,17 @@ public class SqlBlogPostManager : IBlogPostManager
         return true;
     }
 
-    /// <summary> Изменение тела поста </summary>
-    /// <param name="PostId"> Идентификатор поста </param>
-    /// <param name="Body"> Тело поста </param>
-    /// <param name="Cancel"> Токен отмены </param>
-    /// <returns> Возврат флага результата изменения тела поста</returns>
+    /// <summary> Изменение тела поста</summary>
+    /// <param name="PostId">Идентификатор поста</param>
+    /// <param name="Body">Тело поста</param>
+    /// <param name="Cancel">Отмена асинхронной операции</param>
+    /// <returns>Возврат флага результата изменения тела поста</returns>
     public async Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default)
     {
-        var post = await GetPostAsync(PostId, Cancel);
+        if (await _DB.Posts.FirstOrDefaultAsync(p => p.Id == PostId, Cancel).ConfigureAwait(false) is not { } post)
+            throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
 
-        if (post is null)
+        if (Equals(post.Body, Body))
             return false;
 
         post.Body = Body;
