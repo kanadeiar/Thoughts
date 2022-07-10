@@ -7,7 +7,7 @@ namespace Thoughts.Interfaces.Base
         [return: NotNullIfNotNull("item")]
         TResult? Map(TSource? item);
 
-        //[return: NotNullIfNotNull("item")] // todo: Посмотреть варианты реализации
-        //TSource? MapBack(TResult? item);
+        [return: NotNullIfNotNull("item")]
+        TSource? Map(TResult? item);
     }
 }

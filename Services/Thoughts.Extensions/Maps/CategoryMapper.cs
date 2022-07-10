@@ -2,65 +2,59 @@
 using Thoughts.Interfaces.Base;
 
 using PostDAL = Thoughts.DAL.Entities.Post;
-using PostDom = Thoughts.Domain.Base.Entities.Post;
 using CategoryDom = Thoughts.Domain.Base.Entities.Category;
+using CategoryDAL = Thoughts.DAL.Entities.Category;
 
 namespace Thoughts.Extensions.Maps;
 
-public class CategoryMapper : IMapper<CategoryDom, Category>, IMapper<Category, CategoryDom>
+public class CategoryMapper : IMapper<CategoryDom, CategoryDAL>
 {
-    //private readonly IMapper<PostDom, Post> _PostMapper;
-    //private readonly Dictionary<int, PostDAL> _PostsDAL = new();
-
-    //public CategoryMapper(IMapper<PostDom, PostDAL> PostMapper)
-    //{
-    //    _PostMapper = PostMapper;
-    //}
-
-    public Category? Map(CategoryDom? item)
+    private static Domain.Base.Entities.Status ToDom(Status status_dal) => status_dal switch
     {
-        if (item is null) return default;
-        var cat = new Category
+        Status.Blocked => Domain.Base.Entities.Status.Blocked,
+        Status.Private => Domain.Base.Entities.Status.Private,
+        Status.Protected => Domain.Base.Entities.Status.Protected,
+        Status.Public => Domain.Base.Entities.Status.Public,
+        _ => (Domain.Base.Entities.Status)(int)status_dal
+    };
+
+    private static Status ToDAL(Domain.Base.Entities.Status status_dal) => status_dal switch
+    {
+        Domain.Base.Entities.Status.Blocked => Status.Blocked,
+        Domain.Base.Entities.Status.Private => Status.Private,
+        Domain.Base.Entities.Status.Protected => Status.Protected,
+        Domain.Base.Entities.Status.Public => Status.Public,
+        _ => (Status)(int)status_dal
+    };
+
+    public CategoryDAL? Map(CategoryDom? category_dom)
+    {
+        if (category_dom is null) 
+            return default;
+
+        var category_dal = new CategoryDAL
         {
-            Id = item.Id,
-            Name = item.Name,
-            Status = (Status)item.Status,
+            Id = category_dom.Id,
+            Name = category_dom.Name,
+            Status = ToDAL(category_dom.Status),
+            Posts = category_dom.Posts.Select(id => new PostDAL { Id = id}).ToArray(),
         };
-        MapsCash.CategoryDalCash.Add(cat);
 
-        foreach (var post in item.Posts)
-        {
-            cat.Posts.Add(MapsHelper.FindPostOrMapNew(post));
-            // todo: использование локального кеша данных маппера
-            //if (_PostsDAL.TryGetValue(post.Id, out var post_dom)) 
-            //    cat.Posts.Add(post_dom);
-            //else
-            //{
-            //    post_dom = _PostMapper.Map(post);
-            //    _PostsDAL.Add(post.Id, post_dom);
-            //    cat.Posts.Add(post_dom);
-            //}
-        }
-
-        return cat;
+        return category_dal;
     }
 
-    //private readonly Dictionary<int, PostDom> _PostsDom = new();
-
-    public CategoryDom? Map(Category? item)
+    public CategoryDom? Map(CategoryDAL? category_dal)
     {
-        if (item is null) return default;
+        if (category_dal is null) 
+            return null;
 
         var cat = new CategoryDom
         {
-            Id = item.Id,
-            Name = item.Name,
-            Status = (Domain.Base.Entities.Status)item.Status,
+            Id = category_dal.Id,
+            Name = category_dal.Name,
+            Status = ToDom(category_dal.Status),
+            Posts = category_dal.Posts.Select(p => p.Id).ToArray(),
         };
-        MapsCash.CategoryDomCash.Add(cat);
-
-        foreach (var post in item.Posts)
-            cat.Posts.Add(MapsHelper.FindPostOrMapNew(post));
 
         return cat;
     }
