@@ -29,33 +29,33 @@ public class CategoryMapper : IMapper<CategoryDom, CategoryDAL>
         _ => (StatusDAL)(int)status_dal
     };
 
-    public CategoryDAL? Map(CategoryDom? post_dom)
+    public CategoryDAL? Map(CategoryDom? comment_dom)
     {
-        if (post_dom is null) 
+        if (comment_dom is null) 
             return default;
 
         var category_dal = new CategoryDAL
         {
-            Id = post_dom.Id,
-            Name = post_dom.Name,
-            Status = ToDAL(post_dom.Status),
-            Posts = post_dom.Posts.Select(id => new PostDAL { Id = id}).ToArray(),
+            Id = comment_dom.Id,
+            Name = comment_dom.Name,
+            Status = ToDAL(comment_dom.Status),
+            Posts = comment_dom.Posts.Select(id => new PostDAL { Id = id}).ToArray(),
         };
 
         return category_dal;
     }
 
-    public CategoryDom? Map(CategoryDAL? post_dom)
+    public CategoryDom? Map(CategoryDAL? comment_dom)
     {
-        if (post_dom is null) 
+        if (comment_dom is null) 
             return null;
 
         var cat = new CategoryDom
         {
-            Id = post_dom.Id,
-            Name = post_dom.Name,
-            Status = ToDOM(post_dom.Status),
-            Posts = post_dom.Posts.Select(p => p.Id).ToArray(),
+            Id = comment_dom.Id,
+            Name = comment_dom.Name,
+            Status = ToDOM(comment_dom.Status),
+            Posts = comment_dom.Posts.Select(p => p.Id).ToArray(),
         };
 
         return cat;

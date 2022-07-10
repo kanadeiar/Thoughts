@@ -34,64 +34,64 @@ public class PostMapper : IMapper<PostDOM, PostDAL>
         _ => (StatusDAL)(int)status_dal
     };
 
-    public PostDOM? Map(PostDAL? post_dom)
+    public PostDOM? Map(PostDAL? comment_dom)
     {
-        if (post_dom is null)
+        if (comment_dom is null)
             return default;
 
         var post = new PostDOM
         {
-            Id = post_dom.Id,
-            Status = ToDOM(post_dom.Status),
-            Date = post_dom.Date,
+            Id = comment_dom.Id,
+            Status = ToDOM(comment_dom.Status),
+            Date = comment_dom.Date,
             User = new UserDOM
             {
-                Id = post_dom.User.Id,
-                LastName = post_dom.User.LastName,
-                FirstName = post_dom.User.FirstName,
-                Patronymic = post_dom.User.Patronymic,
-                Birthday = post_dom.User.Birthday,
-                NickName = post_dom.User.NickName,
-                Status = ToDOM(post_dom.User.Status),
-                Roles = post_dom.User.Roles.Select(role => new RoleDOM
+                Id = comment_dom.User.Id,
+                LastName = comment_dom.User.LastName,
+                FirstName = comment_dom.User.FirstName,
+                Patronymic = comment_dom.User.Patronymic,
+                Birthday = comment_dom.User.Birthday,
+                NickName = comment_dom.User.NickName,
+                Status = ToDOM(comment_dom.User.Status),
+                Roles = comment_dom.User.Roles.Select(role => new RoleDOM
                 {
                     Id = role.Id,
                     Name = role.Name
                 }).ToArray(),
             },
-            Title = post_dom.Title,
-            Body = post_dom.Body,
-            PublicationsDate = post_dom.PublicationDate,
-            Category = (post_dom.Category.Id, post_dom.Category.Name),
-            Comments = post_dom.Comments.Select(comment => comment.Id).ToArray(),
-            Tags = post_dom.Tags.Select(tag => tag.Id).ToArray(),
+            Title = comment_dom.Title,
+            Body = comment_dom.Body,
+            PublicationsDate = comment_dom.PublicationDate,
+            Category = (comment_dom.Category.Id, comment_dom.Category.Name),
+            Comments = comment_dom.Comments.Select(comment => comment.Id).ToArray(),
+            Tags = comment_dom.Tags.Select(tag => tag.Id).ToArray(),
         };
 
         return post;
     }
 
-    public PostDAL? Map(PostDOM? post_dom)
+    public PostDAL? Map(PostDOM? comment_dom)
     {
-        if (post_dom is null) return default;
+        if (comment_dom is null) return default;
 
         var post = new PostDAL
         {
-            Id = post_dom.Id,
-            Status = ToDAL(post_dom.Status),
-            Date = post_dom.Date,
-            Title = post_dom.Title,
-            Body = post_dom.Body,
-            PublicationDate = post_dom.PublicationsDate,
+            Id = comment_dom.Id,
+            Status = ToDAL(comment_dom.Status),
+            Date = comment_dom.Date,
+            Title = comment_dom.Title,
+            Body = comment_dom.Body,
+            PublicationDate = comment_dom.PublicationsDate,
             User = new UserDAL
             {
-                Id = post_dom.User.Id,
-                LastName = post_dom.User.LastName,
-                FirstName = post_dom.User.FirstName,
-                Patronymic = post_dom.User.Patronymic,
-                Status = ToDAL(post_dom.User.Status),
-                Birthday = post_dom.User.Birthday,
-                NickName = post_dom.User.NickName,
-                Roles = post_dom.User.Roles.Select(role => new RoleDAL { Id = role.Id, Name = role.Name }).ToArray(),
+                Id = comment_dom.User.Id,
+                LastName = comment_dom.User.LastName,
+                FirstName = comment_dom.User.FirstName,
+                Patronymic = comment_dom.User.Patronymic,
+                Status = ToDAL(comment_dom.User.Status),
+                Birthday = comment_dom.User.Birthday,
+                NickName = comment_dom.User.NickName,
+                Roles = comment_dom.User.Roles.Select(role => new RoleDAL { Id = role.Id, Name = role.Name }).ToArray(),
             }
         };
 
