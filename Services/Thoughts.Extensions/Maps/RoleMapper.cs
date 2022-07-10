@@ -1,42 +1,57 @@
 ﻿using Thoughts.DAL.Entities;
 using Thoughts.Interfaces.Base;
 
-using RoleDom = Thoughts.Domain.Base.Entities.Role;
+using RoleDAL = Thoughts.DAL.Entities.Role;
+using RoleDOM = Thoughts.Domain.Base.Entities.Role;
+
+using StatusDAL = Thoughts.DAL.Entities.Status;
+using StatusDOM = Thoughts.Domain.Base.Entities.Status;
 
 namespace Thoughts.Extensions.Maps;
 
-public class RoleMapper : IMapper<RoleDom, Role>, IMapper<Role, RoleDom>
+public class RoleMapper : IMapper<RoleDOM, Role>
 {
-    public RoleDom? Map(Role? item)
+    private static StatusDOM ToDOM(StatusDAL status_dal) => status_dal switch
     {
-        if (item is null) return default;
+        StatusDAL.Blocked => StatusDOM.Blocked,
+        StatusDAL.Private => StatusDOM.Private,
+        StatusDAL.Protected => StatusDOM.Protected,
+        StatusDAL.Public => StatusDOM.Public,
+        _ => (StatusDOM)(int)status_dal
+    };
 
-        var role = new RoleDom
+    private static StatusDAL ToDAL(StatusDOM status_dal) => status_dal switch
+    {
+        StatusDOM.Blocked => StatusDAL.Blocked,
+        StatusDOM.Private => StatusDAL.Private,
+        StatusDOM.Protected => StatusDAL.Protected,
+        StatusDOM.Public => StatusDAL.Public,
+        _ => (StatusDAL)(int)status_dal
+    };
+
+    public RoleDOM? Map(RoleDAL? role_dal)
+    {
+        if (role_dal is null) 
+            return default;
+
+        var role_dom = new RoleDOM
         {
-            Id = item.Id,
-            Name = item.Name,
+            Id = role_dal.Id,
+            Name = role_dal.Name,
         };
-        MapsCash.RoleDomCash.Add(role);
 
-        foreach (var user in item.Users)
-            role.Users.Add(MapsHelper.FindUserOrMapNew(user));
-
-        return role;
+        return role_dom;
     }
 
-    public Role? Map(RoleDom? item)
+    public RoleDAL? Map(RoleDOM? role_dom)
     {
-        if (item is null) return default;
+        if (role_dom is null) return default;
 
         var role = new Role
         {
-            Id = item.Id,
-            Name = item.Name,
+            Id = role_dom.Id,
+            Name = role_dom.Name,
         };
-        MapsCash.RoleDalCash.Add(role);
-
-        foreach (var user in item.Users)
-            role.Users.Add(MapsHelper.FindUserOrMapNew(user));
 
         return role;
     }
