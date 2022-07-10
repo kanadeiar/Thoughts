@@ -3,7 +3,7 @@
 /// <summary>Ключевое слово</summary>
 public class Tag : NamedEntityModel
 {
-    public ICollection<Post> Posts { get; set; } = new HashSet<Post>();
+    public ICollection<int> Posts { get; set; } = new HashSet<int>();
 
     public override string ToString() => Name;
 }

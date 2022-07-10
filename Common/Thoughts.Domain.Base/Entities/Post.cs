@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Thoughts.Domain.Base.Entities;
 
@@ -26,19 +25,19 @@ public class Post : EntityModel
 
     /// <summary>Категория к которой относится запись</summary>
     [Required]
-    public Category Category { get; set; } = null!;
+    public (int Id, string Name) Category { get; set; }
 
     /// <summary>Список тегов относящихся к записи</summary>
-    public ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
+    public ICollection<int> Tags { get; set; } = new HashSet<int>();
 
     /// <summary>Список комментариев относящихся к записи</summary>
-    public ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
+    public ICollection<int> Comments { get; set; } = new HashSet<int>();
 
     /// <summary>Дата публикации</summary>
     public DateTimeOffset? PublicationsDate { get; set; }
 
     /// <summary>Приложенные файлы</summary>
-    public ICollection<FileModel> Files { get; set; } = new HashSet<FileModel>();
+    public ICollection<int> Files { get; set; } = new HashSet<int>();
 
     public override string ToString() => $"{Date}, {User.NickName}: {Title}";
 }
