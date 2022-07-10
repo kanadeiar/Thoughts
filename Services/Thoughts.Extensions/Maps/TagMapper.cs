@@ -1,43 +1,41 @@
-﻿using Thoughts.DAL.Entities;
-using Thoughts.Interfaces.Base;
+﻿using Thoughts.Interfaces.Base;
 
-using TagDom = Thoughts.Domain.Base.Entities.Tag;
+using TagDAL = Thoughts.DAL.Entities.Tag;
+using TagDOM = Thoughts.Domain.Base.Entities.Tag;
+
+using PostDAL = Thoughts.DAL.Entities.Post;
 
 namespace Thoughts.Extensions.Maps;
 
-public class TagMapper : IMapper<TagDom, Tag>, IMapper<Tag, TagDom>
+public class TagMapper : IMapper<TagDOM, TagDAL>
 {
-    public Tag? Map(TagDom? item)
+    public TagDAL? Map(TagDOM? tag_dom)
     {
-        if (item is null) return default;
+        if (tag_dom is null) 
+            return default;
 
-        var tag = new Tag
+        var tag_dal = new TagDAL
         {
-            Id = item.Id,
-            Name = item.Name,
+            Id = tag_dom.Id,
+            Name = tag_dom.Name,
+            Posts = tag_dom.Posts.Select(id => new PostDAL { Id = id }).ToArray(),
         };
-        MapsCash.TagDalCash.Add(tag);
 
-        foreach (var post in item.Posts)
-            tag.Posts.Add(MapsHelper.FindPostOrMapNew(post));
-
-        return tag;
+        return tag_dal;
     }
 
-    public TagDom? Map(Tag? item)
+    public TagDOM? Map(TagDAL? tag_dal)
     {
-        if (item is null) return default;
+        if (tag_dal is null) 
+            return default;
 
-        var tag = new Domain.Base.Entities.Tag
+        var tag_dom = new TagDOM
         {
-            Id = item.Id,
-            Name = item.Name,
+            Id = tag_dal.Id,
+            Name = tag_dal.Name,
+            Posts = tag_dal.Posts.Select(post => post.Id).ToArray(),
         };
-        MapsCash.TagDomCash.Add(tag);
 
-        foreach (var post in item.Posts)
-            tag.Posts.Add(MapsHelper.FindPostOrMapNew(post));
-
-        return tag;
+        return tag_dom;
     }
 }
