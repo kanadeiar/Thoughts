@@ -3,7 +3,7 @@
 <article>
     <h3>@Model.Title</h3>
     <p>Дата: @Model.Date.ToString("dd.MM.yyyy")</p>
-    <rawhtml text="@Model.Body"/>
+    <rawhtml>@Model.Body</rawhtml>
     <p>Автор: @Model.User?.NickName</p>
     <ul class="actions">
         <li><a asp-controller="Blog" asp-action="Details" asp-route-id="@Model.Id" class="button">Подробнее ...</a></li>
