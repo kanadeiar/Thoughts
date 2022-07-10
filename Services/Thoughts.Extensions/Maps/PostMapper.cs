@@ -1,71 +1,99 @@
 ﻿using Thoughts.Interfaces.Base;
 
-using PostDal = Thoughts.DAL.Entities.Post;
-using StatusDal = Thoughts.DAL.Entities.Status;
-using PostDom = Thoughts.Domain.Base.Entities.Post;
-using StatusDom = Thoughts.Domain.Base.Entities.Status;
-using UserDom = Thoughts.Domain.Base.Entities.User;
+using PostDAL = Thoughts.DAL.Entities.Post;
+using PostDOM = Thoughts.Domain.Base.Entities.Post;
+
+using StatusDAL = Thoughts.DAL.Entities.Status;
+using StatusDOM = Thoughts.Domain.Base.Entities.Status;
+
+using UserDAL = Thoughts.DAL.Entities.User;
+using UserDOM = Thoughts.Domain.Base.Entities.User;
+
+using RoleDAL = Thoughts.DAL.Entities.Role;
+using RoleDOM = Thoughts.Domain.Base.Entities.Role;
 
 namespace Thoughts.Extensions.Maps;
 
-public class PostMapper : IMapper<PostDom, PostDal>, IMapper<PostDal, PostDom>
+public class PostMapper : IMapper<PostDOM, PostDAL>
 {
-    public PostDom? Map(PostDal? item)
+    private static StatusDOM ToDOM(StatusDAL status_dal) => status_dal switch
     {
-        if (item is null) return default;
+        StatusDAL.Blocked => StatusDOM.Blocked,
+        StatusDAL.Private => StatusDOM.Private,
+        StatusDAL.Protected => StatusDOM.Protected,
+        StatusDAL.Public => StatusDOM.Public,
+        _ => (StatusDOM)(int)status_dal
+    };
 
-        var post = new PostDom
+    private static StatusDAL ToDAL(StatusDOM status_dal) => status_dal switch
+    {
+        StatusDOM.Blocked => StatusDAL.Blocked,
+        StatusDOM.Private => StatusDAL.Private,
+        StatusDOM.Protected => StatusDAL.Protected,
+        StatusDOM.Public => StatusDAL.Public,
+        _ => (StatusDAL)(int)status_dal
+    };
+
+    public PostDOM? Map(PostDAL? post_dom)
+    {
+        if (post_dom is null)
+            return default;
+
+        var post = new PostDOM
         {
-            Id = item.Id,
-            Status = (StatusDom)item.Status,
-            Date = item.Date,
-            User = new UserDom
+            Id = post_dom.Id,
+            Status = ToDOM(post_dom.Status),
+            Date = post_dom.Date,
+            User = new UserDOM
             {
-                Id = item.User.Id,
+                Id = post_dom.User.Id,
+                LastName = post_dom.User.LastName,
+                FirstName = post_dom.User.FirstName,
+                Patronymic = post_dom.User.Patronymic,
+                Birthday = post_dom.User.Birthday,
+                NickName = post_dom.User.NickName,
+                Status = ToDOM(post_dom.User.Status),
+                Roles = post_dom.User.Roles.Select(role => new RoleDOM
+                {
+                    Id = role.Id,
+                    Name = role.Name
+                }).ToArray(),
             },
-            Title = item.Title,
-            Body = item.Body,
-            PublicationsDate = item.PublicationDate,
+            Title = post_dom.Title,
+            Body = post_dom.Body,
+            PublicationsDate = post_dom.PublicationDate,
+            Category = (post_dom.Category.Id, post_dom.Category.Name),
+            Comments = post_dom.Comments.Select(comment => comment.Id).ToArray(),
+            Tags = post_dom.Tags.Select(tag => tag.Id).ToArray(),
         };
-        MapsCash.PostDomCash.Add(post);
-
-        post.User = MapsHelper.FindUserOrMapNew(item.User);
-
-        post.Category = MapsHelper.FindCategoryOrMapNew(item.Category);
-
-        foreach (var tag in item.Tags)
-            post.Tags.Add(MapsHelper.FindTagOrMapNew(tag));
-
-        foreach (var comment in item.Comments)
-            post.Comments.Add(MapsHelper.FindCommentOrMapNew(comment));
 
         return post;
     }
 
-    public PostDal? Map(PostDom? item)
+    public PostDAL? Map(PostDOM? post_dom)
     {
-        if(item is null) return default;
+        if (post_dom is null) return default;
 
-        var post = new PostDal
+        var post = new PostDAL
         {
-            Id = item.Id,
-            Status = (StatusDal)item.Status,
-            Date = item.Date,
-            Title = item.Title,
-            Body = item.Body,
-            PublicationDate = item.PublicationsDate,
+            Id = post_dom.Id,
+            Status = ToDAL(post_dom.Status),
+            Date = post_dom.Date,
+            Title = post_dom.Title,
+            Body = post_dom.Body,
+            PublicationDate = post_dom.PublicationsDate,
+            User = new UserDAL
+            {
+                Id = post_dom.User.Id,
+                LastName = post_dom.User.LastName,
+                FirstName = post_dom.User.FirstName,
+                Patronymic = post_dom.User.Patronymic,
+                Status = ToDAL(post_dom.User.Status),
+                Birthday = post_dom.User.Birthday,
+                NickName = post_dom.User.NickName,
+                Roles = post_dom.User.Roles.Select(role => new RoleDAL { Id = role.Id, Name = role.Name }).ToArray(),
+            }
         };
-        MapsCash.PostDalCash.Add(post);
-
-        post.User = MapsHelper.FindUserOrMapNew(item.User);
-
-        post.Category = MapsHelper.FindCategoryOrMapNew(item.Category);
-
-        foreach (var tag in item.Tags)
-            post.Tags.Add(MapsHelper.FindTagOrMapNew(tag));
-
-        foreach (var comment in item.Comments)
-            post.Comments.Add(MapsHelper.FindCommentOrMapNew(comment));
 
         return post;
     }
