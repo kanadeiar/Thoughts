@@ -2,12 +2,16 @@
 using System.Diagnostics.CodeAnalysis;
 
 using Thoughts.DAL.Entities;
+using Thoughts.Domain.Base.Entities;
 
 using PostDomain = Thoughts.Domain.Base.Entities.Post;
 using PostDAL = Thoughts.DAL.Entities.Post;
 
 using UserDomain = Thoughts.Domain.Base.Entities.User;
 using UserDAL = Thoughts.DAL.Entities.User;
+
+using RoleDomain = Thoughts.Domain.Base.Entities.Role;
+using RoleDAL = Thoughts.DAL.Entities.Role;
 
 using StatusDomain = Thoughts.Domain.Base.Entities.Status;
 using StatusDAL = Thoughts.DAL.Entities.Status;
@@ -28,6 +32,8 @@ namespace Thoughts.Services.Mapping;
 public static class Mapper
 {
     #region To DAL
+
+    [return: NotNullIfNotNull("post")]
     public static PostDAL? PostToDAL(this PostDomain? post)
         => post is null ? null
         : new PostDAL
@@ -37,15 +43,16 @@ public static class Mapper
             Body = post.Body,
             User = post.User.UserToDAL()!,
             Status = post.Status.StatusToDAL(),
-            Category = post.Category.CategoryToDAL()!,
-            Tags = (ICollection<TagDAL>)post.Tags.TagToDAL(),
-            Comments = (ICollection<CommentDAL>)post.Comments.CommentToDAL(),
+            Category = new() { Id = post.Category.Id, Name = post.Category.Name },
+            Tags = post.Tags.Select(id => new TagDAL { Id = id }).ToArray(),
+            Comments = post.Comments.Select(id => new CommentDAL { Id = id }).ToArray(),
             PublicationDate = post.PublicationsDate,
             Date = post.Date
         };
 
-    public static IEnumerable<PostDAL?> PostToDAL(this IEnumerable<PostDomain> posts) => posts.Select(PostToDAL);
+    public static IEnumerable<PostDAL> PostToDAL(this IEnumerable<PostDomain> posts) => posts.Select(post => PostToDAL(post));
 
+    [return: NotNullIfNotNull("user")]
     public static UserDAL? UserToDAL(this UserDomain? user)
         => user is null ? null
         : new UserDAL
@@ -56,44 +63,45 @@ public static class Mapper
             Patronymic = user.Patronymic,
             NickName = user.NickName,
             Birthday = user.Birthday,
-            Status = user.Status.StatusToDAL()!,
-            //Roles                 - нужно ли здесь?
+            Status = user.Status.StatusToDAL(),
+            Roles = user.Roles.Select(role => new RoleDAL { Id = role.Id, Name = role.Name }).ToArray(),
         };
 
 
     public static StatusDAL StatusToDAL(this StatusDomain status) => status switch
     {
-        StatusDomain.Private => Status.Private,
-        StatusDomain.Protected => Status.Protected,
-        StatusDomain.Public => Status.Public,
-        StatusDomain.Blocked => Status.Blocked,
+        StatusDomain.Private => StatusDAL.Private,
+        StatusDomain.Protected => StatusDAL.Protected,
+        StatusDomain.Public => StatusDAL.Public,
+        StatusDomain.Blocked => StatusDAL.Blocked,
         _ => throw new InvalidEnumArgumentException(nameof(status), (int)status, typeof(StatusDomain))
     };
 
 
+    [return: NotNullIfNotNull("category")]
     public static CategoryDAL? CategoryToDAL(this CategoryDomain? category)
         => category is null ? null
         : new CategoryDAL
         {
             Id = category.Id,
             Name = category.Name,
-            //Status = categoryDomain.Status.StatusToDAL(),     // <- непонятно зачем и нужно ли здесь
-            //Posts                 ??? - в DAL есть ссылка на посты, непонятно зачем и нужно ли здесь
+            Status = category.Status.StatusToDAL(),
+            Posts = category.Posts.Select(id => new PostDAL { Id = id }).ToArray(),
         };
 
-
+    [return: NotNullIfNotNull("tag")]
     public static TagDAL? TagToDAL(this TagDomain? tag)
         => tag is null ? null
         : new TagDAL
         {
             Id = tag.Id,
             Name = tag.Name,
-            //Posts                 ??? - в DAL есть ссылка на посты, непонятно зачем и нужно ли здесь
+            Posts = tag.Posts.Select(id => new PostDAL { Id = id }).ToArray(),
         };
 
-    public static IEnumerable<TagDAL?> TagToDAL(this IEnumerable<TagDomain?> tagsDomain) => tagsDomain.Select(TagToDAL);
+    public static IEnumerable<TagDAL> TagToDAL(this IEnumerable<TagDomain> Tags) => Tags.Select(tag => TagToDAL(tag));
 
-
+    [return: NotNullIfNotNull("comment")]
     public static CommentDAL? CommentToDAL(this CommentDomain? comment)
         => comment is null ? null
         : new CommentDAL
@@ -102,15 +110,15 @@ public static class Mapper
             Body = comment.Body,
             Date = comment.Date,
             IsDeleted = comment.IsDeleted,
-            //ChildrenComment       <- не уверен что нужно здесь
-            //ParentComment         <- не уверен что нужно здесь
-            //Posts                 <- не уверен что нужно здесь
-            //User                  <- не уверен что нужно здесь
+            User = comment.User.UserToDAL(),
+            Post = new PostDAL { Id = comment.PostId },
+            ParentComment = comment.ParentComment.CommentToDAL(),
+            ChildrenComment = comment.ChildrenComment.Select(id => new CommentDAL { Id = id}).ToArray(),
         };
 
-    public static IEnumerable<CommentDAL?> CommentToDAL(this IEnumerable<CommentDomain?> comments) => comments.Select(CommentToDAL);
+    public static IEnumerable<CommentDAL> CommentToDAL(this IEnumerable<CommentDomain> comments) => comments.Select(comment => CommentToDAL(comment));
 
-
+    [return: NotNullIfNotNull("file")]
     public static ContentFile? FileToDAL(this FileDomain? file)
         => file is null ? null
         : new ContentFile
@@ -122,7 +130,7 @@ public static class Mapper
             FileHash = file.Hash,
         };
 
-    public static IEnumerable<ContentFile?> FileToDAL(this IEnumerable<FileDomain?> files) => files.Select(FileToDAL);
+    public static IEnumerable<ContentFile> FileToDAL(this IEnumerable<FileDomain> files) => files.Select(file => FileToDAL(file));
 
     #endregion
 
@@ -138,16 +146,16 @@ public static class Mapper
         Body = post.Body,
         User = post.User.UserToDomain()!,
         Status = post.Status.StatusToDomain()!,
-        Category = post.Category.CategoryToDomain()!,
-        Tags = post.Tags.TagToDomain().ToArray()!,
-        Comments = post.Comments.CommentToDomain().ToArray()!,
+        Category = (post.Category.Id, post.Category.Name),
+        Tags = post.Tags.Select(tag => tag.Id).ToArray(),
+        Comments = post.Comments.Select(comment => comment.Id).ToArray(),
         PublicationsDate = post.PublicationDate,
         Date = post.Date,
     };
 
     public static IEnumerable<PostDomain> PostToDomain(this IEnumerable<PostDAL> posts) => posts.Select(post => PostToDomain(post));
 
-
+    [return: NotNullIfNotNull("user")]
     public static UserDomain? UserToDomain(this UserDAL? user)
         => user is null ? null
         : new UserDomain
@@ -164,10 +172,10 @@ public static class Mapper
 
     public static StatusDomain StatusToDomain(this StatusDAL status) => status switch
     {
-        Status.Private => StatusDomain.Private,
-        Status.Protected => StatusDomain.Protected,
-        Status.Public => StatusDomain.Public,
-        Status.Blocked => StatusDomain.Blocked,
+        StatusDAL.Private => StatusDomain.Private,
+        StatusDAL.Protected => StatusDomain.Protected,
+        StatusDAL.Public => StatusDomain.Public,
+        StatusDAL.Blocked => StatusDomain.Blocked,
         _ => throw new InvalidEnumArgumentException(nameof(status), (int)status, typeof(StatusDAL))
     };
 
@@ -181,7 +189,7 @@ public static class Mapper
         };
 
 
-    [return:NotNullIfNotNull("tag")]
+    [return: NotNullIfNotNull("tag")]
     public static TagDomain? TagToDomain(this TagDAL? tag)
         => tag is null ? null
         : new TagDomain
@@ -192,7 +200,7 @@ public static class Mapper
 
     public static IEnumerable<TagDomain> TagToDomain(this IEnumerable<TagDAL> tags) => tags.Select(tag => TagToDomain(tag));
 
-
+    [return: NotNullIfNotNull("comment")]
     public static CommentDomain? CommentToDomain(this CommentDAL? comment)
         => comment is null ? null
         : new CommentDomain
@@ -203,9 +211,9 @@ public static class Mapper
             IsDeleted = comment.IsDeleted,
         };
 
-    public static IEnumerable<CommentDomain?> CommentToDomain(this IEnumerable<CommentDAL?> comments) => comments.Select(CommentToDomain);
+    public static IEnumerable<CommentDomain> CommentToDomain(this IEnumerable<CommentDAL> comments) => comments.Select(comment => CommentToDomain(comment));
 
-
+    [return: NotNullIfNotNull("file")]
     public static FileDomain? FileToDomain(this ContentFile? file)
         => file is null ? null
         : new FileDomain
@@ -217,7 +225,7 @@ public static class Mapper
             Hash = file.FileHash,
         };
 
-    public static IEnumerable<FileDomain?> FileToDomain(this IEnumerable<ContentFile?> files) => files.Select(FileToDomain);
+    public static IEnumerable<FileDomain> FileToDomain(this IEnumerable<ContentFile> files) => files.Select(file => FileToDomain(file));
 
     #endregion
 }
