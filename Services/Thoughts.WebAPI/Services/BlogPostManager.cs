@@ -1,37 +1,55 @@
-﻿using Thoughts.Interfaces;
+﻿using Thoughts.Domain;
+using Thoughts.Interfaces;
 using Thoughts.Interfaces.Base.Repositories;
-using Thoughts.DAL.Entities;
 
 using Post = Thoughts.Domain.Base.Entities.Post;
 using Tag = Thoughts.Domain.Base.Entities.Tag;
 using Category = Thoughts.Domain.Base.Entities.Category;
+using User = Thoughts.Domain.Base.Entities.User;
 
 namespace Thoughts.WebAPI.Services
 {
     public class BlogPostManager : IBlogPostManager
     {
         private readonly IRepository<Post> _PostsRepository;
+        private readonly INamedRepository<Category> _CategoriesRepository;
+        private readonly INamedRepository<Tag> _TagsRepository;
+        private readonly IRepository<User, string> _UsersRepository;
+        private readonly ILogger<BlogPostManager> _Logger;
 
-        public BlogPostManager(IRepository<Post> repository)
+        public BlogPostManager(
+            IRepository<Post> PostsRepository,
+            INamedRepository<Category> CategoriesRepository,
+            INamedRepository<Tag> TagsRepository,
+            IRepository<User, string> UsersRepository,
+            ILogger<BlogPostManager> Logger)
         {
-            _PostsRepository = repository;
+            _PostsRepository = PostsRepository;
+            _CategoriesRepository = CategoriesRepository;
+            _TagsRepository = TagsRepository;
+            _UsersRepository = UsersRepository;
+            _Logger = Logger;
         }
 
         /// <summary>Назначение тэга посту</summary>
         /// <param name="PostId">Идентификатор поста</param>
         /// <param name="Tag">Добавляемый тэг</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Истина, если тэг был назначен успешно</returns>
         public async Task<bool> AssignTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
         {
-            var is_exists = await _PostsRepository.ExistId(PostId, Cancel);
-            if (!is_exists) return false;
+            if (await _PostsRepository.GetById(PostId, Cancel).ConfigureAwait(false) is not { } post)
+                return false;
 
-            var getted_post = await _PostsRepository.GetById(PostId, Cancel);
+            if (await _TagsRepository.GetByName(Tag, Cancel) is not { } tag) 
+                tag = await _TagsRepository.Add(new Tag { Name = Tag }, Cancel);
 
-            var tag = new Tag { Name = Tag };
-            getted_post.Tags.Add(tag);
-            await _PostsRepository.Update(getted_post, Cancel);
+            if (post.Tags.Contains(tag.Id))
+                return true;
+
+            post.Tags.Add(tag.Id);
+
+            await _PostsRepository.Update(post, Cancel);
 
             return true;
         }
@@ -39,310 +57,246 @@ namespace Thoughts.WebAPI.Services
         /// <summary>Изменение тела поста</summary>
         /// <param name="PostId">Идентификатор поста</param>
         /// <param name="Body">Новое тело поста</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Истина, если тело было изменено успешно</returns>
-        public Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default)
+        public async Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default)
         {
-            var task = new Task<bool>(() =>
-            {
-                var exist_task = _PostsRepository.ExistId(PostId, Cancel);
-                if (exist_task.Result is true)
-                {
-                    var getted_post = _PostsRepository.GetById(PostId).Result;
-
-                    getted_post.Body = Body;
-
-                    var post = _PostsRepository.Update(getted_post, Cancel);
-                    if (post.Result is not null)
-                    {
-                        return true;
-                    }
-                }
+            if (await _PostsRepository.GetById(PostId, Cancel).ConfigureAwait(false) is not { } post)
                 return false;
-            });
-            return task;
+
+            if (Equals(post.Body, Body))
+                return true;
+
+            post.Body = Body;
+
+            await _PostsRepository.Update(post, Cancel);
+            return true;
         }
 
         /// <summary>Изменение категории поста</summary>
         /// <param name="PostId">Идентификатор поста</param>
         /// <param name="CategoryName">Новая категория поста</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Изменённая категория</returns>
-        public Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
+        public async Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
         {
-            var task = new Task<Category>(() =>
-            {
-                var exist_task = _PostsRepository.ExistId(PostId, Cancel);
-                var category = new Category { Name = CategoryName };
-                if (exist_task.Result is true)
-                {
-                    var getted_post = _PostsRepository.GetById(PostId).Result;
+            if (await _PostsRepository.GetById(PostId, Cancel).ConfigureAwait(false) is not { } post)
+                throw new InvalidOperationException("Не найдена запись поста с указанным идентификатором");
 
-                    getted_post.Category = category;
+            if (await _CategoriesRepository.GetByName(CategoryName, Cancel) is not { } category)
+                category = await _CategoriesRepository.Add(new() { Name = CategoryName }, Cancel);
 
-                    var post = _PostsRepository.Update(getted_post, Cancel);
-                    if (post.Result is not null)
-                    {
-                        return category;
-                    }
-                }
-                return null;
-            });
-            return task;
+            if (post.Category.Id == category.Id)
+                return category;
+
+            post.Category = (category.Id, CategoryName);
+
+            await _PostsRepository.Update(post, Cancel);
+            return category;
         }
 
         /// <summary>Изменение заголовка поста</summary>
         /// <param name="PostId">Идентификатор поста</param>
         /// <param name="Title">Новый заголовок поста</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Истина, если заголовок был изменен успешно</returns>
-        public Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default)
+        public async Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default)
         {
-            var task = new Task<bool>(() =>
-            {
-                var exist_task = _PostsRepository.ExistId(PostId, Cancel);
-                if (exist_task.Result is true)
-                {
-                    var getted_post = _PostsRepository.GetById(PostId).Result;
-
-                    getted_post.Title = Title;
-
-                    var post = _PostsRepository.Update(getted_post, Cancel);
-                    if (post.Result is not null)
-                    {
-                        return true;
-                    }
-                }
+            if (await _PostsRepository.GetById(PostId, Cancel).ConfigureAwait(false) is not { } post)
                 return false;
-            });
-            return task;
+
+            if (Equals(post.Title, Title))
+                return true;
+
+            post.Title = Title;
+
+            await _PostsRepository.Update(post, Cancel);
+            return true;
         }
 
         /// <summary>Создание нового поста (есть TODO блок)</summary>
         /// <param name="Title">Заголовок</param>
         /// <param name="Body">Тело</param>
         /// <param name="UserId">Идентификатор пользователя, создающего пост</param>
-        /// <param name="Category">Категория</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="CategoryName">Категория</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Вновь созданный пост</returns>
-        public Task<Post> CreatePostAsync(string Title, string Body, string UserId, string Category, CancellationToken Cancel = default)
+        public async Task<Post> CreatePostAsync(string Title, string Body, string UserId, string CategoryName, CancellationToken Cancel = default)
         {
-            var new_post = new Post()
+            if (await _UsersRepository.GetById(UserId, Cancel) is not { } user)
+                throw new InvalidOperationException($"Пользователь с id {UserId} не найден");
+
+            if (await _CategoriesRepository.GetByName(CategoryName, Cancel) is not { } category)
+                category = await _CategoriesRepository.Add(new() { Name = CategoryName }, Cancel);
+
+            var post = new Post
             {
                 Title = Title,
                 Body = Body,
-                Category = new Category { Name = Category },
-                //
-                //TODO
-                //здесь нам как-то нужно добавить юзера
-                //
+                Category = (category.Id, category.Name),
+                User = user,
             };
-            return _PostsRepository.Add(new_post, Cancel);
+
+            return await _PostsRepository.Add(post, Cancel);
         }
 
         /// <summary>Удаление поста</summary>
         /// <param name="Id">Идентификатор поста</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Истина, если пост был удалён успешно</returns>
-        public Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default)
+        public async Task<bool> DeletePostAsync(int Id, CancellationToken Cancel = default)
         {
-            var task = new Task<bool>(() =>
-            {
-                var exist_task = _PostsRepository.ExistId(Id, Cancel);
-                if (exist_task.Result is true)
-                {
-                    var delete = _PostsRepository.DeleteById(Id);
-                    if (delete.Result is not null)
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            });
-            return task;
+            var deleted_post = await _PostsRepository.DeleteById(Id, Cancel).ConfigureAwait(false);
+            return deleted_post is not null;
         }
 
         /// <summary>Получить все посты</summary>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Перечисление всех постов</returns>
-        public Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken Cancel = default)
-        {
-            return _PostsRepository.GetAll(Cancel);
-        }
+        public async Task<IEnumerable<Post>> GetAllPostsAsync(CancellationToken Cancel = default) => await _PostsRepository
+           .GetAll(Cancel)
+           .ConfigureAwait(false);
 
         /// <summary>Получить все посты пользователя по его идентификатору</summary>
         /// <param name="UserId">Идентификатор пользователя</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Перечисление всех постов пользователя</returns>
-        public Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
+        public async Task<IEnumerable<Post>> GetAllPostsByUserIdAsync(string UserId, CancellationToken Cancel = default)
         {
-            var task = new Task<IEnumerable<Post>>(() =>
-            {
-                return GetAllPostsAsync(Cancel).Result.Where(p => p.User.Id == UserId);
-            });
-            return task;
+            var posts = await _PostsRepository.GetAll(Cancel); // todo: Требуется добавить возможность выборки поста в репозитории IPostsRepository : INamedRepository<Post>
+            return posts.Where(p => p.User.Id == UserId);
         }
 
-        /// <summary>Получить все страницы с постами пользователя по его идентификатору (есть TODO блок)</summary>
+        /// <summary>Получить все страницы с постами пользователя по его идентификатору</summary>
         /// <param name="UserId">Идентификатор пользователя</param>
         /// <param name="PageIndex">Номер страницы</param>
         /// <param name="PageSize">Размер страницы</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Страница с перечислением всех постов пользователя</returns>
-        public Task<IPage<Post>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default)
+        public async Task<IPage<Post>> GetAllPostsByUserIdPageAsync(string UserId, int PageIndex, int PageSize, CancellationToken Cancel = default)
         {
-            var task = new Task<IPage<Post>>(() =>
-            {
-                var pages = _PostsRepository.GetPage(PageIndex, PageSize, Cancel).Result;
+            var posts = await _PostsRepository.GetAll(Cancel); // todo: Требуется добавить возможность выборки поста в репозитории IPostsRepository : INamedRepository<Post>
 
-                //
-                // TODO
-                // интерфейс не позволяет менять свойство Items
-                // а также нет сущности, реализующей интерфейс страницы
-                // поэтому метод временно возвращает все страницы
-                //
-                pages.Items.Where(p => p.User.Id == UserId);
+            var user_posts = posts.Where(p => p.User.Id == UserId);
 
-                return pages;
-            });
-            return task;
+            var total_count = user_posts.Count();
+            var page_items = user_posts.Skip(PageIndex * PageSize).Take(PageSize);
+
+            return new Page<Post>(page_items, PageIndex, PageSize, total_count);
         }
 
         /// <summary>Получить определённое количество постов пользователя</summary>
         /// <param name="UserId">Идентификатор пользователя</param>
         /// <param name="Skip">Количество пропускаемых элементов</param>
         /// <param name="Take">Количество получаемых элементов</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Перечисление постов пользователя</returns>
-        public Task<IEnumerable<Post>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default)
+        public async Task<IEnumerable<Post>> GetAllPostsByUserIdSkipTakeAsync(string UserId, int Skip, int Take, CancellationToken Cancel = default)
         {
-            var task = new Task<IEnumerable<Post>>(() =>
-            {
-                return GetAllPostsAsync(Cancel).Result.Where(p => p.User.Id == UserId).Skip(Skip).Take(Take);
-            });
-            return task;
+            var posts = await GetAllPostsAsync(Cancel);
+            return posts.Where(p => p.User.Id == UserId).Skip(Skip).Take(Take);
         }
 
         /// <summary>Получить число постов</summary>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Число постов</returns>
-        public Task<int> GetAllPostsCountAsync(CancellationToken Cancel = default)
-        {
-            return _PostsRepository.GetCount(Cancel);
-        }
+        public async Task<int> GetAllPostsCountAsync(CancellationToken Cancel = default) => await _PostsRepository
+           .GetCount(Cancel)
+           .ConfigureAwait(false);
 
         /// <summary>Получить страницу со всеми постами</summary>
         /// <param name="PageIndex">Номер страницы</param>
         /// <param name="PageSize">Размер страницы</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Страница с постами</returns>
-        public Task<IPage<Post>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default)
-        {
-            return _PostsRepository.GetPage(PageIndex, PageSize, Cancel);
-        }
+        public async Task<IPage<Post>> GetAllPostsPageAsync(int PageIndex, int PageSize, CancellationToken Cancel = default) =>
+            await _PostsRepository.GetPage(PageIndex, PageSize, Cancel)
+               .ConfigureAwait(false);
 
         /// <summary>Получить определённое количество постов из всех</summary>
         /// <param name="Skip">Количество пропускаемых элементов</param>
         /// <param name="Take">Количество получаемых элементов</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Перечисление постов</returns>
-        public Task<IEnumerable<Post>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default)
+        public async Task<IEnumerable<Post>> GetAllPostsSkipTakeAsync(int Skip, int Take, CancellationToken Cancel = default)
         {
-            var task = new Task<IEnumerable<Post>>(() =>
-            {
-                return GetAllPostsAsync(Cancel).Result.Skip(Skip).Take(Take);
-            });
-            return task;
+            var posts = await GetAllPostsAsync(Cancel);
+            return posts.Skip(Skip).Take(Take);
         }
 
         /// <summary>Получить тэги к посту по его идентификатору</summary>
-        /// <param name="Id">Идентификатор поста</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="PostId">Идентификатор поста</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Перечисление тэгов</returns>
-        public Task<IEnumerable<Tag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default)
+        public async Task<IEnumerable<Tag>> GetBlogTagsAsync(int PostId, CancellationToken Cancel = default)
         {
-            var task = new Task<IEnumerable<Tag>>(() =>
+            if (await _PostsRepository.GetById(PostId, Cancel).ConfigureAwait(false) is not { } post)
+                throw new InvalidOperationException($"Пост с id {PostId} не найден");
+
+            var tag_ids = post.Tags;
+
+            var tags = new List<Tag>();
+            foreach (var tag_id in tag_ids)
             {
-                var exist_task = _PostsRepository.ExistId(Id, Cancel);
-                if (exist_task.Result is true)
-                {
-                    return _PostsRepository.GetById(Id).Result.Tags;
-                }
-                return null;
-            });
-            return task;
+                var tag = await _TagsRepository.GetById(tag_id, Cancel);
+                tags.Add(tag);
+            }
+
+            return tags;
         }
 
         /// <summary>Получение поста по его идентификатору</summary>
         /// <param name="Id">Идентификатор поста</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Найденный пост или <b>null</b></returns>
-        public Task<Post?> GetPostAsync(int Id, CancellationToken Cancel = default)
-        {
-            var task = new Task<Post>(() =>
-            {
-                var exist_task = _PostsRepository.ExistId(Id, Cancel);
-                if (exist_task.Result is true)
-                {
-                    return _PostsRepository.GetById(Id).Result;
-                }
-                return null;
-            });
-            return task;
-        }
+        public async Task<Post?> GetPostAsync(int Id, CancellationToken Cancel = default) => await _PostsRepository
+           .GetById(Id, Cancel)
+           .ConfigureAwait(false);
 
         /// <summary>Получить посты по тэгу</summary>
         /// <param name="Tag">Тэг</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Перечисление постов</returns>
-        public Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
+        public async Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default)
         {
-            var tag = new Tag { Name = Tag };
-            var task = new Task<IEnumerable<Post>>(() =>
-            {
-                var posts = _PostsRepository.GetAll(Cancel).Result.Where(p => p.Tags.Contains(tag));
-                return posts;
-            });
-            return task;
+            if (await _TagsRepository.GetByName(Tag, Cancel).ConfigureAwait(false) is not { Id: var tag_id } tag)
+                return Enumerable.Empty<Post>();
+
+            var posts = await _PostsRepository.GetAll(Cancel);
+
+            var tags_posts = posts.Where(p => p.Tags.Contains(tag_id));
+            return tags_posts;
         }
 
         /// <summary>Получить количество постов пользователя</summary>
         /// <param name="UserId">Идентификатор пользователя</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Количество постов</returns>
-        public Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
+        public async Task<int> GetUserPostsCountAsync(string UserId, CancellationToken Cancel = default)
         {
-            var task = new Task<int>(() =>
-            {
-                return _PostsRepository.GetAll().Result.Where(p => p.User.Id == UserId).Count();
-            });
-            return task;
+            var posts = await _PostsRepository.GetAll(Cancel);
+            return posts.Count(p => p.User.Id == UserId);
         }
 
         /// <summary>Удалить тэг с поста</summary>
         /// <param name="PostId">Идентификатор поста</param>
         /// <param name="Tag">Тэг</param>
-        /// <param name="Cancel">Токен отмены</param>
+        /// <param name="Cancel">Отмена асинхронной операции</param>
         /// <returns>Истина, если тэг был удалён успешно</returns>
-        public Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
+        public async Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default)
         {
-            var tag = new Tag { Name = Tag };
+            if (await _PostsRepository.GetById(PostId, Cancel).ConfigureAwait(false) is not { } post)
+                throw new InvalidOperationException($"Пост с id {PostId} не найден");
 
-            var task = new Task<bool>(() =>
-            {
-                var post_exist = _PostsRepository.ExistId(PostId, Cancel);
-                if (post_exist.Result is true)
-                {
-                    var getted_post = _PostsRepository.GetById(PostId, Cancel);
-                    if (getted_post.Result is not null)
-                    {
-                        var post = getted_post.Result;
-                        return post.Tags.Remove(tag);
-                    }
-                }
+            if (await _TagsRepository.GetByName(Tag, Cancel) is not { Id: var tag_id } tag)
                 return false;
-            });
-            return task;
+
+            if (!post.Tags.Remove(tag_id))
+                return false;
+
+            await _PostsRepository.Update(post, Cancel);
+
+            return true;
         }
     }
 }

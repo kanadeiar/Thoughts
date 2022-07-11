@@ -10,7 +10,7 @@ public class Category : NamedEntityModel
     public Status Status { get; set; }
 
     /// <summary>Список постов входящих в категорию</summary>
-    public ICollection<Post> Posts { get; set; } = new HashSet<Post>();
+    public ICollection<int> Posts { get; set; } = new HashSet<int>();
 
     public override string ToString() => Name;
 }

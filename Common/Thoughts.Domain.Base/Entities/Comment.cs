@@ -10,7 +10,7 @@ public class Comment : EntityModel
 
     /// <summary>Запись к которой принадлежит комментарий</summary>
     [Required]
-    public Post Post { get; set; } = null!;
+    public int PostId { get; set; }
 
     /// <summary>Автор комментария</summary>
     [Required]
@@ -24,7 +24,7 @@ public class Comment : EntityModel
     public Comment? ParentComment { get; set; }
 
     /// <summary>Список дочерних комментариев</summary>
-    public ICollection<Comment> ChildrenComment { get; set; } = new HashSet<Comment>();
+    public ICollection<int> ChildrenComment { get; set; } = new HashSet<int>();
 
     /// <summary>Признак удалённой записи</summary>
     public bool IsDeleted { get; set; }

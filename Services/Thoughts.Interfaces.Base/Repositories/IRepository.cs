@@ -119,7 +119,7 @@ public interface IRepository<T, in TKey> where T : IEntity<TKey>
     /// <param name="id">Идентификатор сущности, которую надо удалить</param>
     /// <param name="Cancel">Признак отмены асинхронной операции</param>
     /// <returns>Удалённая из репозитория сущность</returns>
-    Task<T> DeleteById(TKey id, CancellationToken Cancel = default);
+    Task<T?> DeleteById(TKey id, CancellationToken Cancel = default);
 }
 
 /// <summary>Репозиторий сущностей</summary>

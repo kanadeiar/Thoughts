@@ -46,7 +46,7 @@ public interface IBlogPostManager
 
     Task<bool> RemoveTagAsync(int PostId, string Tag, CancellationToken Cancel = default);
 
-    Task<IEnumerable<Tag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default);
+    Task<IEnumerable<Tag>> GetBlogTagsAsync(int PostId, CancellationToken Cancel = default);
 
     Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default);
 
