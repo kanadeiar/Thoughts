@@ -29,6 +29,8 @@ switch (db_type)
 
 builder.Services.AddTransient<ThoughtsDbInitializer>();
 
+builder.Services.AddTransient<IShortUrlManager, SqlShortUrlManagerService>();
+
 builder.Services.AddControllers();
 var app = builder.Build();
 
