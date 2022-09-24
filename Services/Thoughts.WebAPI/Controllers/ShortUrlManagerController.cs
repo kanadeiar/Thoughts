@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 using Thoughts.Interfaces.Base;
 
 namespace Thoughts.WebAPI.Controllers
 {
-    [Route("api/url")]
+    [Route(WebApiControllersPath.ShortUrl)]
     [ApiController]
     public class ShortUrlManagerController : ControllerBase
     {
@@ -15,27 +16,55 @@ namespace Thoughts.WebAPI.Controllers
             _shortUrlManager = ShortUrlManager;
         }
 
-          // GET: api/url?Alias=...
+        // GET: api/url?Alias=...
         [HttpGet]
-        public Task<Uri?> GetUrl(string Alias) => _shortUrlManager.GetUrl(Alias);
+        public async Task<ActionResult<Uri>> GetUrl(string Alias)
+        {
+            var result = await _shortUrlManager.GetUrl(Alias);
+            if (result is null)
+                return BadRequest();
+
+            return result;
+        }
 
         // GET: api/url/10
         [HttpGet("{Id}")]
-        public Task<Uri?> GetUrlById(int Id) => _shortUrlManager.GetUrlById(Id);
-
-        // PUT api/url
-        [HttpPut]
-        public Task<string> AddUrl( string Url)
+        public async Task<ActionResult<Uri>> GetUrlById(int Id)
         {
-            _shortUrlManager.AddUrl(Url);
+            var result = await _shortUrlManager.GetUrlById(Id);
+            if (result is null)
+                return BadRequest();
+
+            return result;
+        }
+
+
+        // PUT api/url?Url=...
+        [HttpPut]
+        public async Task<ActionResult<string>> AddUrl(string Url)
+        {
+            var result = await _shortUrlManager.AddUrl(Url);
+            if (String.IsNullOrEmpty(result))
+                return BadRequest();
+
+            //Ответ в формате api/url?Alias=447B38C52866B03C8129FD474502F558
+            return $"{WebApiControllersPath.ShortUrl}?Alias={result}";
         }
 
         // DELETE api/url/10
         [HttpDelete("{Id}")]
-        public Task<bool> DeleteUrl(int Id) => _shortUrlManager.DeleteUrl(Id);
+        public async Task<ActionResult<bool>> DeleteUrl(int Id)
+        {
+            var result= await _shortUrlManager.DeleteUrl(Id);
+            return result ? result : BadRequest();
+        }
 
         // POST api/url/10
         [HttpPost("{Id}")]
-        public Task<bool> UpdateUrl(int Id, [FromBody] string Url) => _shortUrlManager.UpdateUrl(Id, Url);
+        public async Task<ActionResult<bool>> UpdateUrl(int Id, [FromBody] string Url)
+        {
+            var result=await _shortUrlManager.UpdateUrl(Id, Url);
+            return result ? result : BadRequest();
+        }
     }
 }
