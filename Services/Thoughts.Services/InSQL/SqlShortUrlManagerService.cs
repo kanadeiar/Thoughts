@@ -25,7 +25,7 @@ namespace Thoughts.Services.InSQL
             _logger = Logger;
         }
 
-        public async Task<string> AddUrl(string UrlString, CancellationToken Cancel = default)
+        public async Task<string> AddUrlAsync(string UrlString, CancellationToken Cancel = default)
         {
             _logger.LogInformation($"Создание короткой ссылки для Url:{UrlString}");
 
@@ -62,7 +62,7 @@ namespace Thoughts.Services.InSQL
             return shortUrl.Alias;
         }
 
-        public async Task<bool> DeleteUrl(int Id, CancellationToken Cancel = default)
+        public async Task<bool> DeleteUrlAsync(int Id, CancellationToken Cancel = default)
         {
             _logger.LogInformation($"Удаление короткой ссылки Id:{Id}");
 
@@ -97,7 +97,7 @@ namespace Thoughts.Services.InSQL
             return true;
         }
 
-        public async Task<Uri?> GetUrl(string Alias, CancellationToken Cancel = default)
+        public async Task<Uri?> GetUrlAsync(string Alias, CancellationToken Cancel = default)
         {
             var result = await _db.ShortUrls.
                 FirstOrDefaultAsync(
@@ -110,7 +110,7 @@ namespace Thoughts.Services.InSQL
 
             return result.OriginalUrl;
         }
-        public async Task<Uri?> GetUrlById(int Id, CancellationToken Cancel = default)
+        public async Task<Uri?> GetUrlByIdAsync(int Id, CancellationToken Cancel = default)
         {
             var result = await _db.ShortUrls.
                 FirstOrDefaultAsync(
@@ -124,7 +124,7 @@ namespace Thoughts.Services.InSQL
             return result.OriginalUrl;
         }
 
-        public async Task<bool> UpdateUrl(int Id, string UrlString, CancellationToken Cancel = default)
+        public async Task<bool> UpdateUrlAsync(int Id, string UrlString, CancellationToken Cancel = default)
         {
             _logger.LogInformation($"Обновление короткой ссылки Id:{Id}. Новый Url:{UrlString}");
 
@@ -151,6 +151,7 @@ namespace Thoughts.Services.InSQL
             try
             {
                 shortUrl.OriginalUrl = url;
+                shortUrl.Alias = GenerateAlias(url.OriginalString);
                 await _db.SaveChangesAsync(Cancel).ConfigureAwait(false);
             }
             catch (DbUpdateException e)
@@ -166,6 +167,11 @@ namespace Thoughts.Services.InSQL
             return true;
         }
 
+        /// <summary>
+        /// Генерирование псевдонима ссылки (хеш MD5)
+        /// </summary>
+        /// <param name="Url">Исходный Url</param>
+        /// <returns>Псевдоним ссылки</returns>
         private string GenerateAlias(string Url)
         {
             using (var md5 = MD5.Create())
@@ -177,6 +183,11 @@ namespace Thoughts.Services.InSQL
             }
         }
 
+        /// <summary>
+        /// Создание объекта Uri из строки
+        /// </summary>
+        /// <param name="Url">Строка сождержащия адрес Uri</param>
+        /// <returns>Созданный Uri</returns>
         private Uri? CreateUrl(string Url)
         {
             bool result = Uri.TryCreate(Url, UriKind.Absolute, out var uriResult)

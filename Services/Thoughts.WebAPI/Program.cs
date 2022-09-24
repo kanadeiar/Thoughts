@@ -1,9 +1,35 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.Extensions.Configuration;
 
-builder.Services.AddControllers();
+using Thoughts.DAL.Sqlite;
+using Thoughts.DAL.SqlServer;
+using Thoughts.Interfaces.Base;
+using Thoughts.Services.InSQL;
+
+var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var db_type = configuration["Database"];
+
+switch (db_type)
+{
+    default: throw new InvalidOperationException($"Тип БД {db_type} не поддерживается");
+
+    case "Sqlite":
+        builder.Services.AddThoughtsDbSqlite(configuration.GetConnectionString("Sqlite"));
+        break;
+
+    case "SqlServer":
+        builder.Services.AddThoughtsDbSqlServer(configuration.GetConnectionString("SqlServer"));
+        break;
+}
+
+builder.Services.AddTransient<ThoughtsDbInitializer>();
+
+builder.Services.AddControllers();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
