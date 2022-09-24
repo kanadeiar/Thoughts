@@ -4,6 +4,7 @@ using Thoughts.DAL.Sqlite;
 using Thoughts.DAL.SqlServer;
 using Thoughts.Interfaces.Base;
 using Thoughts.Services.InSQL;
+using Thoughts.WebAPI.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -33,6 +34,8 @@ builder.Services.AddTransient<IShortUrlManager, SqlShortUrlManagerService>();
 
 builder.Services.AddControllers();
 var app = builder.Build();
+
+await app.InitializeDatabase();
 
 if (app.Environment.IsDevelopment())
 {
