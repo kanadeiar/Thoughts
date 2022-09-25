@@ -47,8 +47,7 @@ namespace Thoughts.WebAPI.Controllers
             if (String.IsNullOrEmpty(result))
                 return BadRequest();
 
-            //Ответ в формате api/url?Alias=447B38C52866B03C8129FD474502F558
-            return $"{WebApiControllersPath.ShortUrl}?Alias={result}";
+            return $"{result}";
         }
 
         // DELETE api/url/10
