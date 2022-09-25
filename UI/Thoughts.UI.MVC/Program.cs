@@ -1,5 +1,7 @@
+using Thoughts.Interfaces.Base;
 using Thoughts.Interfaces.Base.Repositories;
 using Thoughts.Services.Mapping;
+using Thoughts.WebAPI.Clients.ShortUrl;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +28,7 @@ switch (db_type)
 
 services.AddTransient<ThoughtsDbInitializer>();
 services.AddScoped<IBlogPostManager, SqlBlogPostManager>();
+services.AddTransient<IShortUrlManager, ShortUrlClient>();
 
 //services.AddScoped<IRepository<Post>, MappingRepository<Thoughts.DAL.Entities.Post, Post>>();
 //services.AddScoped<IRepository<Category>, MappingRepository<Thoughts.DAL.Entities.Category, Category>>();
