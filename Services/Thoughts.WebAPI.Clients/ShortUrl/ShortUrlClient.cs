@@ -20,7 +20,7 @@ namespace Thoughts.WebAPI.Clients.ShortUrl
 
         public async Task<string> AddUrlAsync(string Url, CancellationToken Cancel = default)
         {
-            var response = await PutAsync<string>($"{WebApiControllersPath.ShortUrl}?Url={Url}", "");
+            var response = await PostAsync<string>($"{WebApiControllersPath.ShortUrl}", Url);
             return await response.Content.ReadAsStringAsync();
         }
 
@@ -44,7 +44,7 @@ namespace Thoughts.WebAPI.Clients.ShortUrl
 
         public async Task<bool> UpdateUrlAsync(int Id, string Url, CancellationToken Cancel = default)
         {
-            var response = await PutAsync<string>($"{WebApiControllersPath.ShortUrl}/{Id}", Url);
+            var response = await PostAsync<string>($"{WebApiControllersPath.ShortUrl}/{Id}", Url);
             return await response.Content.ReadAsAsync<bool>();
         }
     }

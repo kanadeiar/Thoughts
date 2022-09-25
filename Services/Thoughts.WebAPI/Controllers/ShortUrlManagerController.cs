@@ -39,9 +39,9 @@ namespace Thoughts.WebAPI.Controllers
         }
 
 
-        // PUT api/url?Url=...
-        [HttpPut]
-        public async Task<ActionResult<string>> AddUrl(string Url)
+        // POST api/url
+        [HttpPost]
+        public async Task<ActionResult<string>> AddUrl([FromBody]string Url)
         {
             var result = await _shortUrlManager.AddUrlAsync(Url);
             if (String.IsNullOrEmpty(result))
