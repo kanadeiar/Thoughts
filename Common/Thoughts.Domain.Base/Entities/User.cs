@@ -30,5 +30,6 @@ public class User : EntityModel<string>
     /// <summary>Роли пользователя</summary>
     public ICollection<Role> Roles { get; set; } = new HashSet<Role>();
 
+
     public override string ToString() => $"[id:{Id}] {string.Join(' ', LastName, FirstName, Patronymic)}";
 }
