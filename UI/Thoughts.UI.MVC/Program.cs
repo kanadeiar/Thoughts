@@ -1,5 +1,3 @@
-using Thoughts.Interfaces.Base.Repositories;
-using Thoughts.Services.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +6,16 @@ var services = builder.Services;
 
 
 services.AddControllersWithViews();//.AddRazorRuntimeCompilation();
+
+// To list physical files from a path provided by configuration:
+var uploadFileOptions = configuration.GetSection("UploadFileOptions");
+
+var shared = new SharedConfiguration(
+    uploadFileOptions.GetValue<long>("FileSizeLimit"),
+    uploadFileOptions.GetValue<string>("StoredFilesPath"),
+    uploadFileOptions.GetSection("PermittedExtensions")?.GetChildren()?.Select(i => i.Value)?.ToArray()
+    );
+services.AddSingleton(shared);
 
 var db_type = configuration["Database"];
 
@@ -21,11 +29,13 @@ switch (db_type)
 
     case "SqlServer":
         services.AddThoughtsDbSqlServer(configuration.GetConnectionString("SqlServer"));
+        services.AddFileStorageDbSqlServer(configuration.GetConnectionString("FileStorageServer"));
         break;
 }
 
 services.AddTransient<ThoughtsDbInitializer>();
 services.AddScoped<IBlogPostManager, SqlBlogPostManager>();
+services.AddScoped<IFileManager, FileStorageManager>();
 
 //services.AddScoped<IRepository<Post>, MappingRepository<Thoughts.DAL.Entities.Post, Post>>();
 //services.AddScoped<IRepository<Category>, MappingRepository<Thoughts.DAL.Entities.Category, Category>>();
