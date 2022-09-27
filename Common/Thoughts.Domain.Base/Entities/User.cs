@@ -27,9 +27,20 @@ public class User : EntityModel<string>
     [Required]
     public string NickName { get; set; } = null!;
 
+    /// <summary>EMail</summary>
+    [Required, StringLength(255)]
+    public string EMail { get; set; }
+
+    /// <summary>Соль</summary>
+    [Required, StringLength(100)]
+    public string PasswordSalt { get; set; }
+
+    /// <summary>Hash пароля</summary>
+    [Required, StringLength(100)]
+    public string PasswordHash { get; set; }
+
     /// <summary>Роли пользователя</summary>
     public ICollection<Role> Roles { get; set; } = new HashSet<Role>();
-
 
     public override string ToString() => $"[id:{Id}] {string.Join(' ', LastName, FirstName, Patronymic)}";
 }
