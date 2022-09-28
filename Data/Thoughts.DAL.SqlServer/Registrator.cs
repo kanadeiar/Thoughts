@@ -14,4 +14,14 @@ public static class Registrator
 
         return services;
     }
+
+    public static IServiceCollection AddFileStorageDbSqlServer(this IServiceCollection services, string ConnectionString)
+    {
+        services.AddDbContext<FileStorageDb>(opt => opt
+            .UseSqlServer(
+                ConnectionString,
+                o => o.MigrationsAssembly(typeof(Registrator).Assembly.FullName)));
+
+        return services;
+    }
 }

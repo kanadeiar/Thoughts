@@ -17,7 +17,7 @@ var db_type = configuration["Database"];
 
 switch (db_type)
 {
-    default: throw new InvalidOperationException($"Òèï ÁÄ {db_type} íå ïîääåðæèâàåòñÿ");
+    default: throw new InvalidOperationException($"Ã’Ã¨Ã¯ ÃÃ„ {db_type} Ã­Ã¥ Ã¯Ã®Ã¤Ã¤Ã¥Ã°Ã¦Ã¨Ã¢Ã Ã¥Ã²Ã±Ã¿");
 
     case "Sqlite":
         builder.Services.AddThoughtsDbSqlite(configuration.GetConnectionString("Sqlite"));
@@ -40,7 +40,14 @@ await app.InitializeDatabase();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions.Reverse())
+        {
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                description.GroupName.ToUpperInvariant());
+        }
+    });
 }
 
 app.UseHttpsRedirection();
