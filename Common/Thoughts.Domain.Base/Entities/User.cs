@@ -27,16 +27,9 @@ public class User : EntityModel<string>
     [Required]
     public string NickName { get; set; } = null!;
 
-    /// <summary>EMail</summary>
-    [Required, StringLength(255)]
-    public string EMail { get; set; }
-
-    /// <summary>Соль</summary>
-    [Required, StringLength(100)]
-    public string PasswordSalt { get; set; }
-
-    /// <summary>Hash пароля</summary>
-    [Required, StringLength(100)]
+    /// <summary>Id пользователя Identity</summary>
+    [StringLength(100)]
+    public string IdentityUserId { get; set; }
     public string PasswordHash { get; set; }
 
     /// <summary>Роли пользователя</summary>
