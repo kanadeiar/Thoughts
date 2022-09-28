@@ -21,6 +21,7 @@
     <ProjectReference Include="..\..\Data\Thoughts.DAL.SqlServer\Thoughts.DAL.SqlServer.csproj" />
     <ProjectReference Include="..\..\Services\Thoughts.Interfaces\Thoughts.Interfaces.csproj" />
     <ProjectReference Include="..\..\Services\Thoughts.Services\Thoughts.Services.csproj" />
+    <ProjectReference Include="..\..\Services\Thoughts.WebAPI.Clients\Thoughts.WebAPI.Clients.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
