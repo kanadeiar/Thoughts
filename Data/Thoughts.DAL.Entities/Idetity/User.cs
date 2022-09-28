@@ -6,10 +6,5 @@ namespace Thoughts.DAL.Entities.Idetity
     {
         public const string Administrator = "Admin";
         public const string AdminPassword = "AdPAss_123";
-
-        /// <summary>Соль</summary>
-        [Required, StringLength(100)]
-        public string PasswordSalt { get; set; }
-        public override string ToString() => UserName;
     }
 }

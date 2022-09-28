@@ -12,7 +12,7 @@ using Thoughts.DAL;
 namespace Thoughts.DAL.SqlServer.Migrations
 {
     [DbContext(typeof(ThoughtsDB))]
-    [Migration("20220927185557_UpdateUser")]
+    [Migration("20220928193818_UpdateUser")]
     partial class UpdateUser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -208,14 +208,14 @@ namespace Thoughts.DAL.SqlServer.Migrations
                     b.Property<DateTime?>("Birthday")
                         .HasColumnType("date");
 
-                    b.Property<string>("EMail")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IdentityUserId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -224,16 +224,6 @@ namespace Thoughts.DAL.SqlServer.Migrations
                     b.Property<string>("NickName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PasswordSalt")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Patronymic")
                         .HasColumnType("nvarchar(450)");

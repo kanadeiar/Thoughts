@@ -21,9 +21,9 @@ switch (db_type)
 
     case "SqlServer":
         services.AddThoughtsDbSqlServer(configuration.GetConnectionString("SqlServer"));
-        services.AddIdentityDBSqlServer(configuration.GetConnectionString("IdentitySqlServer"));
         break;
 }
+services.AddIdentityDBSqlServer(configuration.GetConnectionString("IdentitySqlServer"));
 
 services.AddTransient<ThoughtsDbInitializer>();
 services.AddTransient<IdentityDbInitializer>();

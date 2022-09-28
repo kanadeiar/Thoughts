@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Identity.DAL.SqlServer.Migrations
 {
     [DbContext(typeof(IdentityDB))]
-    [Migration("20220927205812_MyMigration")]
-    partial class MyMigration
+    [Migration("20220928193651_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -192,11 +192,6 @@ namespace Identity.DAL.SqlServer.Migrations
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordSalt")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
