@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,16 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Thoughts.DAL.Entities\Thoughts.DAL.Entities.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.6" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore">
-      <HintPath>..\..\..\..\nuget\microsoft.aspnetcore.identity.entityframeworkcore\6.0.6\lib\net6.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore">
-      <HintPath>..\..\..\..\nuget\microsoft.entityframeworkcore\6.0.6\lib\net6.0\Microsoft.EntityFrameworkCore.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\Thoughts.DAL.Entities\Thoughts.DAL.Entities.csproj" />
   </ItemGroup>
 
 </Project>
