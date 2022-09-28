@@ -41,13 +41,15 @@ namespace Thoughts.WebAPI.Controllers
 
         // POST api/url
         [HttpPost]
-        public async Task<ActionResult<string>> AddUrl([FromBody]string Url)
+        public async Task<IActionResult> AddUrl([FromBody]string Url)
         {
+            // 267FC37D9A60075A69DDFC466AAD4FB6
             var result = await _shortUrlManager.AddUrlAsync(Url);
-            if (String.IsNullOrEmpty(result))
+            if (string.IsNullOrEmpty(result))
                 return BadRequest();
 
-            return $"{result}";
+            //return CreatedAtAction(nameof(GetUrlById), new { Id = id }, )
+            return Ok(result);
         }
 
         // DELETE api/url/10
