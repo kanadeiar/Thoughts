@@ -15,9 +15,12 @@ using Microsoft.Net.Http.Headers;
 
 using Thoughts.DAL;
 using Thoughts.DAL.Entities;
+using Thoughts.Tools.Extensions;
 using Thoughts.UI.MVC.Common;
 using Thoughts.UI.MVC.Filters;
 using Thoughts.UI.MVC.Utilities;
+
+using static System.Net.WebRequestMethods;
 
 namespace Thoughts.UI.MVC.Controllers
 {
@@ -48,6 +51,12 @@ namespace Thoughts.UI.MVC.Controllers
             _permittedExtensions = sharedConfiguration.PermittedExtensionsForUploadedFile;
         }
 
+
+        /// <summary>
+        /// Загрузка файла с проверкой файла на разрешенные расширения файла
+        /// Максимальный размер файла ограничен размером байтового массива
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [Route("upload")]
         [DisableFormValueModelBinding]
@@ -164,6 +173,102 @@ namespace Thoughts.UI.MVC.Controllers
 
             return Created(nameof(FileController), null);
         }
+
+
+
+        /// <summary>
+        /// Загрузка файла без ограничений по размеру
+        /// Файл не проверяется на разрешенные расширения
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [Route("uploadlarge")]
+        public async Task<IActionResult> UploadLargeFile()
+        {
+            var request = HttpContext.Request;
+
+            // validation of Content-Type
+            // 1. first, it must be a form-data request
+            // 2. a boundary should be found in the Content-Type
+            if (!request.HasFormContentType ||
+                !MediaTypeHeaderValue.TryParse(request.ContentType, out var mediaTypeHeader) ||
+                string.IsNullOrEmpty(mediaTypeHeader.Boundary.Value))
+            {
+                return new UnsupportedMediaTypeResult();
+            }
+
+            var reader = new MultipartReader(mediaTypeHeader.Boundary.Value, request.Body);
+            var section = await reader.ReadNextSectionAsync();
+
+            // This sample try to get the first file from request and save it
+            // Make changes according to your needs in actual use
+            while (section != null)
+            {
+                var hasContentDispositionHeader = ContentDispositionHeaderValue.TryParse(section.ContentDisposition,
+                    out var contentDisposition);
+
+                if (hasContentDispositionHeader && contentDisposition.DispositionType.Equals("form-data") &&
+                    !string.IsNullOrEmpty(contentDisposition.FileName.Value))
+                {
+                    // Don't trust any file name, file extension, and file data from the request unless you trust them completely
+                    // Otherwise, it is very likely to cause problems such as virus uploading, disk filling, etc
+                    // In short, it is necessary to restrict and verify the upload
+                    // Here, we just use the temporary folder and a random file name
+
+                    // Get the temporary folder, and combine a random file name with it
+                    var trustedFileNameForFileStorage = Path.GetRandomFileName();
+                    var saveToPath = Path.Combine(_targetFilePath, trustedFileNameForFileStorage);
+
+
+                    await using (var targetStream = System.IO.File.Create(saveToPath))
+                    {
+                        await section.Body.CopyToAsync(targetStream);
+                    }
+
+                    var fi = new FileInfo(saveToPath);
+                    await using (var fs = System.IO.File.OpenRead(saveToPath))
+                    {
+                        var sha1 = await fs.GetSha1Async();
+                        var fileExists = await _fileManager.Exists(sha1);
+
+                        var file = new UploadedFile
+                        {
+                            Sha1 = sha1,
+                            Md5 = await fs.GetMd5Async(),
+                            NameForDisplay = contentDisposition.FileName.Value,
+                            FileNameForFileStorage = trustedFileNameForFileStorage,
+                            Url = "",
+                            Created = DateTimeOffset.Now,
+                            Updated = null,
+                            Meta = "",
+                            Access = 0,
+                            Flags = 0,
+                            MimeType = section.ContentType ?? "",
+                            Path = _targetFilePath,
+                            Size = fi.Length,
+                        };
+
+                        if (fileExists)
+                        {
+                            await _fileManager.AddOrUpdate(file);
+                            System.IO.File.Delete(saveToPath);
+                            break;
+                        }
+
+                        await _fileManager.AddOrUpdate(file);
+                    }
+
+                    return Ok();
+                }
+
+                section = await reader.ReadNextSectionAsync();
+            }
+
+            // If the code runs to this location, it means that no files have been saved
+            return BadRequest("No files data in the request.");
+        }
+
 
         /// <summary>
         /// 

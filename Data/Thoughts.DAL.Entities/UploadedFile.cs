@@ -42,7 +42,7 @@ namespace Thoughts.DAL.Entities
         
         //Размер файла в байтах
         [Column(TypeName = "bigint")]
-        public int Size { get; set; }
+        public long Size { get; set; }
 
         //Дата создания файла
         public DateTimeOffset Created { get; set; }
