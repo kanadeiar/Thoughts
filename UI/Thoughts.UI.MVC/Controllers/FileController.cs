@@ -7,6 +7,7 @@ using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.FileProviders;
@@ -23,11 +24,17 @@ namespace Thoughts.UI.MVC.Controllers
     [Route("file/")]
     public class FileController : Controller
     {
+
         private readonly long _fileSizeLimit;
+
         private readonly string _targetFilePath;
+
         private readonly string[] _permittedExtensions;
+
         private static readonly FormOptions _defaultFormOptions = new FormOptions();
+
         private readonly IFileManager _fileManager;
+
         public FileController(SharedConfiguration sharedConfiguration, IFileManager fileManager)
         {
             _fileManager = fileManager;
@@ -168,7 +175,7 @@ namespace Thoughts.UI.MVC.Controllers
         public async Task<IActionResult> Get(string file)
         {
             var result = await _fileManager.Get(file);
-            if(result == null) return NotFound();
+            if (result == null) return NotFound();
             var path = Path.Combine(result.Path + result.FileNameForFileStorage);
             var byteArray = await System.IO.File.ReadAllBytesAsync(path);
 
@@ -185,7 +192,7 @@ namespace Thoughts.UI.MVC.Controllers
         public async Task<IActionResult> Delete(string file)
         {
             var result = await _fileManager.Get(file);
-            if(result == null) return NotFound();
+            if (result == null) return NotFound();
 
             await _fileManager.Delete(file);
             return Ok();

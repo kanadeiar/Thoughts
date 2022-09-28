@@ -11,14 +11,8 @@ namespace Thoughts.UI.MVC.Common
         #region FileStorage
         public long FileSizeLimit { get; set; }
         public string TargetFilePath { get; set; }
-        public string[]? PermittedExtensionsForUploadedFile { get; set; }
+        public string[] PermittedExtensionsForUploadedFile { get; set; }
 
         #endregion
-        public SharedConfiguration(long fileSizeLimit, string targetFilePath, string[]? permittedExtensionsForUploadedFile)
-        {
-            FileSizeLimit = fileSizeLimit;
-            TargetFilePath = targetFilePath;
-            PermittedExtensionsForUploadedFile = permittedExtensionsForUploadedFile;
-        }
     }
 }

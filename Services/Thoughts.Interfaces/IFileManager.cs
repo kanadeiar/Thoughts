@@ -15,6 +15,4 @@ public interface IFileManager
     Task Delete(string sha1);
     Task<bool> Exists(string sha1);
     Task<bool> Exists(byte[] buffer);
-    Task<string> ComputedSha1Checksum(byte[] buffer);
-    Task<string> ComputeMd5Checksum(byte[] buffer);
 }
