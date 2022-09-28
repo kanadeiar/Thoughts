@@ -1,4 +1,8 @@
-﻿namespace Thoughts.UI.MAUI
+﻿using System.Reflection;
+
+using Microsoft.Extensions.Configuration;
+
+namespace Thoughts.UI.MAUI
 {
     public static class MauiProgram
     {
@@ -12,6 +16,18 @@
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            var strAppConfigStreamName = string.Empty;
+
+#if DEBUG
+            strAppConfigStreamName = "Thoughts.UI.MAUI.appsettings.json";
+#else
+            strAppConfigStreamName = "Thoughts.UI.MAUI.appsettings.json";
+#endif
+
+            var assembly = IntrospectionExtensions.GetTypeInfo(typeof(MauiProgram)).Assembly;
+            using var stream = assembly.GetManifestResourceStream(strAppConfigStreamName);
+            builder.Configuration.AddJsonStream(stream);
 
             return builder.Build();
         }
