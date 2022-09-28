@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.Identity;
+using Thoughts.DAL;
+using Thoughts.DAL.Entities;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();

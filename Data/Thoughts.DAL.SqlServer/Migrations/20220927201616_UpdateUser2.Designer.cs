@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Thoughts.DAL;
 
@@ -11,9 +12,10 @@ using Thoughts.DAL;
 namespace Thoughts.DAL.SqlServer.Migrations
 {
     [DbContext(typeof(ThoughtsDB))]
-    partial class ThoughtsDBModelSnapshot : ModelSnapshot
+    [Migration("20220927201616_UpdateUser2")]
+    partial class UpdateUser2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

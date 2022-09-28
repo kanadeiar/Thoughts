@@ -21,10 +21,12 @@ switch (db_type)
 
     case "SqlServer":
         services.AddThoughtsDbSqlServer(configuration.GetConnectionString("SqlServer"));
+        services.AddIdentityDBSqlServer(configuration.GetConnectionString("IdentitySqlServer"));
         break;
 }
 
 services.AddTransient<ThoughtsDbInitializer>();
+services.AddTransient<IdentityDbInitializer>();
 services.AddScoped<IBlogPostManager, SqlBlogPostManager>();
 
 //services.AddScoped<IRepository<Post>, MappingRepository<Thoughts.DAL.Entities.Post, Post>>();
