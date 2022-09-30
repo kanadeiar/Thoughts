@@ -40,6 +40,7 @@ services.AddVersionedApiExplorer(setup =>
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 services.ConfigureOptions<SwaggerConfigureOptions>();
+services.AddRouting(options => options.LowercaseUrls = true);
 
 var db_type = configuration["Database"];
 
