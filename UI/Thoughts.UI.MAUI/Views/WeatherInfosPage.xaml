@@ -8,18 +8,22 @@
                     ItemsSource="{Binding WeatherInfos}"
                     Margin="20"
                     SelectionMode="Single">
-        <CollectionView.ItemTemplate>
+        <CollectionView.ItemsLayout>
+            <GridItemsLayout Orientation="Vertical"
+                             Span="2"
+                             VerticalItemSpacing="10"
+                             HorizontalItemSpacing="10"/>
+        </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
             <DataTemplate>
-                <Grid Padding="20, 0, 0, 0"
-                      ColumnSpacing="10"
-                      ColumnDefinitions="*,*">
-                    <Label Text="{Binding Summary}"
-                           VerticalTextAlignment="Center"/>
-                    <Label Text="{Binding Temperature}"
-                           VerticalTextAlignment="Center"/>
-                    <Label Text="{Binding Date}"
-                           VerticalTextAlignment="Center"/>
-                </Grid>
+                    <VerticalStackLayout>
+                        <Label Text="{Binding Summary}"
+                        VerticalTextAlignment="Center"/>
+                        <Label Text="{Binding Temperature}"
+                        VerticalTextAlignment="Center"/>
+                        <Label Text="{Binding Date}"
+                        VerticalTextAlignment="Center"/>
+                    </VerticalStackLayout>
             </DataTemplate>
         </CollectionView.ItemTemplate>
     </CollectionView>

@@ -30,7 +30,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
             services.AddSingleton<IHttpsClientHandlerService, HttpsClientHandlerService>();
 
 #if DEBUG
-            services.AddHttpClient("webAPI", client => client.BaseAddress = new Uri(webAPI))
+            services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI))
                 .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpMessageHandler());
 #else
             services.AddHttpClient("webAPI", client => client.BaseAddress = new Uri(webAPI));

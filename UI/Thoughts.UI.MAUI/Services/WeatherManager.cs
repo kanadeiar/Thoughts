@@ -15,12 +15,15 @@ namespace Thoughts.UI.MAUI.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<WeatherInfo>> GetAllInfos(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<WeatherInfo>> GetAllInfosAsync(CancellationToken cancellationToken = default)
         {
             var result = await _weatherService.GetAllAsync(cancellationToken)
                 .ConfigureAwait(false);
 
             return result;
         }
+
+        public IEnumerable<WeatherInfo> GetAllInfos(CancellationToken cancellationToken = default) => 
+            GetAllInfosAsync(cancellationToken).GetAwaiter().GetResult();
     }
 }

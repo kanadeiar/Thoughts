@@ -16,9 +16,19 @@ namespace Thoughts.UI.MAUI.ViewModels
         public WeatherViewModel(IWeatherManager weatherManager)
         {
             _weatherManager = weatherManager;
+            LoadData();
         }
 
-        public ObservableCollection<WeatherInfo> WeatherInfos { get; set; } = new();
+        public ObservableCollection<WeatherInfo> WeatherInfos { get; } = new();
 
+        private void LoadData()
+        {
+            WeatherInfos.Clear();
+
+            var infos = _weatherManager.GetAllInfos();
+
+            foreach (var info in infos)
+                WeatherInfos.Add(info);
+        }
     }
 }
