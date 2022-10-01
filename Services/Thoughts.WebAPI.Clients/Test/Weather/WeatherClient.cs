@@ -3,17 +3,24 @@ using System.Text.Json.Serialization;
 
 namespace Thoughts.WebAPI.Clients.Test.Weather;
 
-public class WeatherClient
+public class WeatherClient : IWeatherService
 {
-    private readonly HttpClient _Client;
+    private readonly IHttpClientFactory _httpFactory;
 
-    public WeatherClient(HttpClient Client) => _Client = Client;
+    public WeatherClient(IHttpClientFactory httpFactory) => _httpFactory = httpFactory;
 
-    public async Task<IEnumerable<WeatherInfo>> GetAll()
+    public async Task<IEnumerable<WeatherInfo>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var result = await _Client.GetFromJsonAsync<IEnumerable<WeatherInfo>>("api/test/weather");
-        return result ?? throw new InvalidOperationException("Не удалось получить данные от сервиса");
+        var client = _httpFactory.CreateClient("WebAPI");
+
+        var result = await client
+            .GetFromJsonAsync<IEnumerable<WeatherInfo>>("api/test/weather", cancellationToken)
+            .ConfigureAwait(false);
+
+        return result ?? Enumerable.Empty<WeatherInfo>();
     }
+
+    public IEnumerable<WeatherInfo> GetAll() => GetAllAsync().GetAwaiter().GetResult();
 }
 
 public record WeatherInfo(DateTime Date, string? Summary)
