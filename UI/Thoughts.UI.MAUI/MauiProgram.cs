@@ -1,11 +1,13 @@
 ﻿using System.Reflection;
-
 using Microsoft.Extensions.Configuration;
+using Thoughts.UI.MAUI.Services.Extensions;
 
 namespace Thoughts.UI.MAUI
 {
     public static class MauiProgram
     {
+        public static MauiApp App { get; private set; }
+
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
@@ -29,7 +31,9 @@ namespace Thoughts.UI.MAUI
             using var stream = assembly.GetManifestResourceStream(strAppConfigStreamName);
             builder.Configuration.AddJsonStream(stream);
 
-            return builder.Build();
+            builder.AddMAUIServices();
+
+            return App = builder.Build();
         }
     }
 }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Thoughts.UI.MAUI.Views.WeatherInfosPage"
+             xmlns:vm="clr-namespace:Thoughts.UI.MAUI.ViewModels"
+             Title="Weather">
+    <CollectionView x:Name="weatherInfos"
+                    ItemsSource="{Binding WeatherInfos}"
+                    Margin="20"
+                    SelectionMode="Single">
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Grid Padding="20, 0, 0, 0"
+                      ColumnSpacing="10"
+                      ColumnDefinitions="*,*">
+                    <Label Text="{Binding Summary}"
+                           VerticalTextAlignment="Center"/>
+                    <Label Text="{Binding Temperature}"
+                           VerticalTextAlignment="Center"/>
+                    <Label Text="{Binding Date}"
+                           VerticalTextAlignment="Center"/>
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</ContentPage>
