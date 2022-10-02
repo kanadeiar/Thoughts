@@ -14,7 +14,7 @@ namespace Thoughts.WebAPI.Tests
 {
     public static class TestData
     {
-        public static Post[] _Posts;
+        public static IEnumerable<Post> _Posts;
         public static Mock<IRepository<Post>> _Post_Repo_Mock;
 
         public static Tag[] _Tags;

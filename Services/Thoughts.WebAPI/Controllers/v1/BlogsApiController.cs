@@ -1,13 +1,5 @@
 ﻿using Thoughts.Interfaces;
-using Newtonsoft;
-
 using Microsoft.AspNetCore.Mvc;
-
-using Newtonsoft.Json;
-
-using Thoughts.Domain.Base.Entities;
-using Thoughts.DAL.Entities;
-using Post = Thoughts.Domain.Base.Entities.Post;
 
 namespace Thoughts.WebAPI.Controllers.v1
 {
@@ -29,14 +21,16 @@ namespace Thoughts.WebAPI.Controllers.v1
         public async Task<IActionResult> GetAllPosts(CancellationToken ct)
         {
             var posts = await _BlogsManager.GetAllPostsAsync(ct);
+            if(posts.Any())
+                return Ok(posts);
 
-            return Ok(posts);
+            return NotFound();
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetById(int? id, CancellationToken ct)
+        public async Task<IActionResult> GetById(int id, CancellationToken ct)
         {
-            var post = await _BlogsManager.GetPostAsync(id.Value, ct);
+            var post = await _BlogsManager.GetPostAsync(id, ct);
             if (post == null)
                 return NotFound();
 
