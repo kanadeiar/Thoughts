@@ -54,19 +54,19 @@ services.Configure<IdentityOptions>(opt =>
 });
 
 // нужна ли настройка Cookie?
-services.ConfigureApplicationCookie(opt =>
-{
-    opt.Cookie.Name = "GB.WebStore";
-    opt.Cookie.HttpOnly = true;
+//services.ConfigureApplicationCookie(opt =>
+//{
+//    opt.Cookie.Name = "Thoughts.WebAPI";
+//    opt.Cookie.HttpOnly = true;
 
-    opt.ExpireTimeSpan = TimeSpan.FromDays(10);
+//    opt.ExpireTimeSpan = TimeSpan.FromDays(10);
 
-    opt.LoginPath = "/Account/Login";
-    opt.LogoutPath = "/Account/Logout";
-    opt.AccessDeniedPath = "/Account/AccessDenied";
+//    opt.LoginPath = "/Account/Login";
+//    opt.LogoutPath = "/Account/Logout";
+//    opt.AccessDeniedPath = "/Account/AccessDenied";
 
-    opt.SlidingExpiration = true;
-});
+//    opt.SlidingExpiration = true;
+//});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
