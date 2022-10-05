@@ -33,7 +33,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
             services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI))
                 .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpMessageHandler());
 #else
-            services.AddHttpClient("webAPI", client => client.BaseAddress = new Uri(webAPI));
+            services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI));
 #endif
 
             services.AddSingleton(settings);
