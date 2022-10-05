@@ -30,13 +30,13 @@ namespace Thoughts.UI.MAUI.Services.Extensions
 
 #if DEBUG
             services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI))
+                .AddTypedClient<IWeatherService, WeatherClient>()
                 .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpMessageHandler());
 #else
             services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI));
 #endif
 
             services.AddSingleton(settings);
-            services.AddScoped<IWeatherService, WeatherClient>();
             services.AddScoped<IWeatherManager, WeatherManager>();
 
             return services;

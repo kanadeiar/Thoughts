@@ -1,19 +1,18 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 
 namespace Thoughts.WebAPI.Clients.Test.Weather;
 
 public class WeatherClient : IWeatherService
 {
-    private readonly IHttpClientFactory _httpFactory;
+    private readonly HttpClient _httpClient;
 
-    public WeatherClient(IHttpClientFactory httpFactory) => _httpFactory = httpFactory;
+    public WeatherClient(HttpClient httpClient) => _httpClient = httpClient;
 
     public async Task<IEnumerable<WeatherInfo>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var client = _httpFactory.CreateClient("WebAPI");
-
-        var result = await client
+        var result = await _httpClient
             .GetFromJsonAsync<IEnumerable<WeatherInfo>>("api/test/weather", cancellationToken)
             .ConfigureAwait(false);
 
