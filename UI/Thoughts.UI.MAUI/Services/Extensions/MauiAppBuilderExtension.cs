@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 using Thoughts.UI.MAUI.Services.Interfaces;
 using Thoughts.UI.MAUI.ViewModels;
@@ -24,7 +23,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
             var settings = configuration.GetSection(nameof(AppSettings)).Get<AppSettings>();
 
             var webAPI = DeviceInfo.Platform == DevicePlatform.Android
-                ? settings.WebAPIAndroid
+                ? settings.LocalhostWebAPIAndroid
                 : settings.WebAPI;
 
             services.AddSingleton<IHttpsClientHandlerService, HttpsClientHandlerService>();
