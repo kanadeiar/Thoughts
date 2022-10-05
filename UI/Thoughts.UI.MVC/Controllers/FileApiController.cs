@@ -25,7 +25,7 @@ using static System.Net.WebRequestMethods;
 namespace Thoughts.UI.MVC.Controllers
 {
     [Route("file/")]
-    public class FileController : Controller
+    public class FileApiController : Controller
     {
 
         private readonly long _fileSizeLimit;
@@ -38,7 +38,7 @@ namespace Thoughts.UI.MVC.Controllers
 
         private readonly IFileManager _fileManager;
 
-        public FileController(SharedConfiguration sharedConfiguration, IFileManager fileManager)
+        public FileApiController(SharedConfiguration sharedConfiguration, IFileManager fileManager)
         {
             _fileManager = fileManager;
             _fileSizeLimit = sharedConfiguration.FileSizeLimit;
@@ -171,7 +171,7 @@ namespace Thoughts.UI.MVC.Controllers
                 section = await reader.ReadNextSectionAsync();
             }
 
-            return Created(nameof(FileController), null);
+            return Created(nameof(FileApiController), null);
         }
 
 
