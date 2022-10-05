@@ -10,15 +10,19 @@ var services = builder.Services;
 
 
 services.AddControllersWithViews();//.AddRazorRuntimeCompilation();
+var contentRoot = configuration.GetValue<string>(WebHostDefaults.ContentRootKey);
 
 // To list physical files from a path provided by configuration:
 var uploadFileOptions = configuration.GetSection("UploadFileOptions");
 
-var shared = new SharedConfiguration(
-    uploadFileOptions.GetValue<long>("FileSizeLimit"),
-    uploadFileOptions.GetValue<string>("StoredFilesPath"),
-    uploadFileOptions.GetSection("PermittedExtensions")?.GetChildren()?.Select(i => i.Value)?.ToArray()
-    );
+var shared = new SharedConfiguration()
+{
+    FileSizeLimit = uploadFileOptions.GetValue<long>("FileSizeLimit"),
+    TargetFilePath = Path.Combine(contentRoot + "upload\\"),//uploadFileOptions.GetValue<string>("StoredFilesPath"),
+    PermittedExtensionsForUploadedFile = uploadFileOptions
+        .GetSection("PermittedExtensions")?
+        .GetChildren()?.Select(i => i.Value)?.ToArray()
+};
 services.AddSingleton(shared);
 
 var db_type = configuration["Database"];

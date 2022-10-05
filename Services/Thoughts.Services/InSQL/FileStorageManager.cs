@@ -5,10 +5,10 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-
 using Thoughts.DAL;
 using Thoughts.DAL.Entities;
 using Thoughts.Interfaces;
+using Thoughts.Tools.Extensions;
 
 namespace Thoughts.Services.InSQL
 {
@@ -21,7 +21,7 @@ namespace Thoughts.Services.InSQL
             _context = context;
         }
 
-        public async Task<UploadedFile?> Get(string sha1)
+        public async Task<UploadedFile> Get(string sha1)
         {
             var file = await _context.Files.FindAsync(sha1);
 
@@ -51,7 +51,7 @@ namespace Thoughts.Services.InSQL
         {
             if (fileModel != null)
             {
-                fileModel.Sha1 = await ComputedSha1Checksum(fileModel.ByteArray);
+                fileModel.Sha1 = await fileModel.ByteArray.GetSha1Async();
                 var file = await _context.Files.FindAsync(fileModel.Sha1);
                 if (file != null)
                 {
@@ -61,14 +61,14 @@ namespace Thoughts.Services.InSQL
                 }
                 else
                 {
-                    fileModel.Md5 = await ComputeMd5Checksum(fileModel.ByteArray);
+                    fileModel.Md5 = await fileModel.ByteArray.GetMd5Async();
                     fileModel.Counter++;
                     await _context.Files.AddAsync(fileModel);
                 }
                 await _context.SaveChangesAsync();
             }
 
-            return fileModel.Sha1;
+            return fileModel?.Sha1;
         }
 
         public async Task<bool> Exists(string sha1)
@@ -80,51 +80,16 @@ namespace Thoughts.Services.InSQL
 
         public async Task<bool> Exists(byte[] buffer)
         {
-            return await Exists(await ComputedSha1Checksum(buffer));
+            return await Exists(await buffer.GetSha1Async());
         }
 
-        public async Task<string> ComputedSha1Checksum(byte[] buffer)
-        {
-            using var sha = SHA1.Create();
-            var checksum = sha.ComputeHash(buffer);
-            var sendCheckSum = BitConverter.ToString(checksum)
-                .Replace("-", string.Empty);
-
-            return sendCheckSum;
-        }
-
-        private async Task<string> ComputedSha1Checksum(string path)
-        {
-            var fs = File.OpenRead(path);
-            var fileData = new byte[fs.Length];
-            fs.Read(fileData, 0, fileData.Length);
-            return await ComputedSha1Checksum(fileData);
-        }
-
-        private static string ComputeMd5Checksum(string path)
-        {
-            var fs = File.OpenRead(path);
-            MD5 md5 = new MD5CryptoServiceProvider();
-            var fileData = new byte[fs.Length];
-            fs.Read(fileData, 0, (int)fs.Length);
-            var checkSum = md5.ComputeHash(fileData);
-            return BitConverter.ToString(checkSum).Replace("-", String.Empty);
-        }
-
-        public async Task<string> ComputeMd5Checksum(byte[] buffer)
-        {
-            MD5 md5 = new MD5CryptoServiceProvider();
-            var checkSum = md5.ComputeHash(buffer);
-            return BitConverter.ToString(checkSum).Replace("-", String.Empty);
-        }
-
-        private bool FileExistsInStorage(UploadedFile file)
+        private static bool FileExistsInStorage(UploadedFile file)
         {
             var find = false;
             if (file == null) return find;
 
             var dir = new DirectoryInfo(file.Path);
-            return dir.GetFiles().Any(f => ComputeMd5Checksum(f.FullName) == file.Md5);
+            return dir.GetFiles().Any(f => f.FullName.GetMd5Async().Result == file.Md5);
         }
 
     }

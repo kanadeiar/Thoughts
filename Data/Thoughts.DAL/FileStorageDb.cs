@@ -16,7 +16,7 @@ namespace Thoughts.DAL
 
         public FileStorageDb(DbContextOptions<FileStorageDb> options) : base(options)
         {
-            Database.EnsureCreated();
+
         }
     }
 }

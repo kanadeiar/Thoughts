@@ -36,6 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Authentication\" />
     <Folder Include="Controllers\v2\" />
   </ItemGroup>
 
