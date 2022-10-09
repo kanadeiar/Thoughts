@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-
 using Thoughts.UI.MAUI.Services.Interfaces;
 using Thoughts.UI.MAUI.ViewModels;
 using Thoughts.UI.MAUI.Views;
@@ -21,19 +20,21 @@ namespace Thoughts.UI.MAUI.Services.Extensions
         public static IServiceCollection AddMAUIServices(this IServiceCollection services, IConfiguration configuration)
         {
             var settings = configuration.GetSection(nameof(AppSettings)).Get<AppSettings>();
-
-            var webAPI = DeviceInfo.Platform == DevicePlatform.Android
-                ? settings.LocalhostWebAPIAndroid
-                : settings.WebAPI;
-
-            services.AddSingleton<IHttpsClientHandlerService, HttpsClientHandlerService>();
+            var webAPI = string.Empty;
 
 #if DEBUG
+            webAPI = DeviceInfo.Platform == DevicePlatform.Android
+                ? settings.DebugWebAPIAndroid
+                : settings.DebugWebAPI;
+
+            services.AddSingleton<IHttpsClientHandlerService, HttpsClientHandlerService>();
             services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI))
                 .AddTypedClient<IWeatherService, WeatherClient>()
-                .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpMessageHandler());
+                .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpsMessageHandler());
 #else
-            services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI));
+            webAPI = settings.DeviceWebAPI;
+            services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI))
+                .AddTypedClient<IWeatherService, WeatherClient>();
 #endif
 
             services.AddSingleton(settings);
@@ -58,7 +59,9 @@ namespace Thoughts.UI.MAUI.Services.Extensions
             return services;
         }
 
-        private static HttpMessageHandler GetHttpMessageHandler(this IServiceProvider services) => 
+#if DEBUG
+        private static HttpMessageHandler GetHttpsMessageHandler(this IServiceProvider services) => 
             services.GetRequiredService<IHttpsClientHandlerService>().GetPlatformMessageHandler();
+#endif
     }
 }
