@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Thoughts.UI.MAUI.Views.WeatherInfosPage"
-             xmlns:vm="clr-namespace:Thoughts.UI.MAUI.ViewModels"
-             Title="Weather">
+             Title="{Binding Title}">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior 
+            EventName="Appearing"
+            Command="{Binding OpenPageCommand}"/>
+    </ContentPage.Behaviors>
     <CollectionView x:Name="weatherInfos"
                     ItemsSource="{Binding WeatherInfos}"
                     Margin="20"

@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using CommunityToolkit.Maui;
 using Microsoft.Extensions.Configuration;
 using Thoughts.UI.MAUI.Services.Extensions;
 
@@ -13,6 +14,7 @@ namespace Thoughts.UI.MAUI
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
