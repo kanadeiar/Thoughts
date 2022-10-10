@@ -1,5 +1,6 @@
 ﻿using Identity.DAL;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,13 +15,13 @@ namespace Thoughts.WebAPI.Controllers.Identity
     [Route(WebAPIAddresses.Addresses.Identity.Roles)]
     public class RolesApiController : ControllerBase
     {
-        private readonly RoleStore<Role> _RoleStore;
+        private readonly RoleManager<IdentRole> _RoleManager;
         private readonly ILogger<RolesApiController> _Logger;
 
-        public RolesApiController(IdentityDB db, ILogger<RolesApiController> Logger)
+        public RolesApiController(IdentityDB db, RoleManager<IdentRole> roleManager, ILogger<RolesApiController> Logger)
         {
             _Logger = Logger;
-            _RoleStore = new(db);
+            _RoleManager = roleManager;
         }
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace Thoughts.WebAPI.Controllers.Identity
         /// </summary>
         /// <returns></returns>
         [HttpGet("all")]
-        public async Task<IEnumerable<Role>> GetAll() => await _RoleStore.Roles.ToArrayAsync();
+        public async Task<IEnumerable<IdentRole>> GetAll() => await _RoleManager.Roles.ToArrayAsync();
 
         /// <summary>
         /// Создать новую роль
@@ -36,9 +37,9 @@ namespace Thoughts.WebAPI.Controllers.Identity
         /// <param name="role"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<bool> CreateAsync(Role role)
+        public async Task<bool> CreateAsync(IdentRole role)
         {
-            var creation_result = await _RoleStore.CreateAsync(role);
+            var creation_result = await _RoleManager.CreateAsync(role);
 
             if (!creation_result.Succeeded)
                 _Logger.LogWarning("Ошибка создания роли {0}:{1}",
@@ -56,8 +57,8 @@ namespace Thoughts.WebAPI.Controllers.Identity
         [HttpPost("{name}")]
         public async Task<bool> CreateAsync(string name)
         {
-            var role = new Role() { Name = name, NormalizedName = name.ToUpper() };
-            var creation_result = await _RoleStore.CreateAsync(role);
+            var role = new IdentRole() { Name = name, NormalizedName = name.ToUpper() };
+            var creation_result = await _RoleManager.CreateAsync(role);
 
             if (!creation_result.Succeeded)
                 _Logger.LogWarning("Ошибка создания роли {0}:{1}",
@@ -73,9 +74,9 @@ namespace Thoughts.WebAPI.Controllers.Identity
         /// <param name="role"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<bool> UpdateAsync(Role role)
+        public async Task<bool> UpdateAsync(IdentRole role)
         {
-            var uprate_result = await _RoleStore.UpdateAsync(role);
+            var uprate_result = await _RoleManager.UpdateAsync(role);
 
             if (!uprate_result.Succeeded)
                 _Logger.LogWarning("Ошибка изменения роли {0}:{1}",
@@ -91,9 +92,9 @@ namespace Thoughts.WebAPI.Controllers.Identity
         /// <param name="role"></param>
         /// <returns></returns>
         [HttpDelete]
-        public async Task<bool> DeleteAsync(Role role)
+        public async Task<bool> DeleteAsync(IdentRole role)
         {
-            var delete_result = await _RoleStore.DeleteAsync(role);
+            var delete_result = await _RoleManager.DeleteAsync(role);
 
             if (!delete_result.Succeeded)
                 _Logger.LogWarning("Ошибка удаления роли {0}:{1}",
@@ -109,7 +110,7 @@ namespace Thoughts.WebAPI.Controllers.Identity
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("FindById/{id}")]
-        public async Task<Role> FindByIdAsync(string id) => await _RoleStore.FindByIdAsync(id);
+        public async Task<IdentRole> FindByIdAsync(string id) => await _RoleManager.FindByIdAsync(id);
 
         /// <summary>
         /// Найти роль по названию
@@ -117,7 +118,7 @@ namespace Thoughts.WebAPI.Controllers.Identity
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet("FindByName/{name}")]
-        public async Task<Role> FindByNameAsync(string name) => await _RoleStore.FindByNameAsync(name.ToUpper());
+        public async Task<IdentRole> FindByNameAsync(string name) => await _RoleManager.FindByNameAsync(name);
 
         /// <summary>
         /// Изменить название роли 
@@ -126,26 +127,11 @@ namespace Thoughts.WebAPI.Controllers.Identity
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpPost("SetRoleName/{name}")]
-        public async Task<string> SetRoleNameAsync(Role role, string name)
+        public async Task<string> SetRoleNameAsync(IdentRole role, string name)
         {
-            await _RoleStore.SetRoleNameAsync(role, name);
-            await _RoleStore.SetNormalizedRoleNameAsync(role, name.ToUpper());
-            await _RoleStore.UpdateAsync(role);
+            await _RoleManager.SetRoleNameAsync(role, name);
+            await _RoleManager.UpdateAsync(role);
             return role.Name;
-        }
-
-        /// <summary>
-        /// Изменить нормализованное название роли 
-        /// </summary>
-        /// <param name="role"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        [HttpPost("SetNormalizedRoleName/{name}")]
-        public async Task<string> SetNormalizedRoleNameAsync(Role role, string name)
-        {
-            await _RoleStore.SetNormalizedRoleNameAsync(role, name);
-            await _RoleStore.UpdateAsync(role);
-            return role.NormalizedName;
         }
 
         /// <summary>
@@ -154,7 +140,7 @@ namespace Thoughts.WebAPI.Controllers.Identity
         /// <param name="role"></param>
         /// <returns></returns>
         [HttpPost("GetRoleId")]
-        public async Task<string> GetRoleIdAsync([FromBody] Role role) => await _RoleStore.GetRoleIdAsync(role);
+        public async Task<string> GetRoleIdAsync([FromBody] IdentRole role) => await _RoleManager.GetRoleIdAsync(role);
 
         /// <summary>
         /// Получить название роли
@@ -162,14 +148,6 @@ namespace Thoughts.WebAPI.Controllers.Identity
         /// <param name="role"></param>
         /// <returns></returns>
         [HttpPost("GetRoleName")]
-        public async Task<string> GetRoleNameAsync([FromBody] Role role) => await _RoleStore.GetRoleNameAsync(role);
-
-        /// <summary>
-        /// Получить нормализованное название роли
-        /// </summary>
-        /// <param name="role"></param>
-        /// <returns></returns>
-        [HttpPost("GetNormalizedRoleName")]
-        public async Task<string> GetNormalizedRoleNameAsync(Role role) => await _RoleStore.GetNormalizedRoleNameAsync(role);
+        public async Task<string> GetRoleNameAsync([FromBody] IdentRole role) => await _RoleManager.GetRoleNameAsync(role);
     }
 }

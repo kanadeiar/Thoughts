@@ -2,77 +2,48 @@
 
 using Identity.DAL;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 using Thoughts.DAL;
+using Thoughts.DAL.Entities.Idetity;
 using Thoughts.Services.Data;
 
 namespace Thoughts.Services.InSQL;
 
 public class IdentityDbInitializer
 {
-    private readonly IdentityDB _db;
-    private readonly ILogger<IdentityDbInitializer> _Log;
-
-    public IdentityDbInitializer(IdentityDB db, ILogger<IdentityDbInitializer> Log)
+    public static async Task InitializeAsync(UserManager<IdentUser> userManager, RoleManager<IdentRole> roleManager)
     {
-        _db = db;
-        _Log = Log;
-    }
+        string adminLogin = IdentUser.Administrator;
+        string adminPassword = IdentUser.AdminPassword;
 
-    public async Task DeleteAsync(CancellationToken Cancel = default)
-    {
-        await _db.Database.EnsureDeletedAsync(Cancel).ConfigureAwait(false);
-    }
 
-    public async Task InitializeAsync(bool RemoveBefore = false, bool InitializeTestData = false, CancellationToken Cancel = default)
-    {
-        if (RemoveBefore)
-            await DeleteAsync(Cancel).ConfigureAwait(false);
-
-        var pending_migrations = await _db.Database.GetPendingMigrationsAsync(Cancel).ConfigureAwait(false);
-        var applied_migrations = await _db.Database.GetPendingMigrationsAsync(Cancel);
-
-        if(applied_migrations.Any())
-            _Log.LogInformation("К БД применены миграции: {0}", string.Join(",", applied_migrations));
-
-        if (pending_migrations.Any())
+        if (await roleManager.FindByNameAsync(IdentRole.Administrators) is null)
         {
-            _Log.LogInformation("Применение миграций: {0}...", string.Join(",", pending_migrations));
-            await _db.Database.MigrateAsync(Cancel);
-            _Log.LogInformation("Применение миграций выполнено");
-        }
-        else
-        {
-            await _db.Database.EnsureCreatedAsync(Cancel);
+            await roleManager.CreateAsync(new IdentRole() { Name = IdentRole.Administrators });
         }
 
-        //if (InitializeTestData)
-        //    await InitializeTestDataAsync(Cancel);
+        if (await roleManager.FindByNameAsync(IdentRole.Users) is null)
+        {
+            await roleManager.CreateAsync(new IdentRole() { Name = IdentRole.Users });
+        }
+
+        if (await userManager.FindByNameAsync(adminLogin) is null)
+        {
+            var admin = new IdentUser()
+            {
+                UserName = adminLogin
+            };
+
+            var identityResult = await userManager.CreateAsync(admin, adminPassword);
+
+            if (identityResult.Succeeded)
+            {
+                await userManager.AddToRoleAsync(admin, IdentRole.Administrators);
+            }
+        }
     }
-
-    //private async Task InitializeTestDataAsync(CancellationToken Cancel = default)
-    //{
-    //    if (await _db.Users.AnyAsync(Cancel).ConfigureAwait(false))
-    //    {
-    //        _Log.LogInformation("В базе данных есть пользователи - в инициализации тестовыми данными не нуждается");
-    //        return;
-    //    }
-
-    //    var timer = Stopwatch.StartNew();
-
-    //    await using var transaction = await _db.Database.BeginTransactionAsync(Cancel).ConfigureAwait(false);
-
-    //    await _db.AddRangeAsync(TestDbData.Categories, Cancel);
-    //    await _db.AddRangeAsync(TestDbData.Tags, Cancel);
-    //    await _db.AddRangeAsync(TestDbData.Users, Cancel);
-    //    await _db.AddRangeAsync(TestDbData.Posts, Cancel);
-
-    //    await _db.SaveChangesAsync(Cancel);
-
-    //    await transaction.CommitAsync(Cancel);
-
-    //    _Log.LogInformation("Инициализация БД тестовыми данными выполнена успешно за {0} мс", timer.ElapsedMilliseconds);
-    //}
 }

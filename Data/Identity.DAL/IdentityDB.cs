@@ -5,7 +5,7 @@ using Thoughts.DAL.Entities.Idetity;
 
 namespace Identity.DAL
 {
-    public class IdentityDB : IdentityDbContext<User, Role, string>
+    public class IdentityDB : IdentityDbContext<IdentUser, IdentRole, string>
     {
         public IdentityDB(DbContextOptions<IdentityDB> options) : base(options) { }
     }
