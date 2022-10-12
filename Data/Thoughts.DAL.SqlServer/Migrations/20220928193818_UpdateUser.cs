@@ -13,7 +13,7 @@ namespace Thoughts.DAL.SqlServer.Migrations
                 table: "Users",
                 type: "nvarchar(100)",
                 maxLength: 100,
-                nullable: false,
+                nullable: true,
                 defaultValue: "");
         }
 
