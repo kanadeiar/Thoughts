@@ -16,9 +16,9 @@ namespace Thoughts.UI.MAUI.ViewModels
 
         #region Commands
 
-        private ICommand _openPageCommand;
+        private ICommand _loadDataCommand;
 
-        public ICommand OpenPageCommand => _openPageCommand ??= new Command(LoadData);
+        public ICommand LoadDataCommand => _loadDataCommand ??= new Command(LoadData);
 
         #endregion
 
