@@ -167,6 +167,7 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddAuthorization();
 
 services.AddScoped<ThoughtsDbInitializer>();
+services.AddScoped<IdentityDbInitializer>();
 services.AddScoped<IBlogPostManager, SqlBlogPostManager>();
 builder.Services.AddTransient<IShortUrlManager, SqlShortUrlManagerService>();
 
@@ -175,18 +176,6 @@ var app = builder.Build();
 await app.InitializeDatabase();
 
 var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
-
-using (var scope = scopeFactory.CreateScope())
-{
-    var scoped_services = scope.ServiceProvider;
-
-    var identity_db = scoped_services.GetRequiredService<IdentityDB>();
-    await identity_db.Database.MigrateAsync();
-
-    var userManager            = scoped_services.GetRequiredService<UserManager<IdentUser>>();
-    var rolesManager           = scoped_services.GetRequiredService<RoleManager<IdentRole>>();
-    await IdentityDbInitializer.InitializeAsync(userManager, rolesManager);
-}
 
 var api_version_description_provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 if (app.Environment.IsDevelopment())
