@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Services\Thoughts.Interfaces\Thoughts.Interfaces.csproj" />
+    <ProjectReference Include="..\..\Services\Thoughts.WebAPI.Clients\Thoughts.WebAPI.Clients.csproj" />
   </ItemGroup>
 
 </Project>

@@ -16,6 +16,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Authentication\**" />
+    <Compile Remove="Controllers\v2\**" />
+    <Content Remove="Authentication\**" />
+    <Content Remove="Controllers\v2\**" />
+    <EmbeddedResource Remove="Authentication\**" />
+    <EmbeddedResource Remove="Controllers\v2\**" />
+    <None Remove="Authentication\**" />
+    <None Remove="Controllers\v2\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
@@ -38,11 +49,6 @@
     <ProjectReference Include="..\..\DTO\DTO.csproj" />
     <ProjectReference Include="..\Thoughts.Interfaces\Thoughts.Interfaces.csproj" />
     <ProjectReference Include="..\Thoughts.Services\Thoughts.Services.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Authentication\" />
-    <Folder Include="Controllers\v2\" />
   </ItemGroup>
 
 </Project>
