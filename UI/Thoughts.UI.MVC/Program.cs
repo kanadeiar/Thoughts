@@ -40,8 +40,10 @@ switch (db_type)
         services.AddFileStorageDbSqlServer(configuration.GetConnectionString("FileStorageServer"));
         break;
 }
+services.AddIdentityDBSqlServer(configuration.GetConnectionString("IdentitySqlServer"));
 
 services.AddTransient<ThoughtsDbInitializer>();
+services.AddTransient<IdentityDbInitializer>();
 services.AddScoped<IBlogPostManager, SqlBlogPostManager>();
 services.AddTransient<IShortUrlManager, ShortUrlClient>();
 services.AddScoped<IFileManager, FileStorageManager>();

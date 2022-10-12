@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Thoughts.DAL;
 
@@ -11,9 +12,10 @@ using Thoughts.DAL;
 namespace Thoughts.DAL.SqlServer.Migrations
 {
     [DbContext(typeof(ThoughtsDB))]
-    partial class ThoughtsDBModelSnapshot : ModelSnapshot
+    [Migration("20220928193818_UpdateUser")]
+    partial class UpdateUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,27 +176,6 @@ namespace Thoughts.DAL.SqlServer.Migrations
                         .HasDatabaseName("NameIndex1");
 
                     b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("Thoughts.DAL.Entities.ShortUrl", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Alias")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OriginalUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ShortUrls");
                 });
 
             modelBuilder.Entity("Thoughts.DAL.Entities.Tag", b =>

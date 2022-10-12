@@ -27,6 +27,11 @@ public class User : EntityModel<string>
     [Required]
     public string NickName { get; set; } = null!;
 
+    /// <summary>Id пользователя Identity</summary>
+    [StringLength(100)]
+    public string IdentityUserId { get; set; }
+    public string PasswordHash { get; set; }
+
     /// <summary>Роли пользователя</summary>
     public ICollection<Role> Roles { get; set; } = new HashSet<Role>();
 
