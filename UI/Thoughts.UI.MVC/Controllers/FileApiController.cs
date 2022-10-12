@@ -223,6 +223,7 @@ namespace Thoughts.UI.MVC.Controllers
                     // Get the temporary folder, and combine a random file name with it
                     var trustedFileNameForFileStorage = Path.GetRandomFileName();
                     saveToPath = Path.Combine(_targetFilePath, trustedFileNameForFileStorage);
+                    Directory.CreateDirectory(Path.GetDirectoryName(saveToPath)!);
 
 
                     await using (var targetStream = System.IO.File.Create(saveToPath))
