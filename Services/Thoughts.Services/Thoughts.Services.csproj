@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Thoughts.Domain\Thoughts.Domain.csproj" />
     <ProjectReference Include="..\..\Data\Identity.DAL\Identity.DAL.csproj" />
+    <ProjectReference Include="..\..\Common\Thoughts.Tools\Thoughts.Tools.csproj" />
     <ProjectReference Include="..\..\Data\Thoughts.DAL.Entities\Thoughts.DAL.Entities.csproj" />
     <ProjectReference Include="..\..\Data\Thoughts.DAL\Thoughts.DAL.csproj" />
     <ProjectReference Include="..\Thoughts.Interfaces.Base\Thoughts.Interfaces.Base.csproj" />

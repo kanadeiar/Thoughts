@@ -14,8 +14,49 @@ using Thoughts.DAL.Sqlite;
 using Thoughts.DAL.SqlServer;
 using Thoughts.Services.InSQL;
 using Thoughts.WebAPI.Services;
+using System.Reflection;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
+
+using Swashbuckle.AspNetCore.SwaggerGen;
+
+using Thoughts.DAL.Sqlite;
+using Thoughts.DAL.SqlServer;
+using Thoughts.Interfaces;
+using Thoughts.Interfaces.Base;
+using Thoughts.Services.InSQL;
+using Thoughts.WebAPI;
+using Thoughts.WebAPI.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
+var services = builder.Services;
+
+services.AddControllers();
+
+services.AddApiVersioning(opt =>
+{
+    opt.DefaultApiVersion = new ApiVersion(1, 0);
+    opt.AssumeDefaultVersionWhenUnspecified = true;
+    opt.ReportApiVersions = true;
+    opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
+        new HeaderApiVersionReader("x-api-version"),
+        new MediaTypeApiVersionReader("x-api-version"));
+});
+services.AddVersionedApiExplorer(setup =>
+{
+    setup.GroupNameFormat = "'v'VVV";
+    setup.SubstituteApiVersionInUrl = true;
+});
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
+services.ConfigureOptions<SwaggerConfigureOptions>();
+services.AddRouting(options => options.LowercaseUrls = true);
 
 var configuration = builder.Configuration;
 var services = builder.Services;
@@ -34,6 +75,7 @@ switch (db_type)
         services.AddThoughtsDbSqlServer(configuration.GetConnectionString("SqlServer"));
         break;
 }
+
 services.AddIdentityDBSqlServer(configuration.GetConnectionString("IdentitySqlServer"));
 
 services.AddTransient<ThoughtsDbInitializer>();
@@ -134,7 +176,13 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddAuthorization();
 
+services.AddScoped<ThoughtsDbInitializer>();
+services.AddScoped<IBlogPostManager, SqlBlogPostManager>();
+builder.Services.AddTransient<IShortUrlManager, SqlShortUrlManagerService>();
+
 var app = builder.Build();
+
+await app.InitializeDatabase();
 
 var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 
@@ -145,10 +193,18 @@ using (var scope = scopeFactory.CreateScope())
     await IdentityDbInitializer.InitializeAsync(userManager, rolesManager);
 }
 
+var api_version_description_provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        foreach (var description in api_version_description_provider.ApiVersionDescriptions.Reverse())
+        {
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                description.GroupName.ToUpperInvariant());
+        }
+    });
 }
 
 app.UseHttpsRedirection();

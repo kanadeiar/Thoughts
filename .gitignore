@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 **/wwwroot/lib
 **/ThoughtsData.db*
+**/upload

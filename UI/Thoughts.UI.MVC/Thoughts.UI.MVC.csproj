@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
@@ -18,10 +18,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Thoughts.Domain\Thoughts.Domain.csproj" />
     <ProjectReference Include="..\..\Data\Identity.DAL.SqlServer\Identity.DAL.SqlServer.csproj" />
+    <ProjectReference Include="..\..\Common\Thoughts.Tools\Thoughts.Tools.csproj" />
     <ProjectReference Include="..\..\Data\Thoughts.DAL.Sqlite\Thoughts.DAL.Sqlite.csproj" />
     <ProjectReference Include="..\..\Data\Thoughts.DAL.SqlServer\Thoughts.DAL.SqlServer.csproj" />
     <ProjectReference Include="..\..\Services\Thoughts.Interfaces\Thoughts.Interfaces.csproj" />
     <ProjectReference Include="..\..\Services\Thoughts.Services\Thoughts.Services.csproj" />
+    <ProjectReference Include="..\..\Services\Thoughts.WebAPI.Clients\Thoughts.WebAPI.Clients.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
