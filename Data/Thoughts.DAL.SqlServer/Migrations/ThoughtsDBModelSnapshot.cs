@@ -211,7 +211,6 @@ namespace Thoughts.DAL.SqlServer.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("IdentityUserId")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
