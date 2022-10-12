@@ -35,7 +35,7 @@ public class User : Entity<string>
 
     /// <summary>Id пользователя Identity</summary>
     [StringLength(100)]
-    public string IdentityUserId { get; set; }
+    public string? IdentityUserId { get; set; }
 
     /// <summary>Роли пользователя</summary>
     public ICollection<Role> Roles { get; set; } = new HashSet<Role>();
