@@ -30,6 +30,9 @@ namespace Thoughts.DAL.SqlServer.Migrations.FileStorageDbMigrations
                     b.Property<byte>("Access")
                         .HasColumnType("tinyint");
 
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Counter")
                         .HasColumnType("int");
 
@@ -37,31 +40,25 @@ namespace Thoughts.DAL.SqlServer.Migrations.FileStorageDbMigrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("FileNameForFileStorage")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte>("Flags")
                         .HasColumnType("tinyint");
 
                     b.Property<string>("Md5")
-                        .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
 
                     b.Property<string>("Meta")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("MimeType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NameForDisplay")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Path")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("Size")
@@ -71,12 +68,13 @@ namespace Thoughts.DAL.SqlServer.Migrations.FileStorageDbMigrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Url")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Sha1");
 
-                    b.HasIndex("Md5", "Meta", "Sha1");
+                    b.HasIndex("Md5", "Meta", "Sha1")
+                        .IsUnique()
+                        .HasFilter("[Md5] IS NOT NULL AND [Meta] IS NOT NULL");
 
                     b.ToTable("Files");
                 });

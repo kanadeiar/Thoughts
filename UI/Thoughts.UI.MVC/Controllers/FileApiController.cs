@@ -24,7 +24,7 @@ using static System.Net.WebRequestMethods;
 
 namespace Thoughts.UI.MVC.Controllers
 {
-    [Route("file/")]
+    [Route("fileapi/")]
     public class FileApiController : Controller
     {
 
@@ -123,6 +123,8 @@ namespace Thoughts.UI.MVC.Controllers
 
                         var file = new UploadedFile
                         {
+                            Sha1 = await streamedFileContent.GetSha1Async(),
+                            Md5 = await streamedFileContent.GetMd5Async(),
                             NameForDisplay = trustedFileNameForDisplay,
                             FileNameForFileStorage = trustedFileNameForFileStorage,
                             ByteArray = streamedFileContent,
@@ -201,6 +203,8 @@ namespace Thoughts.UI.MVC.Controllers
             var reader = new MultipartReader(mediaTypeHeader.Boundary.Value, request.Body);
             var section = await reader.ReadNextSectionAsync();
 
+            var saveToPath = "";
+            var fileExists = false;
             // This sample try to get the first file from request and save it
             // Make changes according to your needs in actual use
             while (section != null)
@@ -218,7 +222,7 @@ namespace Thoughts.UI.MVC.Controllers
 
                     // Get the temporary folder, and combine a random file name with it
                     var trustedFileNameForFileStorage = Path.GetRandomFileName();
-                    var saveToPath = Path.Combine(_targetFilePath, trustedFileNameForFileStorage);
+                    saveToPath = Path.Combine(_targetFilePath, trustedFileNameForFileStorage);
 
 
                     await using (var targetStream = System.IO.File.Create(saveToPath))
@@ -227,15 +231,15 @@ namespace Thoughts.UI.MVC.Controllers
                     }
 
                     var fi = new FileInfo(saveToPath);
-                    await using (var fs = System.IO.File.OpenRead(saveToPath))
+                    await using (var fs = fi.OpenRead())
                     {
                         var sha1 = await fs.GetSha1Async();
-                        var fileExists = await _fileManager.Exists(sha1);
+                        fileExists = await _fileManager.Exists(sha1);
 
                         var file = new UploadedFile
                         {
                             Sha1 = sha1,
-                            Md5 = await fs.GetMd5Async(),
+                            Md5 = await fi.FullName.GetMd5Async(),
                             NameForDisplay = contentDisposition.FileName.Value,
                             FileNameForFileStorage = trustedFileNameForFileStorage,
                             Url = "",
@@ -247,13 +251,14 @@ namespace Thoughts.UI.MVC.Controllers
                             MimeType = section.ContentType ?? "",
                             Path = _targetFilePath,
                             Size = fi.Length,
+                            Stream = fs,
+                            Active = true
                         };
 
                         if (fileExists)
                         {
                             await _fileManager.AddOrUpdate(file);
-                            System.IO.File.Delete(saveToPath);
-                            break;
+                            //TODO Delete exists file
                         }
 
                         await _fileManager.AddOrUpdate(file);
@@ -280,7 +285,7 @@ namespace Thoughts.UI.MVC.Controllers
         public async Task<IActionResult> Get(string file)
         {
             var result = await _fileManager.Get(file);
-            if (result == null) return NotFound();
+            if (result == null || !result.Active) return NotFound();
             var path = Path.Combine(result.Path + result.FileNameForFileStorage);
             var byteArray = await System.IO.File.ReadAllBytesAsync(path);
 
@@ -301,6 +306,41 @@ namespace Thoughts.UI.MVC.Controllers
 
             await _fileManager.Delete(file);
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("softdelete")]
+        public async Task<IActionResult> SoftDelete(string file)
+        {
+            var result = await _fileManager.SoftDelete(file);
+            return Json(new { result });
+        }
+
+        [HttpGet]
+        [Route("activatefile")]
+        public async Task<IActionResult> ActivateFile(string file)
+        {
+            var result = await _fileManager.ActivateFile(file);
+            return Json(new { result });
+        }
+
+        [HttpGet]
+        [Route("getallfileinfo")]
+        public async Task<IActionResult> GetAllFileInfo()
+        {
+            var uploadedFiles = await _fileManager.GetAllFilesInfo();
+            var result = uploadedFiles
+                .Select(item => 
+                    new
+                    {
+                        Hash = item.Sha1,
+                        Counter = item.Counter,
+                        Name = item.NameForDisplay,
+                        Size = item.Size,
+                        Created = item.Created,
+                        Active = item.Active,
+                    });
+            return Json(result);
         }
     }
 }
