@@ -25,7 +25,7 @@ using static System.Net.WebRequestMethods;
 namespace Thoughts.UI.MVC.Controllers
 {
     [Route("fileapi/")]
-    public class FileApiController : Controller
+    public class FileApiController : ControllerBase
     {
 
         private readonly long _fileSizeLimit;
@@ -51,14 +51,12 @@ namespace Thoughts.UI.MVC.Controllers
             _permittedExtensions = sharedConfiguration.PermittedExtensionsForUploadedFile;
         }
 
-
         /// <summary>
         /// Загрузка файла с проверкой файла на разрешенные расширения файла
         /// Максимальный размер файла ограничен размером байтового массива
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
-        [Route("upload")]
+        [HttpPost("upload")]
         [DisableFormValueModelBinding]
         [DisableRequestSizeLimit]
         //[ValidateAntiForgeryToken]
@@ -91,80 +89,78 @@ namespace Thoughts.UI.MVC.Controllers
                     // present without form data. If form data
                     // is present, this method immediately fails
                     // and returns the model error.
-                    if (!MultipartRequestHelper
-                        .HasFileContentDisposition(contentDisposition))
+                    if (!MultipartRequestHelper.HasFileContentDisposition(contentDisposition))
                     {
-                        ModelState.AddModelError("File",
-                            $"The request couldn't be processed (Error 2).");
+                        ModelState.AddModelError("File", "The request couldn't be processed (Error 2).");
                         // Log error
-
                         return BadRequest(ModelState);
                     }
-                    else
+
+                    // Don't trust the file name sent by the client. To display
+                    // the file name, HTML-encode the value.
+                    var trustedFileNameForDisplay = WebUtility.HtmlEncode(
+                        contentDisposition.FileName.Value);
+                    var trustedFileNameForFileStorage = Path.GetRandomFileName();
+
+                    // **WARNING!**
+                    // In the following example, the file is saved without
+                    // scanning the file's contents. In most production
+                    // scenarios, an anti-virus/anti-malware scanner API
+                    // is used on the file before making the file available
+                    // for download or for use by other systems. 
+                    // For more information, see the topic that accompanies 
+                    // this sample.
+
+                    var streamedFileContent = await FileHelpers.ProcessStreamedFile(
+                        section: section, 
+                        contentDisposition: contentDisposition,
+                        modelState: ModelState,
+                        permittedExtensions: _permittedExtensions,
+                        sizeLimit: _fileSizeLimit);
+
+                    var file = new UploadedFile
                     {
-                        // Don't trust the file name sent by the client. To display
-                        // the file name, HTML-encode the value.
-                        var trustedFileNameForDisplay = WebUtility.HtmlEncode(
-                                contentDisposition.FileName.Value);
-                        var trustedFileNameForFileStorage = Path.GetRandomFileName();
+                        Sha1                   = await streamedFileContent.GetSha1Async(),
+                        Md5                    = await streamedFileContent.GetMd5Async(),
+                        NameForDisplay         = trustedFileNameForDisplay,
+                        FileNameForFileStorage = trustedFileNameForFileStorage,
+                        ByteArray              = streamedFileContent,
+                        Url                    = "",
+                        Created                = DateTimeOffset.Now,
+                        Updated                = null,
+                        Meta                   = "",
+                        Access                 = 0,
+                        Flags                  = 0,
+                        MimeType               = section.ContentType ?? "",
+                        Path                   = _targetFilePath,
+                        Size                   = streamedFileContent.Length,
+                    };
 
-                        // **WARNING!**
-                        // In the following example, the file is saved without
-                        // scanning the file's contents. In most production
-                        // scenarios, an anti-virus/anti-malware scanner API
-                        // is used on the file before making the file available
-                        // for download or for use by other systems. 
-                        // For more information, see the topic that accompanies 
-                        // this sample.
-
-                        var streamedFileContent = await FileHelpers.ProcessStreamedFile(
-                            section, contentDisposition, ModelState,
-                            _permittedExtensions, _fileSizeLimit);
-
-                        var file = new UploadedFile
-                        {
-                            Sha1 = await streamedFileContent.GetSha1Async(),
-                            Md5 = await streamedFileContent.GetMd5Async(),
-                            NameForDisplay = trustedFileNameForDisplay,
-                            FileNameForFileStorage = trustedFileNameForFileStorage,
-                            ByteArray = streamedFileContent,
-                            Url = "",
-                            Created = DateTimeOffset.Now,
-                            Updated = null,
-                            Meta = "",
-                            Access = 0,
-                            Flags = 0,
-                            MimeType = section.ContentType ?? "",
-                            Path = _targetFilePath,
-                            Size = streamedFileContent.Length,
-                        };
-
-                        var fileExists = await _fileManager.Exists(streamedFileContent);
-                        if (fileExists)
-                        {
-                            await _fileManager.AddOrUpdate(file);
-                            break;
-                        }
-
-
-                        if (!ModelState.IsValid)
-                        {
-                            return BadRequest(ModelState);
-                        }
-
+                    var fileExists = await _fileManager.Exists(streamedFileContent);
+                    if (fileExists)
+                    {
                         await _fileManager.AddOrUpdate(file);
+                        break;
+                    }
 
-                        await using (var targetStream = System.IO.File.Create(
-                            Path.Combine(_targetFilePath, trustedFileNameForFileStorage)))
-                        {
-                            await targetStream.WriteAsync(streamedFileContent);
 
-                            //_logger.LogInformation(
-                            //    "Uploaded file '{TrustedFileNameForDisplay}' saved to " +
-                            //    "'{TargetFilePath}' as {TrustedFileNameForFileStorage}",
-                            //    trustedFileNameForDisplay, _targetFilePath,
-                            //    trustedFileNameForFileStorage);
-                        }
+                    if (!ModelState.IsValid)
+                    {
+                        return BadRequest(ModelState);
+                    }
+
+                    await _fileManager.AddOrUpdate(file);
+
+                    await using (var targetStream = System.IO.File.Create(
+                                     Path.Combine(_targetFilePath, trustedFileNameForFileStorage)))
+                    {
+                        await targetStream.WriteAsync(streamedFileContent);
+
+                        //_logger.LogInformation(
+                        //    "Uploaded file '{TrustedFileNameForDisplay}' saved to " +
+                        //    "'{TargetFilePath}' as {TrustedFileNameForFileStorage}",
+                        //    trustedFileNameForDisplay, _targetFilePath,
+                        //    trustedFileNameForFileStorage);
                     }
                 }
 
@@ -176,16 +172,13 @@ namespace Thoughts.UI.MVC.Controllers
             return Created(nameof(FileApiController), null);
         }
 
-
-
         /// <summary>
         /// Загрузка файла без ограничений по размеру
         /// Файл не проверяется на разрешенные расширения
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("uploadlarge")]
         [DisableRequestSizeLimit]
-        [Route("uploadlarge")]
         public async Task<IActionResult> UploadLargeFile()
         {
             var request = HttpContext.Request;
@@ -281,8 +274,7 @@ namespace Thoughts.UI.MVC.Controllers
         /// </summary>
         /// <param name="file">Хеш сумма файла в sha1</param>
         /// <returns></returns>
-        [HttpGet]
-        [Route("get")]
+        [HttpGet("get")]
         public async Task<IActionResult> Get(string file)
         {
             var result = await _fileManager.Get(file);
@@ -298,8 +290,7 @@ namespace Thoughts.UI.MVC.Controllers
         /// </summary>
         /// <param name="file">Хеш сумма файла в sha1</param>
         /// <returns></returns>
-        [HttpDelete]
-        [Route("delete")]
+        [HttpDelete("delete")]
         public async Task<IActionResult> Delete(string file)
         {
             var result = await _fileManager.Get(file);
@@ -309,24 +300,21 @@ namespace Thoughts.UI.MVC.Controllers
             return Ok();
         }
 
-        [HttpGet]
-        [Route("softdelete")]
+        [HttpGet("softdelete")]
         public async Task<IActionResult> SoftDelete(string file)
         {
             var result = await _fileManager.SoftDelete(file);
-            return Json(new { result });
+            return Ok(new { result });
         }
 
-        [HttpGet]
-        [Route("activatefile")]
+        [HttpGet("activatefile")]
         public async Task<IActionResult> ActivateFile(string file)
         {
             var result = await _fileManager.ActivateFile(file);
-            return Json(new { result });
+            return Ok(new { result });
         }
 
-        [HttpGet]
-        [Route("getallfileinfo")]
+        [HttpGet("getallfileinfo")]
         public async Task<IActionResult> GetAllFileInfo()
         {
             var uploadedFiles = await _fileManager.GetAllFilesInfo();
@@ -335,13 +323,13 @@ namespace Thoughts.UI.MVC.Controllers
                     new
                     {
                         Hash = item.Sha1,
-                        Counter = item.Counter,
+                        item.Counter,
                         Name = item.NameForDisplay,
-                        Size = item.Size,
-                        Created = item.Created,
-                        Active = item.Active,
+                        item.Size,
+                        item.Created,
+                        item.Active,
                     });
-            return Json(result);
+            return Ok(result);
         }
     }
 }

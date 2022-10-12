@@ -4,9 +4,11 @@ using Thoughts.DAL.Entities;
 using Thoughts.Tools.Extensions;
 
 namespace Thoughts.UI.MVC.Controllers;
+
 public class FileController : Controller
 {
     private readonly IFileManager _fileManager;
+
     private readonly string _targetFilePath;
 
     public FileController(IFileManager fileManager, SharedConfiguration sharedConfiguration)
@@ -39,13 +41,12 @@ public class FileController : Controller
         var reader = new MultipartReader(mediaTypeHeader.Boundary.Value, request.Body);
         var section = await reader.ReadNextSectionAsync();
 
-        var saveToPath = "";
-        var fileExists = false;
         // This sample try to get the first file from request and save it
         // Make changes according to your needs in actual use
         while (section != null)
         {
-            var hasContentDispositionHeader = ContentDispositionHeaderValue.TryParse(section.ContentDisposition,
+            var hasContentDispositionHeader = ContentDispositionHeaderValue.TryParse(
+                section.ContentDisposition,
                 out var contentDisposition);
 
             if (hasContentDispositionHeader && contentDisposition.DispositionType.Equals("form-data") &&
@@ -58,7 +59,8 @@ public class FileController : Controller
 
                 // Get the temporary folder, and combine a random file name with it
                 var trustedFileNameForFileStorage = Path.GetRandomFileName();
-                saveToPath = Path.Combine(_targetFilePath, trustedFileNameForFileStorage);
+                var saveToPath                    = Path.Combine(_targetFilePath, trustedFileNameForFileStorage);
+                Directory.CreateDirectory(Path.GetDirectoryName(saveToPath)!);
 
 
                 await using (var targetStream = System.IO.File.Create(saveToPath))
@@ -70,8 +72,8 @@ public class FileController : Controller
                 
                 await using (var fs = fi.OpenRead())
                 {
-                    var sha1 = await fs.GetSha1Async();
-                    fileExists = await _fileManager.Exists(sha1);
+                    var  sha1       = await fs.GetSha1Async();
+                    var fileExists = await _fileManager.Exists(sha1);
 
                     var file = new UploadedFile
                     {
