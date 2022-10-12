@@ -5,7 +5,6 @@ using Identity.DAL.Interfaces;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -14,14 +13,11 @@ using Thoughts.DAL.Sqlite;
 using Thoughts.DAL.SqlServer;
 using Thoughts.Services.InSQL;
 using Thoughts.WebAPI.Services;
-using System.Reflection;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -41,25 +37,23 @@ services.AddControllers();
 
 services.AddApiVersioning(opt =>
 {
-    opt.DefaultApiVersion = new ApiVersion(1, 0);
+    //opt.DefaultApiVersion = new ApiVersion(1, 0);
     opt.AssumeDefaultVersionWhenUnspecified = true;
     opt.ReportApiVersions = true;
     opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
         new HeaderApiVersionReader("x-api-version"),
         new MediaTypeApiVersionReader("x-api-version"));
 });
+
 services.AddVersionedApiExplorer(setup =>
 {
     setup.GroupNameFormat = "'v'VVV";
     setup.SubstituteApiVersionInUrl = true;
 });
-services.AddEndpointsApiExplorer();
-services.AddSwaggerGen();
-services.ConfigureOptions<SwaggerConfigureOptions>();
-services.AddRouting(options => options.LowercaseUrls = true);
 
-var configuration = builder.Configuration;
-var services = builder.Services;
+services.AddEndpointsApiExplorer();
+//services.ConfigureOptions<SwaggerConfigureOptions>();
+services.AddRouting(options => options.LowercaseUrls = true);
 
 var db_type = configuration["Database"];
 
@@ -77,9 +71,6 @@ switch (db_type)
 }
 
 services.AddIdentityDBSqlServer(configuration.GetConnectionString("IdentitySqlServer"));
-
-services.AddTransient<ThoughtsDbInitializer>();
-//services.AddTransient<IdentityDbInitializer>();
 
 services.AddIdentity<IdentUser, IdentRole>()
    .AddEntityFrameworkStores<IdentityDB>()
@@ -126,7 +117,8 @@ builder.Services.AddSwaggerGen(opt =>
         Title = "Сервис аутентификации",
         Version = "v1",
     });
-    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme(Example: 'Bearer 12345abcdef')",
         Name = "Authorization",
@@ -134,45 +126,43 @@ builder.Services.AddSwaggerGen(opt =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-    opt.AddSecurityRequirement(new OpenApiSecurityRequirement()
+
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
             {
+                Reference = new OpenApiReference
                 {
-                    new OpenApiSecurityScheme()
-                    {
-                        Reference = new OpenApiReference()
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
-            });
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 services.AddSingleton<IAuthUtils<IdentUser>, AuthUtils>();
 
 builder.Services.AddAuthentication(x =>
 {
-    x.DefaultAuthenticateScheme =
-        JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme =
-        JwtBearerDefaults.AuthenticationScheme;
-})
-            .AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
-                        builder.Configuration.GetSection("SecretTokenKey:Key").Value)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme    = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x =>
+{
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = true;
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
+            builder.Configuration.GetSection("SecretTokenKey:Key").Value)),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 builder.Services.AddAuthorization();
 
@@ -188,8 +178,13 @@ var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 
 using (var scope = scopeFactory.CreateScope())
 {
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentUser>>();
-    var rolesManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentRole>>();
+    var scoped_services = scope.ServiceProvider;
+
+    var identity_db = scoped_services.GetRequiredService<IdentityDB>();
+    await identity_db.Database.MigrateAsync();
+
+    var userManager            = scoped_services.GetRequiredService<UserManager<IdentUser>>();
+    var rolesManager           = scoped_services.GetRequiredService<RoleManager<IdentRole>>();
     await IdentityDbInitializer.InitializeAsync(userManager, rolesManager);
 }
 
@@ -201,7 +196,8 @@ if (app.Environment.IsDevelopment())
     {
         foreach (var description in api_version_description_provider.ApiVersionDescriptions.Reverse())
         {
-            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+            options.SwaggerEndpoint(
+                $"/swagger/{description.GroupName}/swagger.json",
                 description.GroupName.ToUpperInvariant());
         }
     });
