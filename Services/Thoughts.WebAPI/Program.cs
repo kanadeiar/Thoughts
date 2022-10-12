@@ -1,4 +1,4 @@
-using System.Text;
+п»їusing System.Text;
 
 using Identity.DAL;
 using Identity.DAL.Interfaces;
@@ -24,7 +24,7 @@ var db_type = configuration["Database"];
 
 switch (db_type)
 {
-    default: throw new InvalidOperationException($"Тип БД {db_type} не поддерживается");
+    default: throw new InvalidOperationException($"РўРёРї Р‘Р” {db_type} РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚СЃСЏ");
 
     case "Sqlite":
         services.AddThoughtsDbSqlite(configuration.GetConnectionString("Sqlite"));
@@ -53,9 +53,9 @@ services.Configure<IdentityOptions>(opt =>
     opt.Password.RequiredLength = 3;
     opt.Password.RequiredUniqueChars = 3;
 #endif
-    //opt.User.RequireUniqueEmail = false; // уникальные email
+    //opt.User.RequireUniqueEmail = false; // СѓРЅРёРєР°Р»СЊРЅС‹Рµ email
     opt.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ1234567890";
-    opt.Lockout.AllowedForNewUsers = false; // блокировка новых пользователей
+    opt.Lockout.AllowedForNewUsers = false; // Р±Р»РѕРєРёСЂРѕРІРєР° РЅРѕРІС‹С… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
     opt.Lockout.MaxFailedAccessAttempts = 5;
     opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 });
@@ -81,7 +81,7 @@ builder.Services.AddSwaggerGen(opt =>
 {
     opt.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Сервис аутентификации",
+        Title = "РЎРµСЂРІРёСЃ Р°СѓС‚РµРЅС‚РёС„РёРєР°С†РёРё",
         Version = "v1",
     });
     opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
