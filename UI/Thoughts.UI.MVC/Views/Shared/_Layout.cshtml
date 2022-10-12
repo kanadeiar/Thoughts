@@ -7,10 +7,10 @@
     <meta name="author" content="">
     <title>@ViewBag.Title | Thoughts</title>
 
-    <!-- Styles -->              
+    <!-- Styles -->
     @await Html.PartialAsync("Partial/_Styles")
 
-@*  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @*  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/m.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Thoughts.UI.MVC.styles.css" asp-append-version="true" />*@
 
@@ -24,12 +24,12 @@
                     <div class="inner">
 
                         <!-- Header -->
-                        <partial name="Partial/_Header"/>
+                        <partial name="Partial/_Header" />
 
                         <section>
 
                             <!-- Body -->
-                            @RenderBody()    
+                            @RenderBody()
 
                         </section>
 
@@ -37,18 +37,19 @@
                 </div>
 
                 <!-- Left Sidebar (Menu) -->
-                <partial name="Partial/_LeftSideBar"/>
+                <partial name="Partial/_LeftSideBar" />
 
             </div>
         </div>
 
         <!-- Footer -->
-        <partial name="Partial/_Footer"/>
-        
+        <partial name="Partial/_Footer" />
+
     </div>
 
 
-    <!-- Scripts -->              
-    <partial name="Partial/_Scripts"/>
+    <!-- Scripts -->
+    <partial name="Partial/_Scripts" />
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

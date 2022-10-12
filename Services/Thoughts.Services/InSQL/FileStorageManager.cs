@@ -5,6 +5,9 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
+
 using Thoughts.DAL;
 using Thoughts.DAL.Entities;
 using Thoughts.Interfaces;
@@ -47,11 +50,31 @@ namespace Thoughts.Services.InSQL
             }
         }
 
+        public async Task<bool> SoftDelete(string sha1)
+        {
+            var file = await _context.Files.FindAsync(sha1);
+            if (file == null) return false;
+            file.Active = false;
+            _context.Files.Update(file);
+            await _context.SaveChangesAsync();
+            return true;
+
+        }
+
+        public async Task<bool> ActivateFile(string sha1)
+        {
+            var file = await _context.Files.FindAsync(sha1);
+            if(file == null) return false;
+            file.Active = true;
+            _context.Files.Update(file);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<string> AddOrUpdate(UploadedFile fileModel)
         {
             if (fileModel != null)
             {
-                fileModel.Sha1 = await fileModel.ByteArray.GetSha1Async();
                 var file = await _context.Files.FindAsync(fileModel.Sha1);
                 if (file != null)
                 {
@@ -61,7 +84,6 @@ namespace Thoughts.Services.InSQL
                 }
                 else
                 {
-                    fileModel.Md5 = await fileModel.ByteArray.GetMd5Async();
                     fileModel.Counter++;
                     await _context.Files.AddAsync(fileModel);
                 }
@@ -82,6 +104,11 @@ namespace Thoughts.Services.InSQL
         {
             return await Exists(await buffer.GetSha1Async());
         }
+
+        public async Task<List<UploadedFile>> GetAllFilesInfo()
+        {
+            return await _context.Files.ToListAsync();
+        } 
 
         private static bool FileExistsInStorage(UploadedFile file)
         {

@@ -59,10 +59,13 @@ namespace Thoughts.DAL.Entities
         //Флаги
         public byte Flags { get; set; }
 
+        //Если активен отображается
+        public bool Active { get; set; }
+
         [NotMapped]
         public byte[] ByteArray { get; set; }
 
         [NotMapped]
-        public Stream Stream { get; set; }
+        public FileStream Stream { get; set; }
     }
 }
