@@ -207,7 +207,8 @@ namespace Thoughts.WebAPI.Controllers.Identity
 
         }
 
-        [Authorize(Roles = IdentRole.Administrators)]
+        //[Authorize(Roles = IdentRole.Administrators)]
+        [AllowAnonymous]
         [HttpGet("GetAllRoles")]
         public async Task<IActionResult> GetAllRolesAsync()
         {
@@ -439,7 +440,7 @@ namespace Thoughts.WebAPI.Controllers.Identity
         }
 
         [Authorize(Roles = IdentRole.Administrators)]
-        [HttpPost("GetUserByLogin")]
+        [HttpGet("GetUserByLogin")]
         public async Task<IActionResult> GetUserByEmailAsync(string login)
         {
             try
@@ -466,8 +467,9 @@ namespace Thoughts.WebAPI.Controllers.Identity
             }
         }
 
-        [Authorize(Roles = IdentRole.Administrators)]
-        [HttpPost("GetAllUsers")]
+        //[Authorize(Roles = IdentRole.Administrators)]
+        [AllowAnonymous]
+        [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAllUsersAsync()
         {
             try
@@ -475,8 +477,9 @@ namespace Thoughts.WebAPI.Controllers.Identity
                 _logger.LogInformation("Получение всех пользователей");
                 using (_logger.BeginScope("Получение списка ролей"))
                 {
+                    var listOfAllUsers = await _userManager.Users.ToListAsync();
+                    if (listOfAllUsers is not null)
                     {
-                        var listOfAllUsers = await _userManager.Users.ToListAsync();
                         _logger.LogInformation("Cписок пользователей получен");
                         return Ok(listOfAllUsers);
                     }
