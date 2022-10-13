@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DTO\DTO.csproj" />
     <ProjectReference Include="..\Thoughts.Interfaces\Thoughts.Interfaces.csproj" />
   </ItemGroup>
 

@@ -13,6 +13,9 @@ using WebStore.Interfaces.Services;
 using static WebStore.Interfaces.Services.WebAPIAddresses.Addresses.Identity;
 using static System.Net.WebRequestMethods;
 using System.Net.Http;
+using System.Xml.Linq;
+using DTO.Identity;
+using Newtonsoft.Json;
 
 namespace Thoughts.WebAPI.Clients.Identity;
 
@@ -44,8 +47,6 @@ public class AccountClient //: BaseClient //, UsersClient, IRolesClient
                    .ReadFromJsonAsync<List<IdentUser>>(cancellationToken: Cancel);
                 return result;
         }
-
-        //throw new NotImplementedException();
     }
 
     public async Task<List<IdentRole>> GetAllRolessAsync(CancellationToken Cancel = default)
@@ -64,7 +65,23 @@ public class AccountClient //: BaseClient //, UsersClient, IRolesClient
                    .ReadFromJsonAsync<List<IdentRole>>(cancellationToken: Cancel);
                 return result;
         }
+    }
 
-        //throw new NotImplementedException();
+    public async Task<string> LoginAsync(string login, string password, CancellationToken Cancel = default)
+    {
+        var response = await Http.PostAsJsonAsync($"{Accounts}/Login?login={login}&password={password}", new { }).ConfigureAwait(false);
+
+        switch (response.StatusCode)
+        {
+            case HttpStatusCode.NoContent:
+            case HttpStatusCode.NotFound:
+                return default;
+            default:
+                var result = await response
+                   .EnsureSuccessStatusCode()
+                   .Content
+                   .ReadAsStringAsync();
+                return result;
+        }
     }
 }

@@ -98,7 +98,7 @@ namespace Thoughts.WebAPI.Controllers.Identity
                     {
                         _logger.LogInformation("Авторизация пользователя {0} успешна", login);
                         var sessionToken = _authUtils.CreateSessionToken(user, roles);
-                        return Ok($"Ваш токен сессии: {sessionToken}");
+                        return Ok(sessionToken);
                     }
                 }
             }
@@ -207,8 +207,8 @@ namespace Thoughts.WebAPI.Controllers.Identity
 
         }
 
-        //[Authorize(Roles = IdentRole.Administrators)]
-        [AllowAnonymous]
+        [Authorize(Roles = IdentRole.Administrators)]
+        //[AllowAnonymous]
         [HttpGet("GetAllRoles")]
         public async Task<IActionResult> GetAllRolesAsync()
         {
@@ -467,8 +467,8 @@ namespace Thoughts.WebAPI.Controllers.Identity
             }
         }
 
-        //[Authorize(Roles = IdentRole.Administrators)]
-        [AllowAnonymous]
+        [Authorize(Roles = IdentRole.Administrators)]
+        //[AllowAnonymous]
         [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAllUsersAsync()
         {
