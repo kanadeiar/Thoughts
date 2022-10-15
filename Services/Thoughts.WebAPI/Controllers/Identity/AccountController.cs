@@ -1,4 +1,5 @@
-﻿using DTO.Thoughts.Identity;
+﻿using DTO.Identity;
+using DTO.Thoughts.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -73,33 +74,31 @@ namespace Thoughts.WebAPI.Controllers.Identity
             return BadRequest("Пользователя не удалось зарегистрировать");
         }
 
-        public record LoginModel(string Login, string Password);
-
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<IActionResult> LoginAsync([FromBody] LoginModel Model)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginUserDTO loginUserDTO)
         {
             try
             {
-                _logger.LogInformation("Авторизация пользователя {0}", Model.Login);
+                _logger.LogInformation("Авторизация пользователя {0}", loginUserDTO.Login);
 
-                var user = await _userManager.FindByNameAsync(Model.Login);
+                var user = await _userManager.FindByNameAsync(loginUserDTO.Login);
                 if (user is not null)
                 {
                     var roles = await _userManager.GetRolesAsync(user);
 
                     var signInResult = await _signInManager.PasswordSignInAsync(
-                        userName: Model.Login,
-                        password: Model.Password,
+                        userName: loginUserDTO.Login,
+                        password: loginUserDTO.Password,
                         isPersistent: true,
                         lockoutOnFailure: false);
 
                     if (signInResult.Succeeded)
                     {
-                        _logger.LogInformation("Авторизация пользователя {0} успешна", Model.Login);
+                        _logger.LogInformation("Авторизация пользователя {0} успешна", loginUserDTO.Login);
                         var sessionToken = _authUtils.CreateSessionToken(user, roles);
-                        Response.Headers.Add("Authorization", $"Bearer {sessionToken}");
-                        return Ok(sessionToken);
+                        Response.Headers.Add("Authorization", sessionToken);
+                        return Ok();
                     }
                 }
             }
@@ -107,11 +106,11 @@ namespace Thoughts.WebAPI.Controllers.Identity
             {
                 if (_logger.IsEnabled(LogLevel.Error))
                 {
-                    _logger.LogError(ex, "Авторизовать пользователя {0} не удалось", Model.Login);
+                    _logger.LogError(ex, "Авторизовать пользователя {0} не удалось", loginUserDTO.Login);
                 }
             }
 
-            _logger.LogInformation("Авторизовать пользователя {0} не удалось", Model.Login);
+            _logger.LogInformation("Авторизовать пользователя {0} не удалось", loginUserDTO.Login);
 
             return BadRequest("Авторизовать пользователя не удалось");
         }

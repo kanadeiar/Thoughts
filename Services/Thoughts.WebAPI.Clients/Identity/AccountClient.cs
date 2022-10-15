@@ -57,31 +57,17 @@ public class AccountClient //: BaseClient //, UsersClient, IRolesClient
         }
     }
 
-    public async Task<string?> LoginAsync(string login, string password, CancellationToken Cancel = default)
+    public async Task LoginAsync(string login, string password, CancellationToken Cancel = default)
     {
-        //var requet   = new HttpRequestMessage(HttpMethod.Post, $"{Accounts}/Login?login={login}&password={password}");
-        //var response = await Http.SendAsync(requet, Cancel).ConfigureAwait(false);
-
         var response = await Http.PostAsJsonAsync($"{Accounts}/Login", new { login, password }).ConfigureAwait(false);
 
-        switch (response.StatusCode)
+
+        if (response.StatusCode == HttpStatusCode.OK)
         {
-            case HttpStatusCode.NoContent:
-            case HttpStatusCode.NotFound:
-                return default;
-            default:
-                //Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue();
-
-                if (response.Headers.GetValues("Authorization").FirstOrDefault() is not { Length: > 10 } bearer)
-                    throw new InvalidOperationException("Не удалось получить токен от сервера! Авторизация не выполнена.");
-
-                Http.DefaultRequestHeaders.Authorization = new("Bearer", bearer[7..]);
-
-                var result = await response
-                   .EnsureSuccessStatusCode()
-                   .Content
-                   .ReadAsStringAsync(Cancel);
-                return result;
+            var bearer = response.Headers.GetValues("Authorization").FirstOrDefault();
+            Http.DefaultRequestHeaders.Authorization = new("Bearer", bearer);
         }
+        else
+            throw new InvalidOperationException("Не удалось получить токен от сервера! Авторизация не выполнена.");
     }
 }
