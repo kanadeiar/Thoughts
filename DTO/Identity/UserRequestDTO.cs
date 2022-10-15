@@ -1,4 +1,4 @@
-﻿namespace DTO.Identity
+﻿namespace DTO.Thoughts.Identity
 {
     public class UserRequestDTO
     {
