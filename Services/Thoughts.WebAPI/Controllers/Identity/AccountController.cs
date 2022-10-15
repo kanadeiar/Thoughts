@@ -1,13 +1,11 @@
-﻿
+﻿using DTO.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DTO.Identity;
 using Thoughts.DAL.Entities.Idetity;
+using Thoughts.Identity.DAL.Interfaces;
 using WebStore.Interfaces.Services;
-using Identity.DAL.Interfaces;
-using Thoughts.WebAPI.Services;
 
 namespace Thoughts.WebAPI.Controllers.Identity
 {

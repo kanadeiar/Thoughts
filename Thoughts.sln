@@ -54,16 +54,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.WebAPI.Tests.Integ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.Extensions", "Services\Thoughts.Extensions\Thoughts.Extensions.csproj", "{6CF4E66D-58A2-4917-870E-086BBF54137B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.DAL", "Data\Identity.DAL\Identity.DAL.csproj", "{F67615B1-580A-432E-AFDF-97CCD2A60014}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.Identity.DAL", "Data\Identity.DAL\Thoughts.Identity.DAL.csproj", "{F67615B1-580A-432E-AFDF-97CCD2A60014}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.DAL.SqlServer", "Data\Identity.DAL.SqlServer\Identity.DAL.SqlServer.csproj", "{3590557A-F08D-4785-AF2D-16CD4DB48C92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.Identity.DAL.SqlServer", "Data\Identity.DAL.SqlServer\Thoughts.Identity.DAL.SqlServer.csproj", "{3590557A-F08D-4785-AF2D-16CD4DB48C92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTO", "DTO\DTO.csproj", "{CA2E0BE8-886B-47A4-AA01-BCDF9E44C965}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DTO", "DTO\DTO.csproj", "{CA2E0BE8-886B-47A4-AA01-BCDF9E44C965}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.Tools", "Common\Thoughts.Tools\Thoughts.Tools.csproj", "{AB13DD14-1EF8-4377-8C64-1C5A225D9D28}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.Tools.Tests", "Tests\Thoughts.Tools.Tests\Thoughts.Tools.Tests.csproj", "{46A69540-57B8-4451-A68E-7E135ABE6C1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thoughts.WebAPI.Tests", "Tests\Thoughts.WebAPI.Tests\Thoughts.WebAPI.Tests.csproj", "{EC07231A-B243-4644-9E45-C92CA113ED0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.WebAPI.Tests", "Tests\Thoughts.WebAPI.Tests\Thoughts.WebAPI.Tests.csproj", "{EC07231A-B243-4644-9E45-C92CA113ED0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

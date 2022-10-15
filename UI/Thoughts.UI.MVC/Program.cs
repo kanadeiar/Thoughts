@@ -1,3 +1,4 @@
+using Thoughts.Identity.DAL.SqlServer;
 using Thoughts.Interfaces.Base;
 using Thoughts.Interfaces.Base.Repositories;
 using Thoughts.Services.Mapping;

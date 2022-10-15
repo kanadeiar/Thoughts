@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
 
-using Identity.DAL;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +7,7 @@ using Microsoft.Extensions.Logging;
 
 using Thoughts.DAL;
 using Thoughts.DAL.Entities.Idetity;
+using Thoughts.Identity.DAL;
 using Thoughts.Services.Data;
 
 using static System.Formats.Asn1.AsnWriter;

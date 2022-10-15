@@ -1,8 +1,5 @@
 ﻿using System.Text;
 
-using Identity.DAL;
-using Identity.DAL.Interfaces;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -22,12 +19,14 @@ using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 using Thoughts.DAL.Sqlite;
-using Thoughts.DAL.SqlServer;
 using Thoughts.Interfaces;
 using Thoughts.Interfaces.Base;
 using Thoughts.Services.InSQL;
 using Thoughts.WebAPI;
 using Thoughts.WebAPI.Infrastructure.Extensions;
+using Thoughts.Identity.DAL;
+using Thoughts.Identity.DAL.SqlServer;
+using Thoughts.Identity.DAL.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;

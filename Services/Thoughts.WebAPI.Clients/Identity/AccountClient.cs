@@ -13,7 +13,6 @@ namespace Thoughts.WebAPI.Clients.Identity;
 public class AccountClient //: BaseClient //, UsersClient, IRolesClient
 {
     private readonly ILogger<AccountClient> _Logger;
-    //WebAPIAddresses.Addresses.Identity.Accounts
     public HttpClient Http { get; }
 
     public AccountClient(HttpClient Http, ILogger<AccountClient> Logger)

@@ -1,9 +1,7 @@
-﻿using Identity.DAL;
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Thoughts.DAL.SqlServer;
+namespace Thoughts.Identity.DAL.SqlServer;
 
 public static class Registrator
 {
@@ -11,7 +9,7 @@ public static class Registrator
     {
         services.AddDbContext<IdentityDB>(opt => opt
             .UseSqlServer(
-                ConnectionString, 
+                ConnectionString,
                 o => o.MigrationsAssembly(typeof(Registrator).Assembly.FullName)));
 
         return services;

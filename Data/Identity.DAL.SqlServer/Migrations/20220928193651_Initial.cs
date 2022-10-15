@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Identity.DAL.SqlServer.Migrations
+namespace Thoughts.Identity.DAL.SqlServer.Migrations
 {
     public partial class Initial : Migration
     {

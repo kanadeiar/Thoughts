@@ -2,8 +2,6 @@
 
 using DTO.Identity;
 
-using Identity.DAL;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Thoughts.DAL;
 using Thoughts.DAL.Entities.Idetity;
+using Thoughts.Identity.DAL;
 
 using WebStore.Interfaces.Services;
 
