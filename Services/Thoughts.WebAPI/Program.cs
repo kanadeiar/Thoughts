@@ -175,8 +175,6 @@ var app = builder.Build();
 
 await app.InitializeDatabase();
 
-var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
-
 var api_version_description_provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 if (app.Environment.IsDevelopment())
 {

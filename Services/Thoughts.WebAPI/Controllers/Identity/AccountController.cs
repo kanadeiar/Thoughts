@@ -75,29 +75,32 @@ namespace Thoughts.WebAPI.Controllers.Identity
             return BadRequest("Пользователя не удалось зарегистрировать");
         }
 
+        public record LoginModel(string Login, string Password);
+
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<IActionResult> LoginAsync(string login, string password)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginModel Model)
         {
             try
             {
-                _logger.LogInformation("Авторизация пользователя {0}", login);
+                _logger.LogInformation("Авторизация пользователя {0}", Model.Login);
 
-                var user = await _userManager.FindByNameAsync(login);
+                var user = await _userManager.FindByNameAsync(Model.Login);
                 if (user is not null)
                 {
                     var roles = await _userManager.GetRolesAsync(user);
 
                     var signInResult = await _signInManager.PasswordSignInAsync(
-                        userName: login,
-                        password: password,
+                        userName: Model.Login,
+                        password: Model.Password,
                         isPersistent: true,
                         lockoutOnFailure: false);
 
                     if (signInResult.Succeeded)
                     {
-                        _logger.LogInformation("Авторизация пользователя {0} успешна", login);
+                        _logger.LogInformation("Авторизация пользователя {0} успешна", Model.Login);
                         var sessionToken = _authUtils.CreateSessionToken(user, roles);
+                        Response.Headers.Add("Authorization", $"Bearer {sessionToken}");
                         return Ok(sessionToken);
                     }
                 }
@@ -106,11 +109,11 @@ namespace Thoughts.WebAPI.Controllers.Identity
             {
                 if (_logger.IsEnabled(LogLevel.Error))
                 {
-                    _logger.LogError(ex, "Авторизовать пользователя {0} не удалось", login);
+                    _logger.LogError(ex, "Авторизовать пользователя {0} не удалось", Model.Login);
                 }
             }
 
-            _logger.LogInformation("Авторизовать пользователя {0} не удалось", login);
+            _logger.LogInformation("Авторизовать пользователя {0} не удалось", Model.Login);
 
             return BadRequest("Авторизовать пользователя не удалось");
         }

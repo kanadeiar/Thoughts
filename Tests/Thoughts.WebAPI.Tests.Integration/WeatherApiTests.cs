@@ -18,11 +18,13 @@ public class WeatherApiTests
     {
         _WebAPIHostBuilder = new WebApplicationFactory<Program>()
            //.WithWebHostBuilder(builder => builder
-           //    .ConfigureServices(services =>
-           //     {
-           //         services.RemoveAll(typeof(IRepository<>));
-           //         services.AddScoped(typeof(IRepository<>), typeof(DbRepository<>));
-           //     }))
+               //.ConfigureServices(services =>
+               //     {
+               //         services.RemoveAll<ThoughtsDbInitializer>();
+
+               //         services.RemoveAll(typeof(IRepository<>));
+               //         services.AddScoped(typeof(IRepository<>), typeof(DbRepository<>));
+               //     }))
             ;
     }
 
