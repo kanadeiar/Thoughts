@@ -15,3 +15,4 @@ global using Thoughts.UI.MVC.Infrastructure.Extensions;
 global using Thoughts.UI.MVC.Models;
 global using Thoughts.UI.MVC.Tools;
 global using Thoughts.UI.MVC.WebModels;
+global using Thoughts.UI.MVC.Common;

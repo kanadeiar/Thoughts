@@ -1,0 +1,11 @@
+﻿@model ShortUrlWebModel
+
+@{
+    ViewBag.Title = "Переход по ссылке";
+}
+
+<div class="contact">
+    <p>@Html.RouteLink("Короткая ссылка","shortUrl", new {Alias=@Model.Alias})</p>
+
+    Исходная ссылка: <a href="@Model.OriginalUrl">@Model.OriginalUrl</a>
+</div>

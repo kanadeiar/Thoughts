@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Thoughts.WebAPI.Controllers;
-
+namespace Thoughts.WebAPI.Controllers.v1;
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
-[Route("api/test/weather")]
 public class WeatherApiController : ControllerBase
 {
     private static readonly string[] Summaries = new[]
@@ -18,6 +18,11 @@ public class WeatherApiController : ControllerBase
         _logger = logger;
     }
 
+    /// <summary>
+    /// Get
+    /// </summary>
+    /// <returns></returns>
+    [MapToApiVersion("1.0")]
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
