@@ -15,7 +15,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.5");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.6");
 
             modelBuilder.Entity("PostTag", b =>
                 {
@@ -163,6 +163,25 @@ namespace Thoughts.DAL.Sqlite.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("Thoughts.DAL.Entities.ShortUrl", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OriginalUrl")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShortUrls");
+                });
+
             modelBuilder.Entity("Thoughts.DAL.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -185,6 +204,7 @@ namespace Thoughts.DAL.Sqlite.Migrations
             modelBuilder.Entity("Thoughts.DAL.Entities.User", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("Birthday")

@@ -1,0 +1,76 @@
+﻿@{
+    ViewBag.Title = "Файлы";
+}
+<form asp-controller="File" asp-action="Upload" enctype="multipart/form-data" method="post" >
+    <input type="file" name="file"/>
+    <input type="submit"/>
+</form>
+<div>
+    <ul id="files">
+    </ul>
+
+</div>
+@section Scripts {
+    <script>
+        var baseUrl = '@Context.Request.Scheme://@Context.Request.Host@Context.Request.PathBase/fileapi/';
+        $(() => {
+            async function GetAllFileInfo(params) {
+                var getallfileinfo = baseUrl + 'getallfileinfo';
+                var urlGetFile = baseUrl + 'get/?file=';
+                await fetch(getallfileinfo)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        var result = data;
+                        result.forEach((el) => {
+                            console.log(el);
+                            if (el.active) {
+                                $('#files').append(`<li><a href="${urlGetFile}${el.hash}" >${el.name} </a>|<span>${el.size} б</span> | <span>${el.created}</span>|<span>Ссылок на файл ${el.counter}</span><button title="Файл активен" onclick="softDelete('${el.hash}')" class="btn btn-danger">X</button></li>`);
+                            }
+                            else {
+                                $('#files').append(`<li><a href="${urlGetFile}${el.hash}" >${el.name} </a>|<span>${el.size} б</span> | <span>${el.created}</span>|<span>Ссылок на файл ${el.counter}</span><button title="Файл помечен на удаление" id="${el.hash}" onclick="activateFile('${el.hash}')" class="btn btn-success">V</button></li>`);
+
+                            }
+                        });
+
+                    });
+            }
+
+            GetAllFileInfo();
+
+        });
+        async function softDelete(sha1) {
+            if(confirm('Пометить файл на удаление?')){
+                var urlSoftDelete = baseUrl + 'softdelete/?file=' + sha1;
+                await fetch(urlSoftDelete)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log(data.result);
+                        if (data.result === true) {
+                            $(`#${sha1}`).removeClass('btn-dange').addClass('btn-success');
+                            $(`#${sha1}`).text('V');
+                            $(`#${sha1}`).attr('onclick', `activateFile("${sha1}")`);
+                            $(`#${sha1}`).prop('title', 'Файл помечен на удаление');
+                        }
+                    });
+            }
+            else{
+            
+            }
+        }
+
+        async function activateFile(sha1) {
+            var activeteUrl = baseUrl + 'activatefile/?file=' + sha1;
+            await fetch(activeteUrl)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data.result);
+                    if (data.result === true) {
+                        $(`#${sha1}`).removeClass('btn-success').addClass('btn-danger');
+                        $(`#${sha1}`).text('X');
+                        $(`#${sha1}`).attr('onclick', `softDelete("${sha1}")`);
+                        $(`#${sha1}`).prop('title', 'Файл активен');
+                    }
+                })
+        }
+    </script>
+}

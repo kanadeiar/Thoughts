@@ -23,6 +23,8 @@ public class ThoughtsDB : DbContext
 
     public DbSet<Tag> Tags { get; set; } = null!;
 
+    public DbSet<ShortUrl> ShortUrls { get; set; } = null!;
+
     #endregion
 
     public ThoughtsDB(DbContextOptions<ThoughtsDB> options) : base(options) { }

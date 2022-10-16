@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Thoughts.Domain.Base\Thoughts.Domain.Base.csproj" />
+    <ProjectReference Include="..\..\Data\Thoughts.DAL.Entities\Thoughts.DAL.Entities.csproj" />
     <ProjectReference Include="..\Thoughts.Interfaces.Base\Thoughts.Interfaces.Base.csproj" />
   </ItemGroup>
 

@@ -17,7 +17,7 @@ namespace Thoughts.DAL.SqlServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -176,6 +176,27 @@ namespace Thoughts.DAL.SqlServer.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("Thoughts.DAL.Entities.ShortUrl", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OriginalUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShortUrls");
+                });
+
             modelBuilder.Entity("Thoughts.DAL.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -200,6 +221,7 @@ namespace Thoughts.DAL.SqlServer.Migrations
             modelBuilder.Entity("Thoughts.DAL.Entities.User", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("Birthday")
@@ -208,6 +230,10 @@ namespace Thoughts.DAL.SqlServer.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IdentityUserId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("LastName")
                         .IsRequired()

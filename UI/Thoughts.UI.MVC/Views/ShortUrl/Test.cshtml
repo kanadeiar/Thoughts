@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "Проверка POST запроса";
+}
+
+<form asp-controller="ShortUrl" asp-action="AddUrl" method="post" asp-antiforgery="true">
+
+    <label for="Url">Url</label>
+    <input name="Url" type="text" placeholder="Url" />
+
+    <button type="submit" class="btn">POST</button>
+
+</form>
