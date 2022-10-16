@@ -1,5 +1,7 @@
+using Thoughts.Extensions.Maps;
 using Thoughts.Interfaces.Base;
 using Thoughts.Interfaces.Base.Repositories;
+using Thoughts.Services;
 using Thoughts.Services.Mapping;
 using Thoughts.WebAPI.Clients.ShortUrl;
 
@@ -51,9 +53,12 @@ services.AddScoped<IFileManager, FileStorageManager>();
 //services.AddScoped<IRepository<Post>, MappingRepository<Thoughts.DAL.Entities.Post, Post>>();
 //services.AddScoped<IRepository<Category>, MappingRepository<Thoughts.DAL.Entities.Category, Category>>();
 //services.AddScoped<IRepository<Tag>, MappingRepository<Thoughts.DAL.Entities.Tag, Tag>>();
+services.AddScoped(typeof(IRepository<>), typeof(DbRepository<>));
+
+services.AddScoped<IMapper<Thoughts.DAL.Entities.Comment, Comment>, CommentMapper>();
+services.AddScoped<IMapper<Comment, Thoughts.DAL.Entities.Comment>, CommentMapper>();
 services.AddScoped<IRepository<Comment>, MappingRepository<Thoughts.DAL.Entities.Comment, Comment>>();
 
-//services.AddScoped(typeof(IRepository<>), typeof(DbRepository<>));
 
 var app = builder.Build();
 
