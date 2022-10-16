@@ -17,10 +17,19 @@ namespace Thoughts.UI.MAUI.Services
 
         public async Task<IEnumerable<WeatherInfo>> GetAllInfosAsync(CancellationToken cancellationToken = default)
         {
-            var result = await _weatherService.GetAllAsync(cancellationToken)
-                .ConfigureAwait(false);
+            var result = default(IEnumerable<WeatherInfo>);
 
-            return result;
+            try
+            {
+                result = await _weatherService.GetAllAsync(cancellationToken)
+                        .ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Method}: {message}", nameof(GetAllInfosAsync), e.Message);
+            }
+
+            return result ?? Enumerable.Empty<WeatherInfo>();
         }
 
         public IEnumerable<WeatherInfo> GetAllInfos(CancellationToken cancellationToken = default) => 
