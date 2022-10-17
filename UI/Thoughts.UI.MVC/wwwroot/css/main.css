@@ -3691,3 +3691,6 @@ button:disabled,
     font-family: "Roboto Slab", serif;
     font-weight: normal;
 }
+.form-group * {
+	padding: 0.5rem 0;
+}

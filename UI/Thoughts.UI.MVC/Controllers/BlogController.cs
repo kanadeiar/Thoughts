@@ -1,15 +1,18 @@
-﻿namespace Thoughts.UI.MVC.Controllers;
+﻿using Thoughts.DAL;
+
+namespace Thoughts.UI.MVC.Controllers;
 
 public class BlogController : Controller 
 {
     private readonly IBlogPostManager _postManager;
     private readonly IConfiguration _configuration;
     private readonly int _lengthText;
-
-    public BlogController(IBlogPostManager postManager, IConfiguration configuration)
+    private readonly ThoughtsDB _context;
+    public BlogController(IBlogPostManager postManager, IConfiguration configuration, ThoughtsDB context)
     {
         _postManager = postManager;
         _configuration = configuration;
+        _context = context;
         _lengthText = _configuration.GetValue<int>("LengthTextOnHomeView");
     }
 
@@ -43,8 +46,40 @@ public class BlogController : Controller
         return View(model);
     }
 
+    [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
-        throw new NotImplementedException("Редактирование записи блога не реализовано");
+        await InitViewBag();
+        var post = await _postManager.GetPostAsync(id);
+        var model = new BlogDetailsWebModel
+        {
+            Post = post,
+        };
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(BlogDetailsWebModel model, CancellationToken cancellation = default)
+    {
+        await InitViewBag();
+        var post = model.Post;
+        //if (ModelState.IsValid)
+        {
+            var test = await _postManager.ChangePostTitleAsync(post.Id, post.Title, cancellation);
+            var test1 = await _postManager.ChangePostBodyAsync(post.Id, post.Body, cancellation);
+            var test2 = await _postManager.ChangePostCategoryAsync(post.Id, post.Category?.Name, cancellation);
+        }
+
+        return RedirectToAction("Details", "Blog", new { Id = model.Post.Id });
+    }
+
+    private async Task InitViewBag()
+    {
+        ViewBag.Categoryes = new List<SelectListItem>()
+        {
+            new SelectListItem("--Не выбрано--", "")
+        }.Concat(_context.Categories.Select(item => 
+            new SelectListItem(item.Name, item.Id.ToString())))
+            .ToList();
     }
 }
