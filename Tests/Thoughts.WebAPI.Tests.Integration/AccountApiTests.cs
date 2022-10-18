@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Logging;
 
-using Thoughts.WebAPI.Clients.Identity;
-using Thoughts.WebAPI.Clients.Test.Weather;
-using Thoughts.WebAPI.Controllers.Identity;
 using Moq;
-using static System.Net.WebRequestMethods;
+
+using Thoughts.WebAPI.Clients.Identity;
 
 namespace Thoughts.WebAPI.Tests.Integration;
 
