@@ -29,6 +29,7 @@ public class AccountClient //: BaseClient //, UsersClient, IRolesClient
         {
             case HttpStatusCode.NoContent:
             case HttpStatusCode.NotFound:
+            case HttpStatusCode.Unauthorized:
                 return default;
             default:
                 var result = await response
@@ -47,6 +48,7 @@ public class AccountClient //: BaseClient //, UsersClient, IRolesClient
         {
             case HttpStatusCode.NoContent:
             case HttpStatusCode.NotFound:
+            case HttpStatusCode.Unauthorized:
                 return default;
             default:
                 var result = await response
@@ -60,7 +62,6 @@ public class AccountClient //: BaseClient //, UsersClient, IRolesClient
     public async Task LoginAsync(string login, string password, CancellationToken Cancel = default)
     {
         var response = await Http.PostAsJsonAsync($"{Accounts}/Login", new { login, password }).ConfigureAwait(false);
-
 
         if (response.StatusCode == HttpStatusCode.OK)
         {

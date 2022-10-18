@@ -19,7 +19,6 @@ Console.ReadLine();
 try
 {
     await account_client.LoginAsync("Admin", "AdPAss_123");
-    //http.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
 }
 catch (InvalidOperationException)
 {
