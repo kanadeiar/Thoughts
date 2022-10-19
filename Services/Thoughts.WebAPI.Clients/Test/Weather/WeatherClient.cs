@@ -13,7 +13,7 @@ public class WeatherClient : IWeatherService
     public async Task<IEnumerable<WeatherInfo>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var result = await _httpClient
-            .GetFromJsonAsync<IEnumerable<WeatherInfo>>("api/test/weather", cancellationToken)
+            .GetFromJsonAsync<IEnumerable<WeatherInfo>>("api/v1/weatherapi", cancellationToken)
             .ConfigureAwait(false);
 
         return result ?? Enumerable.Empty<WeatherInfo>();
