@@ -79,7 +79,7 @@ public class BlogController : Controller
         {
             new SelectListItem("--Не выбрано--", "")
         }.Concat(_context.Categories.Select(item => 
-            new SelectListItem(item.Name, item.Id.ToString())))
+            new SelectListItem(item.Name, item.Name.ToString())))
             .ToList();
     }
 }

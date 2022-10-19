@@ -4,17 +4,7 @@
     ViewBag.Title = (exists ? "Редактирование" : "Создание") + " поста";
     var categoryes = ViewBag.Categoryes as List<SelectListItem> ?? new List<SelectListItem>();
 }
-<script src="~/lib/tinymce/tinymce.min.js"></script>
-<script>
-    tinymce.init({
-        selector: '#bodyEditor'
-    });
-</script>
-<style>
-    .form-groupt:first-child {
-        margin-top: 15px
-    }
-</style>
+
 <div>
     <a class="button" asp-controller="Blog" asp-action="Details" asp-route-id="@Model?.Post?.Id">
         Назад к посту
@@ -34,7 +24,7 @@
         <textarea asp-for="Post.Body" id="bodyEditor"></textarea>
         <div>
             <label>Категория</label>
-            <select asp-for="Post.Category.Id" asp-items="categoryes"></select>
+            <select asp-for="Post.Category.Name" asp-items="categoryes"></select>
         </div>
         <div class="row">
             <button class="button p-2" type="submit">@(exists ? "Сохранить" : "Создать")</button>
@@ -46,4 +36,21 @@
 </div>
 
 
+@section Styles
+{
+    <style>
+        .form-groupt:first-child {
+            margin-top: 15px
+        }
+    </style>
+}
 
+@section Scripts
+{
+    <script src="~/lib/tinymce/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: '#bodyEditor'
+        });
+    </script>
+}
