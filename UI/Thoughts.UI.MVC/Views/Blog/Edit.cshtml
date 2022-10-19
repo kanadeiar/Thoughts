@@ -2,7 +2,7 @@
 @{
     var exists = Model != null && Model.Post.Id != 0;
     ViewBag.Title = (exists ? "Редактирование" : "Создание") + " поста";
-    var categoryes = ViewBag.Categoryes as List<SelectListItem> ?? new List<SelectListItem>();
+    var categories = ViewBag.Categoryes as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>();
 }
 
 <div>
@@ -24,7 +24,7 @@
         <textarea asp-for="Post.Body" id="bodyEditor"></textarea>
         <div>
             <label>Категория</label>
-            <select asp-for="Post.Category.Name" asp-items="categoryes"></select>
+            <select asp-for="Post.Category.Name" asp-items="categories"></select>
         </div>
         <div class="row">
             <button class="button p-2" type="submit">@(exists ? "Сохранить" : "Создать")</button>

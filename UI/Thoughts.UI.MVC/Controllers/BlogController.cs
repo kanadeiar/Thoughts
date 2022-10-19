@@ -49,7 +49,9 @@ public class BlogController : Controller
     [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
-        await InitViewBag();
+        ViewBag.Categoryes = new [] { new SelectListItem("--Не выбрано--", "") }
+           .Concat(_context.Categories.Select(item => new SelectListItem(item.Name, item.Name.ToString())));
+
         var post = await _postManager.GetPostAsync(id);
         var model = new BlogDetailsWebModel
         {
@@ -61,7 +63,6 @@ public class BlogController : Controller
     [HttpPost]
     public async Task<IActionResult> Edit(BlogDetailsWebModel model, CancellationToken cancellation = default)
     {
-        await InitViewBag();
         var post = model.Post;
         //if (ModelState.IsValid)
         {
@@ -70,16 +71,11 @@ public class BlogController : Controller
             var test2 = await _postManager.ChangePostCategoryAsync(post.Id, post.Category?.Name, cancellation);
         }
 
-        return RedirectToAction("Details", "Blog", new { Id = model.Post.Id });
+        return RedirectToAction("Details", "Blog", new { model.Post.Id });
     }
 
     private async Task InitViewBag()
     {
-        ViewBag.Categoryes = new List<SelectListItem>()
-        {
-            new SelectListItem("--Не выбрано--", "")
-        }.Concat(_context.Categories.Select(item => 
-            new SelectListItem(item.Name, item.Name.ToString())))
-            .ToList();
+        
     }
 }
