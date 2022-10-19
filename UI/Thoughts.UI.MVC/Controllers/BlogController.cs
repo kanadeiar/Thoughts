@@ -1,4 +1,9 @@
-﻿using Thoughts.DAL;
+﻿using AutoMapper;
+
+using Microsoft.CodeAnalysis.FlowAnalysis;
+
+using Thoughts.DAL;
+using Thoughts.UI.MVC.Infrastructure.AutoMapper;
 
 namespace Thoughts.UI.MVC.Controllers;
 
@@ -6,13 +11,15 @@ public class BlogController : Controller
 {
     private readonly IBlogPostManager _postManager;
     private readonly IConfiguration _configuration;
+    private IMapper _mapper;
     private readonly int _lengthText;
     private readonly ThoughtsDB _context;
-    public BlogController(IBlogPostManager postManager, IConfiguration configuration, ThoughtsDB context)
+    public BlogController(IBlogPostManager postManager, IConfiguration configuration, ThoughtsDB context, IMapper mapper)
     {
         _postManager = postManager;
         _configuration = configuration;
         _context = context;
+        _mapper = mapper;
         _lengthText = _configuration.GetValue<int>("LengthTextOnHomeView");
     }
 
@@ -49,33 +56,34 @@ public class BlogController : Controller
     [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
-        ViewBag.Categoryes = new [] { new SelectListItem("--Не выбрано--", "") }
-           .Concat(_context.Categories.Select(item => new SelectListItem(item.Name, item.Name.ToString())));
-
         var post = await _postManager.GetPostAsync(id);
         var model = new BlogDetailsWebModel
         {
             Post = post,
         };
-        return View(model);
+        var viewModel = _mapper.Map(post, model);
+        return View(viewModel);
     }
 
     [HttpPost]
     public async Task<IActionResult> Edit(BlogDetailsWebModel model, CancellationToken cancellation = default)
     {
-        var post = model.Post;
-        //if (ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            var test = await _postManager.ChangePostTitleAsync(post.Id, post.Title, cancellation);
-            var test1 = await _postManager.ChangePostBodyAsync(post.Id, post.Body, cancellation);
-            var test2 = await _postManager.ChangePostCategoryAsync(post.Id, post.Category?.Name, cancellation);
+            await _postManager.ChangePostTitleAsync(model.PostId, model.Title, cancellation);
+            await _postManager.ChangePostBodyAsync(model.PostId, model.Body, cancellation);
+            await _postManager.ChangePostCategoryAsync(model.PostId, model.CategoryName, cancellation);
         }
 
-        return RedirectToAction("Details", "Blog", new { model.Post.Id });
+        return RedirectToAction("Details", "Blog", new { Id = model.PostId });
     }
 
-    private async Task InitViewBag()
+    public async Task<IActionResult> TypeaheadQuery(string query)
     {
-        
+        var categories = _context.Categories.Where(item => item.Name.StartsWith(query)).ToList();
+        return Json(categories.Select(item => new
+        {
+            item.Name
+        }));
     }
 }

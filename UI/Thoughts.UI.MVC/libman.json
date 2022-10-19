@@ -1,26 +1,35 @@
 {
   "version": "1.0",
   "defaultProvider": "cdnjs",
-  "libraries": [
-    {
-      "library": "jquery@3.5.1",
-      "destination": "wwwroot/lib/jquery/"
-    },
-    {
-      "library": "bootstrap@5.1.0",
-      "destination": "wwwroot/lib/bootstrap/"
-    },
-    {
-      "library": "jquery-validate@1.17.0",
-      "destination": "wwwroot/lib/jquery-validate/"
-    },
-    {
-      "library": "jquery-validation-unobtrusive@3.2.11",
-      "destination": "wwwroot/lib/jquery-validation-unobtrusive/"
-    },
-    {
-      "library": "tinymce@5.1.1",
-      "destination": "wwwroot/lib/tinymce/"
-    }
-  ]
+	"libraries": [
+		{
+			"library": "jquery@3.5.1",
+			"destination": "wwwroot/lib/jquery/"
+		},
+		{
+			"library": "bootstrap@5.1.0",
+			"destination": "wwwroot/lib/bootstrap/"
+		},
+		{
+			"library": "jquery-validate@1.17.0",
+			"destination": "wwwroot/lib/jquery-validate/"
+		},
+		{
+			"library": "jquery-validation-unobtrusive@3.2.11",
+			"destination": "wwwroot/lib/jquery-validation-unobtrusive/"
+		},
+		{
+			"library": "tinymce@5.1.1",
+			"destination": "wwwroot/lib/tinymce/"
+		},
+		{
+			"provider": "cdnjs",
+			"library": "typeahead.js@0.11.1",
+			"destination": "wwwroot/lib/typeahead.js/",
+			"files": [
+				"typeahead.bundle.min.js",
+				"bloodhound.min.js"
+			]
+		}
+	]
 }
