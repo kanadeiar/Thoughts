@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.UI.WPF", "UI\Thoug
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.DAL.Entities", "Data\Thoughts.DAL.Entities\Thoughts.DAL.Entities.csproj", "{B3EE9253-3254-4B68-843D-9AD584AE3E47}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{A9A293C7-3C9E-4984-9C79-F38FBEF68685}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Service", ".Service", "{A9A293C7-3C9E-4984-9C79-F38FBEF68685}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 	EndProjectSection
@@ -56,14 +56,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.Extensions", "Serv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.DAL", "Data\Identity.DAL\Identity.DAL.csproj", "{F67615B1-580A-432E-AFDF-97CCD2A60014}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.DAL.SqlServer", "Data\Identity.DAL.SqlServer\Identity.DAL.SqlServer.csproj", "{3590557A-F08D-4785-AF2D-16CD4DB48C92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.DAL.SqlServer", "Data\Identity.DAL.SqlServer\Identity.DAL.SqlServer.csproj", "{3590557A-F08D-4785-AF2D-16CD4DB48C92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTO", "DTO\DTO.csproj", "{CA2E0BE8-886B-47A4-AA01-BCDF9E44C965}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DTO", "DTO\DTO.csproj", "{CA2E0BE8-886B-47A4-AA01-BCDF9E44C965}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.Tools", "Common\Thoughts.Tools\Thoughts.Tools.csproj", "{AB13DD14-1EF8-4377-8C64-1C5A225D9D28}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.Tools.Tests", "Tests\Thoughts.Tools.Tests\Thoughts.Tools.Tests.csproj", "{46A69540-57B8-4451-A68E-7E135ABE6C1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thoughts.WebAPI.Tests", "Tests\Thoughts.WebAPI.Tests\Thoughts.WebAPI.Tests.csproj", "{EC07231A-B243-4644-9E45-C92CA113ED0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.WebAPI.Tests", "Tests\Thoughts.WebAPI.Tests\Thoughts.WebAPI.Tests.csproj", "{EC07231A-B243-4644-9E45-C92CA113ED0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

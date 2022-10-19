@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="FontAwesome5" Version="2.1.11" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
@@ -19,20 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="ViewModels\Base\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="appconfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Styles\Brushes\DefaultBrushes.xaml">
-      <CopyToOutputDirectory></CopyToOutputDirectory>
-    </Page>
+    <None Update="appconfig.json" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
 
 </Project>
