@@ -30,7 +30,7 @@ public class ThoughtsDbInitializer
             await DeleteAsync(Cancel).ConfigureAwait(false);
 
         var pending_migrations = await _db.Database.GetPendingMigrationsAsync(Cancel).ConfigureAwait(false);
-        var applied_migrations = await _db.Database.GetPendingMigrationsAsync(Cancel);
+        var applied_migrations = await _db.Database.GetAppliedMigrationsAsync(Cancel);
 
         if(applied_migrations.Any())
             _Log.LogInformation("К БД применены миграции: {0}", string.Join(",", applied_migrations));

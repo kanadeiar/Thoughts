@@ -9,7 +9,7 @@ namespace Thoughts.UI.WPF.ViewModels
 {
     public class FilesViewModel : ViewModel
     {
-        private readonly string _path = @"C:\Users\vital\source\repos\Thoughts\UI\Thoughts.UI.WPF\Data\Test\";
+        private readonly string _path = @"..\..\..\Data\Test\";
 
         private static ObservableCollection<TestFile> _filesCollection = new ObservableCollection<TestFile>();
         public static ObservableCollection<TestFile> FilesCollection { get => _filesCollection; set => _filesCollection = value; }
