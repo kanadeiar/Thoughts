@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="Thoughts.UI.MAUI.Views.WeatherInfosPage"
+             x:Class="Thoughts.UI.MAUI.Views.BlogsPage"
              Title="{Binding Title}">
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior 
@@ -20,23 +19,23 @@
     </ContentPage.ToolbarItems>
     <HorizontalStackLayout>
         <CollectionView x:Name="weatherInfos"
-                        ItemsSource="{Binding WeatherInfos}"
+                        ItemsSource="{Binding Posts}"
                         Margin="20"
-                        SelectionMode="Single">
-            <CollectionView.ItemsLayout>
-                <GridItemsLayout Orientation="Vertical"
-                                 Span="2"
-                                 VerticalItemSpacing="10"
-                                 HorizontalItemSpacing="10"/>
-            </CollectionView.ItemsLayout>
+                        SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <VerticalStackLayout>
-                        <Label Text="{Binding Summary}"
+                        <Label x:Name="TitleLabel" Text="{Binding Title}"
+                            FontSize="18"
+                            FontAttributes="Bold"
                             VerticalTextAlignment="Center"/>
-                        <Label Text="{Binding Temperature}"
-                            VerticalTextAlignment="Center"/>
-                        <Label Text="{Binding Date}"
+                        <Label x:Name="DateLabel" Text="{Binding Date}"
+                            VerticalTextAlignment="Center"
+                            LineBreakMode="WordWrap"/>
+                        <Label Text="{Binding Body}"
+                               LineBreakMode="WordWrap"
+                               HorizontalOptions="Center"/>
+                        <Label x:Name="NickNameLabel" Text="{Binding User.NickName}"
                             VerticalTextAlignment="Center"/>
                     </VerticalStackLayout>
                 </DataTemplate>

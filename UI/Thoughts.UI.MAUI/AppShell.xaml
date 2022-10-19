@@ -16,6 +16,11 @@
             Title="Weathers"
             ContentTemplate="{DataTemplate views:WeatherInfosPage}"
             Route="WeatherInfosPage" />
+        
+        <ShellContent
+            Title="Blogs"
+            ContentTemplate="{DataTemplate views:BlogsPage}"
+            Route="BlogsPage" />
     </TabBar>
 
 </Shell>

@@ -2,6 +2,7 @@
 using Thoughts.UI.MAUI.Services.Interfaces;
 using Thoughts.UI.MAUI.ViewModels;
 using Thoughts.UI.MAUI.Views;
+using Thoughts.WebAPI.Clients.Blogs;
 using Thoughts.WebAPI.Clients.Test.Weather;
 
 namespace Thoughts.UI.MAUI.Services.Extensions
@@ -30,15 +31,18 @@ namespace Thoughts.UI.MAUI.Services.Extensions
             services.AddSingleton<IHttpsClientHandlerService, HttpsClientHandlerService>();
             services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI))
                 .AddTypedClient<IWeatherService, WeatherClient>()
+                .AddTypedClient<IBlogsService, BlogsClient>()
                 .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpsMessageHandler());
 #else
             webAPI = settings.DeviceWebAPI;
             services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI))
-                .AddTypedClient<IWeatherService, WeatherClient>();
+                .AddTypedClient<IWeatherService, WeatherClient>()
+                .AddTypedClient<IBlogsService, BlogsClient>();
 #endif
 
             services.AddSingleton(settings);
             services.AddScoped<IWeatherManager, WeatherManager>();
+            services.AddScoped<IBlogsManager, BlogsManager>();
 
             return services;
         }
@@ -47,6 +51,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
         {
             services.AddTransient<MainPage>();
             services.AddTransient<WeatherInfosPage>();
+            services.AddTransient<BlogsPage>();
 
             return services;
         }
@@ -55,6 +60,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
         {
             services.AddTransient<MainViewModel>();
             services.AddTransient<WeatherViewModel>();
+            services.AddTransient<BlogsViewModel>();
 
             return services;
         }

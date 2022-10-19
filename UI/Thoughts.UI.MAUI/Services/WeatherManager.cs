@@ -32,7 +32,6 @@ namespace Thoughts.UI.MAUI.Services
             return result ?? Enumerable.Empty<WeatherInfo>();
         }
 
-        public IEnumerable<WeatherInfo> GetAllInfos(CancellationToken cancellationToken = default) => 
-            GetAllInfosAsync(cancellationToken).GetAwaiter().GetResult();
+        public IEnumerable<WeatherInfo> GetAllInfos() => GetAllInfosAsync().GetAwaiter().GetResult();
     }
 }

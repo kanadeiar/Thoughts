@@ -89,6 +89,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\BlogsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\WeatherInfosPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

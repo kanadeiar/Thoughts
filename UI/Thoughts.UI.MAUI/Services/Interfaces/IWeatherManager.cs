@@ -6,6 +6,6 @@ namespace Thoughts.UI.MAUI.Services.Interfaces
     {
         Task<IEnumerable<WeatherInfo>> GetAllInfosAsync(CancellationToken cancellationToken = default);
 
-        IEnumerable<WeatherInfo> GetAllInfos(CancellationToken cancellationToken = default);
+        IEnumerable<WeatherInfo> GetAllInfos();
     }
 }
