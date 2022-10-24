@@ -201,7 +201,7 @@ public class DbRepository<T, TKey> : IRepository<T, TKey> where T : class, IEnti
     }
 }
 
-public class DbRepository<T> : DbRepository<T, int> where T : class, IEntity<int>
+public class DbRepository<T> : DbRepository<T, int>, IRepository<T> where T : class, IEntity<int>
 {
     public DbRepository(ThoughtsDB db, ILogger<DbRepository<T>> Logger) : base(db, Logger) { }
 }

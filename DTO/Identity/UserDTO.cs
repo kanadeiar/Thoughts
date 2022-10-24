@@ -1,6 +1,6 @@
 ﻿using Thoughts.DAL.Entities.Idetity;
 
-namespace DTO.Identity;
+namespace DTO.Thoughts.Identity;
 
 public abstract class UserDTO
 {

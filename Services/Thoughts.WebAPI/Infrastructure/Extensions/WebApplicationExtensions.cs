@@ -17,5 +17,11 @@ internal static class WebApplicationExtensions
         await db_initializer.InitializeAsync(
             RemoveBefore: configuration.GetValue("DbRemoveBefore", false),
             InitializeTestData: configuration.GetValue("DbInitializeTestData", false));
+
+        var dbIdentity_initializer = services.GetRequiredService<IdentityDbInitializer>();
+
+        await dbIdentity_initializer.InitializeAsync(
+            RemoveBefore: configuration.GetValue("DbRemoveBefore", false),
+            InitializeTestData: configuration.GetValue("DbInitializeTestData", false));
     }
 }
