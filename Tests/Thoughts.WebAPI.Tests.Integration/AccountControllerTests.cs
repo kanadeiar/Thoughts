@@ -1,26 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Logging;
-
-using Thoughts.WebAPI.Clients.Identity;
-using Thoughts.WebAPI.Clients.Test.Weather;
-using Thoughts.WebAPI.Controllers.Identity;
-using Moq;
-using static System.Net.WebRequestMethods;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Thoughts.DAL.Entities.Idetity;
-using Thoughts.Identity.DAL.Interfaces;
 using static WebStore.Interfaces.Services.WebAPIAddresses.Addresses.Identity;
-using System.Net.Http;
+
 using System.Net;
-using static System.Net.Mime.MediaTypeNames;
-using System.Threading.Channels;
 
 namespace Thoughts.WebAPI.Tests.Integration;
 

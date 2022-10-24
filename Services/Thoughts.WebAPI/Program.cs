@@ -13,11 +13,7 @@ using Thoughts.WebAPI.Services;
 
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.EntityFrameworkCore;
 
-using Swashbuckle.AspNetCore.SwaggerGen;
-
-using Thoughts.DAL.Sqlite;
 using Thoughts.Interfaces;
 using Thoughts.Interfaces.Base;
 using Thoughts.WebAPI.Infrastructure.Extensions;
