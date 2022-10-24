@@ -11,7 +11,6 @@ using Thoughts.DAL.SqlServer;
 using Thoughts.Services.InSQL;
 using Thoughts.WebAPI.Services;
 
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
@@ -21,8 +20,6 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Thoughts.DAL.Sqlite;
 using Thoughts.Interfaces;
 using Thoughts.Interfaces.Base;
-using Thoughts.Services.InSQL;
-using Thoughts.WebAPI;
 using Thoughts.WebAPI.Infrastructure.Extensions;
 using Thoughts.Identity.DAL;
 using Thoughts.Identity.DAL.SqlServer;
@@ -189,7 +186,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 

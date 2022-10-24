@@ -12,6 +12,9 @@
     <a class="button" asp-controller="Blog" asp-action="Index">
         Назад к ленте
     </a>
+    <a class="button" asp-controller="Blog" asp-action="Edit" asp-route-id="@Model?.Post?.Id">
+        Редактировать
+    </a>
 </div>
 
 <div class="posts">

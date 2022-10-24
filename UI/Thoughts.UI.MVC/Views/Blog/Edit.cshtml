@@ -1,3 +1,56 @@
-﻿@{
-    ViewBag.Title = "Редактор записи блога";
+﻿@model BlogDetailsWebModel
+@{
+    var exists = Model != null && Model.Post.Id != 0;
+    ViewBag.Title = (exists ? "Редактирование" : "Создание") + " поста";
+    var categories = ViewBag.Categoryes as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>();
+}
+
+<div>
+    <a class="button" asp-controller="Blog" asp-action="Details" asp-route-id="@Model?.Post?.Id">
+        Назад к посту
+    </a>
+</div>
+
+<div>
+    <form method="post" asp-controller="Blog" asp-action="Edit">
+        <input type="hidden" asp-for="Post.Id" />
+        <input type="hidden" asp-for="Post.User.Id"/>
+        <div>
+            <div class="form-group">
+                <label>Заголовок</label>
+                <input type="text" asp-for="Post.Title" />
+            </div>
+        </div>
+        <textarea asp-for="Post.Body" id="bodyEditor"></textarea>
+        <div>
+            <label>Категория</label>
+            <select asp-for="Post.Category.Name" asp-items="categories"></select>
+        </div>
+        <div class="row">
+            <button class="button p-2" type="submit">@(exists ? "Сохранить" : "Создать")</button>
+            <a class="button p-2" asp-controller="Blog" asp-action="Details" asp-route-id="@Model?.Post?.Id">
+                Отмена
+            </a>
+        </div>
+    </form>
+</div>
+
+
+@section Styles
+{
+    <style>
+        .form-groupt:first-child {
+            margin-top: 15px
+        }
+    </style>
+}
+
+@section Scripts
+{
+    <script src="~/lib/tinymce/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: '#bodyEditor'
+        });
+    </script>
 }

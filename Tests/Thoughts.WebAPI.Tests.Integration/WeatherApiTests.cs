@@ -45,6 +45,6 @@ public class WeatherApiTests
 
         var weather_client = new WeatherClient(http_client);
 
-        var weather = await weather_client.GetAll();
+        var weather = await weather_client.GetAllAsync();
     }
 }

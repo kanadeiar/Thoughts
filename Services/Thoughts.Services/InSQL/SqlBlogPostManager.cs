@@ -276,9 +276,9 @@ public class SqlBlogPostManager : IBlogPostManager
         var post = await _DB.Posts
            .Select(p => new DAL.Entities.Post { Id = p.Id })
            .FirstOrDefaultAsync(p => p.Id == PostId, Cancel).ConfigureAwait(false);
-        
+
         if (post is null || post.Tags.Count == 0) return false;
-        
+
         var tag = await _DB.Tags
            .Include(t => t.Posts)
            .FirstOrDefaultAsync(t => t.Name == Tag, Cancel);
@@ -334,18 +334,21 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <exception cref="InvalidOperationException"> Не найденный пост </exception>
     public async Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default)
     {
-        var post = await GetPostAsync(PostId, Cancel).ConfigureAwait(false);
+        var post = await _DB.Posts
+           .Include(p => p.Category)
+           .FirstAsync(p => p.Id == PostId, Cancel)
+           .ConfigureAwait(false);
 
-        if (post is null)
-            throw new InvalidOperationException($"Не найдена запись блога с id:{PostId}");
+        if (post.Category.Name == CategoryName)
+            return post.Category.CategoryToDomain();
 
-        var new_category = new Category { Name = CategoryName };
+        var category = await _DB.Categories.FirstOrDefaultAsync(c => c.Name == CategoryName, Cancel);
+        post.Category = category ?? new() { Name = CategoryName };
 
-        post.Category = new_category;   // - тут всё же не уверен
+        _DB.Update(post);
+        await _DB.SaveChangesAsync(Cancel);
 
-        await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
-
-        return post.Category!;
+        return post.Category.CategoryToDomain();
     }
 
     /// <summary> Изменение заголовка поста </summary>
@@ -355,11 +358,13 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Возврат флага результата изменения заголовка поста</returns>
     public async Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default)
     {
-        var post = await GetPostAsync(PostId, Cancel);
-
-        if (post is null) return false;
+        var post = await _DB.Posts.FindAsync(PostId).ConfigureAwait(false);
+        if (post!.Title == Title)
+            return false;
 
         post.Title = Title;
+        _DB.Update(post);
+
         await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
 
         return true;
@@ -372,12 +377,13 @@ public class SqlBlogPostManager : IBlogPostManager
     /// <returns> Возврат флага результата изменения тела поста</returns>
     public async Task<bool> ChangePostBodyAsync(int PostId, string Body, CancellationToken Cancel = default)
     {
-        var post = await GetPostAsync(PostId, Cancel);
-
-        if (post is null)
+        var post = await _DB.Posts.FindAsync(PostId).ConfigureAwait(false);
+        if (post!.Body == Body)
             return false;
 
         post.Body = Body;
+        _DB.Update(post);
+
         await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
 
         return true;

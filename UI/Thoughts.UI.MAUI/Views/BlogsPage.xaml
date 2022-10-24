@@ -1,0 +1,45 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Thoughts.UI.MAUI.Views.BlogsPage"
+             Title="{Binding Title}">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior 
+            EventName="Appearing"
+            Command="{Binding LoadDataCommand}"/>
+    </ContentPage.Behaviors>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Reload" Command="{Binding LoadDataCommand}">
+            <ToolbarItem.IconImageSource>
+                <OnPlatform x:TypeArguments="ImageSource">
+                    <On Platform="Android, WinUI, iOS" Value="refresh60.svg" />
+                </OnPlatform>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <HorizontalStackLayout>
+        <CollectionView x:Name="weatherInfos"
+                        ItemsSource="{Binding Posts}"
+                        Margin="20"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout>
+                        <Label x:Name="TitleLabel" Text="{Binding Title}"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            VerticalTextAlignment="Center"/>
+                        <Label x:Name="DateLabel" Text="{Binding Date}"
+                            VerticalTextAlignment="Center"
+                            LineBreakMode="WordWrap"/>
+                        <Label Text="{Binding Body}"
+                               LineBreakMode="WordWrap"
+                               HorizontalOptions="Center"/>
+                        <Label x:Name="NickNameLabel" Text="{Binding User.NickName}"
+                            VerticalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </HorizontalStackLayout>
+</ContentPage>
