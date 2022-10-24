@@ -57,25 +57,34 @@ public class BlogController : Controller
     public async Task<IActionResult> Edit(int id)
     {
         var post = await _postManager.GetPostAsync(id);
+        var currentUser = await _context.Users.FirstOrDefaultAsync();//TODO Get current userId from identity DB
         var model = new BlogDetailsWebModel
         {
             Post = post,
+            UserId = currentUser != null ? currentUser.Id : Guid.NewGuid().ToString() //TODO Get current userId from identity DB
         };
-        var viewModel = _mapper.Map(post, model);
+        var viewModel = _mapper.Map(post ?? new Post(), model);
         return View(viewModel);
     }
 
     [HttpPost]
     public async Task<IActionResult> Edit(BlogDetailsWebModel model, CancellationToken cancellation = default)
     {
+        var post = new Post(); 
         if (ModelState.IsValid)
         {
-            await _postManager.ChangePostTitleAsync(model.PostId, model.Title, cancellation);
-            await _postManager.ChangePostBodyAsync(model.PostId, model.Body, cancellation);
-            await _postManager.ChangePostCategoryAsync(model.PostId, model.CategoryName, cancellation);
+            if (model.PostId > 0)
+            {
+                await _postManager.ChangePostTitleAsync(model.PostId, model.Title, cancellation);
+                await _postManager.ChangePostBodyAsync(model.PostId, model.Body, cancellation);
+                await _postManager.ChangePostCategoryAsync(model.PostId, model.CategoryName, cancellation);
+                return RedirectToAction("Details", "Blog", new { Id = model.PostId });
+            }
+
+            post = await _postManager.CreatePostAsync(model.Title, model.Body, model.UserId, model.CategoryName, cancellation);
         }
 
-        return RedirectToAction("Details", "Blog", new { Id = model.PostId });
+        return RedirectToAction("Details", "Blog", new { post.Id });
     }
 
     public async Task<IActionResult> TypeaheadQuery(string query)
