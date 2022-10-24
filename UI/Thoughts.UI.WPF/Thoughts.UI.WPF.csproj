@@ -33,6 +33,9 @@
     <Page Update="Styles\Brushes\DefaultBrushes.xaml">
       <CopyToOutputDirectory></CopyToOutputDirectory>
     </Page>
+    <Page Update="Views\AccountsView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
   </ItemGroup>
 
 </Project>

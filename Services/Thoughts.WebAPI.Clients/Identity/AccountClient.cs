@@ -15,7 +15,7 @@ public class AccountClient //: BaseClient //, UsersClient, IRolesClient
     private readonly ILogger<AccountClient> _Logger;
     public HttpClient Http { get; }
 
-    public AccountClient(HttpClient Http, ILogger<AccountClient> Logger)
+    public AccountClient(HttpClient Http, ILogger<AccountClient> Logger = null)
     {
         this.Http = Http;
         _Logger = Logger;

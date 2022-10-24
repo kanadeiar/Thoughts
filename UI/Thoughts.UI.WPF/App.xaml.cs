@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Thoughts.UI.WPF.ViewModels;
+using Thoughts.WebAPI.Clients.Identity;
 
 namespace Thoughts.UI.WPF
 {
@@ -25,6 +26,7 @@ namespace Thoughts.UI.WPF
             services.AddSingleton<FilesViewModel>();
             services.AddSingleton<RecordsViewModel>();
             services.AddSingleton <MainWindowViewModel>();
+            services.AddSingleton<AccountClient>();
             
         }
     }
