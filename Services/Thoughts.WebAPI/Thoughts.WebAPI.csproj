@@ -41,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Data\Identity.DAL.SqlServer\Identity.DAL.SqlServer.csproj" />
+    <ProjectReference Include="..\..\Data\Identity.DAL.SqlServer\Thoughts.Identity.DAL.SqlServer.csproj" />
     <ProjectReference Include="..\..\Data\Thoughts.DAL.Entities\Thoughts.DAL.Entities.csproj" />
     <ProjectReference Include="..\..\Data\Thoughts.DAL.Sqlite\Thoughts.DAL.Sqlite.csproj" />
     <ProjectReference Include="..\..\Data\Thoughts.DAL.SqlServer\Thoughts.DAL.SqlServer.csproj" />

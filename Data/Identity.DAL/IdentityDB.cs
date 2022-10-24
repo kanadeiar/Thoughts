@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Thoughts.DAL.Entities.Idetity;
 
-namespace Identity.DAL
+namespace Thoughts.Identity.DAL
 {
     public class IdentityDB : IdentityDbContext<IdentUser, IdentRole, string>
     {

@@ -1,8 +1,5 @@
 ﻿using System.Text;
 
-using Identity.DAL;
-using Identity.DAL.Interfaces;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -18,9 +15,15 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 
+using Swashbuckle.AspNetCore.SwaggerGen;
+
+using Thoughts.DAL.Sqlite;
 using Thoughts.Interfaces;
 using Thoughts.Interfaces.Base;
 using Thoughts.WebAPI.Infrastructure.Extensions;
+using Thoughts.Identity.DAL;
+using Thoughts.Identity.DAL.SqlServer;
+using Thoughts.Identity.DAL.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -160,26 +163,13 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddAuthorization();
 
 services.AddScoped<ThoughtsDbInitializer>();
+services.AddScoped<IdentityDbInitializer>();
 services.AddScoped<IBlogPostManager, SqlBlogPostManager>();
 builder.Services.AddTransient<IShortUrlManager, SqlShortUrlManagerService>();
 
 var app = builder.Build();
 
 await app.InitializeDatabase();
-
-var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
-
-using (var scope = scopeFactory.CreateScope())
-{
-    var scoped_services = scope.ServiceProvider;
-
-    var identity_db = scoped_services.GetRequiredService<IdentityDB>();
-    await identity_db.Database.MigrateAsync();
-
-    var userManager            = scoped_services.GetRequiredService<UserManager<IdentUser>>();
-    var rolesManager           = scoped_services.GetRequiredService<RoleManager<IdentRole>>();
-    await IdentityDbInitializer.InitializeAsync(userManager, rolesManager);
-}
 
 var api_version_description_provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 if (app.Environment.IsDevelopment())

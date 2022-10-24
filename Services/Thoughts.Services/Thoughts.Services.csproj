@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Thoughts.Domain\Thoughts.Domain.csproj" />
-    <ProjectReference Include="..\..\Data\Identity.DAL\Identity.DAL.csproj" />
+    <ProjectReference Include="..\..\Data\Identity.DAL\Thoughts.Identity.DAL.csproj" />
     <ProjectReference Include="..\..\Common\Thoughts.Tools\Thoughts.Tools.csproj" />
     <ProjectReference Include="..\..\Data\Thoughts.DAL.Entities\Thoughts.DAL.Entities.csproj" />
     <ProjectReference Include="..\..\Data\Thoughts.DAL\Thoughts.DAL.csproj" />
