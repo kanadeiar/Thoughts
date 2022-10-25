@@ -18,7 +18,7 @@ namespace Thoughts.UI.WPF.ViewModels
 
         public FilesViewModel()
         {
-            LoadData();
+            //LoadData();
         }
 
         public void LoadData()

@@ -12,7 +12,7 @@ public class WeatherClient : IWeatherService
 
     public async Task<IEnumerable<WeatherInfo>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var result = await _Client.GetFromJsonAsync<IEnumerable<WeatherInfo>>("api/v1/weatherapi");
+        var result = await _httpClient.GetFromJsonAsync<IEnumerable<WeatherInfo>>("api/v1/weatherapi");
         return result ?? throw new InvalidOperationException("Не удалось получить данные от сервиса");
     }
 

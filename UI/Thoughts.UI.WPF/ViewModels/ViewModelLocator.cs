@@ -13,6 +13,6 @@ namespace Thoughts.UI.WPF.ViewModels
         public FilesViewModel FilesModel => App.Services.GetRequiredService<FilesViewModel>();
         public MainWindowViewModel MainWindowModel => App.Services.GetRequiredService<MainWindowViewModel>();
         public RecordsViewModel RecordsModel => App.Services.GetRequiredService<RecordsViewModel>();
-        public AccountsViewModel AccountsViewModel => App.Services.GetRequiredService<AccountsViewModel>();
+        public AccountsViewModel AccountsModel => App.Services.GetRequiredService<AccountsViewModel>();
     }
 }

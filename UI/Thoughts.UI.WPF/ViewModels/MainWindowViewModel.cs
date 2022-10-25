@@ -80,20 +80,6 @@ namespace Thoughts.UI.WPF.ViewModels
             _usersView = new UsersView();
             _CurrrentView = new RecordsView();
             _AccountView = new AccountsView();
-            _AccountClient = new AccountClient(_Http);
-
-            //try
-            //{
-            //    _AccountClient.LoginAsync("Admin", "AdPAss_123").Wait();
-            //}
-            //catch (InvalidOperationException)
-            //{
-
-            //    Console.WriteLine("Не авторизован");
-            //}
-
-            //var roles = _AccountClient.GetAllRolessAsync().Result;
-            //var users = _AccountClient.GetAllUsersAsync().Result;
         }
     }
 }

@@ -1,36 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Net.Http;
 using System.Windows.Input;
 
 using Thoughts.DAL.Entities.Idetity;
+using Thoughts.UI.WPF.Infrastructure.Commands;
 using Thoughts.UI.WPF.ViewModels.Base;
-
-using static Thoughts.UI.WPF.ViewModels.FilesViewModel;
+using Thoughts.WebAPI.Clients.Identity;
 
 namespace Thoughts.UI.WPF.ViewModels
 {
-    internal class AccountsViewModel : ViewModel
+    public class AccountsViewModel : ViewModel
     {
-        private static ObservableCollection<IdentUser> _identUserCollection = new ObservableCollection<IdentUser>();
-        private static ObservableCollection<IdentRole> _identRoleCollection = new ObservableCollection<IdentRole>();
-        public static ObservableCollection<IdentUser> IdentUserCollection
+        private static HttpClient http = new HttpClient
+        {
+            BaseAddress = new("https://localhost:5011")
+        };
+        private static AccountClient account_client = new AccountClient(http);
+
+        private ObservableCollection<IdentUser> _identUserCollection = new ObservableCollection<IdentUser>();
+        private ObservableCollection<IdentRole> _identRoleCollection = new ObservableCollection<IdentRole>();
+
+        public ObservableCollection<IdentUser> IdentUserCollection
         {
             get => _identUserCollection;
-            set 
-            { 
+            set
+            {
                 _identUserCollection = value;
+                OnPropertyChanged("IdentUserCollection");
             }
         }
-        public static ObservableCollection<IdentRole> IdentRoleCollection 
+        public ObservableCollection<IdentRole> IdentRoleCollection
         {
             get => _identRoleCollection;
             set
             {
                 _identRoleCollection = value;
+                OnPropertyChanged("IdentRoleCollection");
             }
         }
 
@@ -41,9 +47,67 @@ namespace Thoughts.UI.WPF.ViewModels
         {
             get
             {
-                return new DelegateCommand((p) =>
+                return new RelayCommand(async (p) =>
                 {
+                    await account_client.LoginAsync("Admin", "AdPAss_123");
+                }, (p) => true);
+            }
+        }
 
+        /// <summary>
+        /// Login
+        /// </summary>
+        public ICommand Logout
+        {
+            get
+            {
+                return new RelayCommand(async (p) =>
+                {
+                    await account_client.LogoutAsync();
+                }, (p) => true);
+            }
+        }
+
+        /// <summary>
+        /// Login
+        /// </summary>
+        public ICommand GetAllRoless
+        {
+            get
+            {
+                return new RelayCommand(async (p) =>
+                {
+                    var temp = await account_client.GetAllRolessAsync();
+                    if (temp is not null)
+                    {
+                        IdentRoleCollection = new ObservableCollection<IdentRole>(temp);
+                    }
+                    else 
+                    {
+                        IdentRoleCollection = new ObservableCollection<IdentRole>(); 
+                    }
+                }, (p) => true);
+            }
+        }
+
+        /// <summary>
+        /// Login
+        /// </summary>
+        public ICommand GetAllUsers
+        {
+            get
+            {
+                return new RelayCommand(async (p) =>
+                {
+                    var temp = await account_client.GetAllUsersAsync();
+                    if (temp is not null)
+                    {
+                        IdentUserCollection = new ObservableCollection<IdentUser>(temp);
+                    }
+                    else
+                    {
+                        IdentUserCollection = new ObservableCollection<IdentUser>();
+                    }
                 }, (p) => true);
             }
         }
