@@ -6,6 +6,17 @@ namespace Thoughts.UI.MAUI.ViewModels
     [QueryProperty("Post", "Post")]
     public class PostDetailsViewModel : ViewModel
     {
+        #region Constructors
+
+        public PostDetailsViewModel()
+        {
+
+        } 
+
+        #endregion
+
+        #region Bindable properties
+
         private Post _post;
 
         public Post Post
@@ -13,6 +24,8 @@ namespace Thoughts.UI.MAUI.ViewModels
             get => _post;
 
             set => Set(ref _post, value);
-        }
+        } 
+
+        #endregion
     }
 }
