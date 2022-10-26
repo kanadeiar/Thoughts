@@ -4,34 +4,46 @@ using System.Windows.Input;
 using Thoughts.Domain.Base.Entities;
 using Thoughts.UI.MAUI.Services.Interfaces;
 using Thoughts.UI.MAUI.ViewModels.Base;
+using Thoughts.UI.MAUI.Views;
 
 namespace Thoughts.UI.MAUI.ViewModels
 {
     public class BlogsViewModel : ViewModel
     {
-        private readonly IBlogsManager _blogsManager;
+        #region Fields
 
+        private readonly IBlogsManager _blogsManager; 
+
+        #endregion
+
+        #region Constructors
+
+        public BlogsViewModel(IBlogsManager blogsManager)
+        {
+            _blogsManager = blogsManager;
+        } 
+
+        #endregion
+
+        #region Bindable properties
+
+        public ObservableCollection<Post> Posts { get; } = new();
 
         private string _title = "Blogs";
 
         public string Title { get => _title; set => Set(ref _title, value); }
 
+        #endregion
+
         #region Commands
+
+        #region Refresh
 
         private ICommand _refreshCommand;
 
-        public ICommand RefreshCommand => _refreshCommand ??= new Command(RefreshData);
+        public ICommand RefreshCommand => _refreshCommand ??= new Command(RefreshDataAsync);
 
-        #endregion
-
-        public BlogsViewModel(IBlogsManager blogsManager)
-        {
-            _blogsManager = blogsManager;
-        }
-
-        public ObservableCollection<Post> Posts { get; } = new();
-
-        async void RefreshData()
+        private async void RefreshDataAsync()
         {
             Posts.Clear();
 
@@ -40,5 +52,31 @@ namespace Thoughts.UI.MAUI.ViewModels
             foreach (var post in posts)
                 Posts.Add(post);
         }
+
+        #endregion
+
+        #region Go to post details
+
+        private ICommand _goToPostDetailsCommand;
+
+        public ICommand GoToPostDetailsCommand => _goToPostDetailsCommand ??= new Command(GoToPostDetailsAsync);
+
+        private async void GoToPostDetailsAsync(object obj)
+        {
+            if (obj is null && obj is not Post)
+                return;
+
+            var post = (Post)obj;
+
+            await Shell.Current.GoToAsync($"{nameof(PostDetailsPage)}", true,
+                new Dictionary<string, object>
+                {
+                    { "Post", post}
+                });
+        }
+
+        #endregion
+
+        #endregion
     }
 }
