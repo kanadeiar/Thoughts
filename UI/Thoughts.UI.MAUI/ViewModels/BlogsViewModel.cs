@@ -75,9 +75,6 @@ namespace Thoughts.UI.MAUI.ViewModels
 
                 var posts = await _blogsManager.GetAllInfosAsync();
 
-                //for demonstrate load spinner
-                await Task.Delay(1000);
-                
                 if(posts is { Count: > 0})
                     Posts.Clear();
 

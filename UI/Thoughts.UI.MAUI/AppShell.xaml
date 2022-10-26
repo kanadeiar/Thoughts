@@ -4,23 +4,24 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:Thoughts.UI.MAUI.Views"
-    Shell.FlyoutBehavior="Disabled">
+    Shell.FlyoutBehavior="Flyout">
 
-    <TabBar>
-        <ShellContent
-            Title="Home"
-            ContentTemplate="{DataTemplate views:MainPage}"
-            Route="MainPage" />
+    <FlyoutItem Title="Home">
+            <ShellContent Title="Home"
+                          ContentTemplate="{DataTemplate views:MainPage}"
+                          Route="MainPage" />
+    </FlyoutItem>
 
-        <ShellContent
-            Title="Weathers"
-            ContentTemplate="{DataTemplate views:WeatherInfosPage}"
-            Route="WeatherInfosPage" />
-        
-        <ShellContent
-            Title="Blogs"
-            ContentTemplate="{DataTemplate views:BlogsPage}"
-            Route="BlogsPage" />
-    </TabBar>
+    <FlyoutItem Title="Weathers">
+            <ShellContent Title="Weathers"
+                          ContentTemplate="{DataTemplate views:WeatherInfosPage}"
+                          Route="WeatherInfosPage" />
+    </FlyoutItem>
 
+    <FlyoutItem Title="Blogs">
+            <ShellContent Title="Blogs"
+                          ContentTemplate="{DataTemplate views:BlogsPage}"
+                          Route="BlogsPage" />
+
+    </FlyoutItem>
 </Shell>
