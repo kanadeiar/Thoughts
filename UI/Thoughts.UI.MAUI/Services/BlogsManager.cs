@@ -17,22 +17,13 @@ namespace Thoughts.UI.MAUI.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<Post>> GetAllInfosAsync(CancellationToken cancellationToken = default)
+        public async Task<IList<Post>> GetAllInfosAsync(CancellationToken cancellationToken = default)
         {
-            var result = default(IEnumerable<Post>);
+            var posts = await _blogsService.GetAllAsync(cancellationToken).ConfigureAwait(false);
 
-            try
-            {
-                result = await _blogsService.GetAllAsync(cancellationToken).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "{Method}: {message}", nameof(GetAllInfosAsync), e.Message);
-            }
-
-            return result ?? Enumerable.Empty<Post>();
+            return posts.ToList();
         }
 
-        public IEnumerable<Post> GetAllInfos() => GetAllInfosAsync().GetAwaiter().GetResult();
+        public IList<Post> GetAllInfos() => GetAllInfosAsync().GetAwaiter().GetResult();
     }
 }
