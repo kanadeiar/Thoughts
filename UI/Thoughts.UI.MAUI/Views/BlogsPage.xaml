@@ -17,29 +17,26 @@
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
     </ContentPage.ToolbarItems>
-    <HorizontalStackLayout>
-        <CollectionView x:Name="weatherInfos"
-                        ItemsSource="{Binding Posts}"
-                        Margin="20"
-                        SelectionMode="None">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <VerticalStackLayout>
-                        <Label x:Name="TitleLabel" Text="{Binding Title}"
-                            FontSize="18"
-                            FontAttributes="Bold"
-                            VerticalTextAlignment="Center"/>
-                        <Label x:Name="DateLabel" Text="{Binding Date}"
-                            VerticalTextAlignment="Center"
-                            LineBreakMode="WordWrap"/>
-                        <Label Text="{Binding Body}"
-                               LineBreakMode="WordWrap"
-                               HorizontalOptions="Center"/>
-                        <Label x:Name="NickNameLabel" Text="{Binding User.NickName}"
-                            VerticalTextAlignment="Center"/>
-                    </VerticalStackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </HorizontalStackLayout>
+    <CollectionView x:Name="weatherInfos"
+                    ItemsSource="{Binding Posts}"
+                    Margin="20"
+                    SelectionMode="None">
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <VerticalStackLayout>
+                    <Label x:Name="TitleLabel" Text="{Binding Title}"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        VerticalTextAlignment="Center"/>
+                    <Label x:Name="DateLabel" Text="{Binding Date}"
+                        VerticalTextAlignment="Center"/>
+                    <Label Text="{Binding Body}"
+                            LineBreakMode="TailTruncation"
+                            HorizontalOptions="Center"/>
+                    <Label x:Name="NickNameLabel" Text="{Binding User.NickName}"
+                        VerticalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
 </ContentPage>
