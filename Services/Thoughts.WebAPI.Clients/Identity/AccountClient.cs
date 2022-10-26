@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Thoughts.DAL.Entities.Idetity;
 
 using static WebStore.Interfaces.Services.WebAPIAddresses.Addresses.Identity;
+using System.Threading;
 
 namespace Thoughts.WebAPI.Clients.Identity;
 
@@ -15,7 +16,7 @@ public class AccountClient //: BaseClient //, UsersClient, IRolesClient
     private readonly ILogger<AccountClient> _Logger;
     public HttpClient Http { get; }
 
-    public AccountClient(HttpClient Http, ILogger<AccountClient> Logger)
+    public AccountClient(HttpClient Http, ILogger<AccountClient> Logger = null)
     {
         this.Http = Http;
         _Logger = Logger;
@@ -70,5 +71,15 @@ public class AccountClient //: BaseClient //, UsersClient, IRolesClient
         }
         else
             throw new InvalidOperationException("Не удалось получить токен от сервера! Авторизация не выполнена.");
+    }
+
+    public async Task LogoutAsync(CancellationToken Cancel = default)
+    {
+        var response = await Http.PostAsJsonAsync($"{Accounts}/Logout", Cancel).ConfigureAwait(false);
+
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            Http.DefaultRequestHeaders.Authorization = null;
+        }
     }
 }

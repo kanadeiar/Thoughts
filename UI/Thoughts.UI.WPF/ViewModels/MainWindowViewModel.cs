@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
+using Microsoft.Extensions.Logging;
+
 using Thoughts.UI.WPF.Infrastructure.Commands;
 using Thoughts.UI.WPF.ViewModels.Base;
 using Thoughts.UI.WPF.Views;
+using Thoughts.WebAPI.Clients.Identity;
 
 namespace Thoughts.UI.WPF.ViewModels
 {
@@ -20,6 +24,12 @@ namespace Thoughts.UI.WPF.ViewModels
         private FilesView _filesView;
         private UsersView _usersView;
         private object _CurrrentView;
+        private AccountsView _AccountView;
+        private AccountClient _AccountClient;
+        private HttpClient _Http = new HttpClient
+        {
+            BaseAddress = new("https://localhost:5011")
+        };
 
 
         public object CurrentView
@@ -54,6 +64,12 @@ namespace Thoughts.UI.WPF.ViewModels
         private bool CanUsersButtonCheckedCommandExecute(object? p) => true;
         private void OnUsersButtonCheckedCommand(object? p) => CurrentView = _usersView;
 
+
+        private ICommand _AccountsButtonCheckedCommand;
+        public ICommand AccountsButtonCheckedCommand => _AccountsButtonCheckedCommand ?? new RelayCommand(OnAccountsButtonCheckedCommand, CanAccountsButtonCheckedCommandExecute);
+        private bool CanAccountsButtonCheckedCommandExecute(object? p) => true;
+        private void OnAccountsButtonCheckedCommand(object? p) => CurrentView = _AccountView;
+
         #endregion
 
 
@@ -63,6 +79,7 @@ namespace Thoughts.UI.WPF.ViewModels
             _filesView = new FilesView();
             _usersView = new UsersView();
             _CurrrentView = new RecordsView();
+            _AccountView = new AccountsView();
         }
     }
 }
