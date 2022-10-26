@@ -43,6 +43,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
             services.AddSingleton(settings);
             services.AddSingleton<IWeatherManager, WeatherManager>();
             services.AddSingleton<IBlogsManager, BlogsManager>();
+            services.AddSingleton<IConnectivity>(Connectivity.Current);
 
             return services;
         }

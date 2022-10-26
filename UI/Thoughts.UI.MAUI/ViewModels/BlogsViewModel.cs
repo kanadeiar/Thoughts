@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 
+using Microsoft.Extensions.Logging;
+
 using Thoughts.Domain.Base.Entities;
 using Thoughts.UI.MAUI.Services.Interfaces;
 using Thoughts.UI.MAUI.ViewModels.Base;
@@ -12,15 +14,23 @@ namespace Thoughts.UI.MAUI.ViewModels
     {
         #region Fields
 
-        private readonly IBlogsManager _blogsManager; 
+        private readonly IBlogsManager _blogsManager;
+        private readonly IConnectivity _connectivity;
+        private readonly ILogger<BlogsViewModel> _logger;
 
         #endregion
 
         #region Constructors
 
-        public BlogsViewModel(IBlogsManager blogsManager)
+        public BlogsViewModel(IBlogsManager blogsManager, 
+            IConnectivity connectivity, 
+            ILogger<BlogsViewModel> logger)
         {
             _blogsManager = blogsManager;
+            _connectivity = connectivity;
+            _logger = logger;
+
+            Title = "Blogs";
         } 
 
         #endregion
@@ -29,9 +39,13 @@ namespace Thoughts.UI.MAUI.ViewModels
 
         public ObservableCollection<Post> Posts { get; } = new();
 
-        private string _title = "Blogs";
+        private bool _isRefresh;
 
-        public string Title { get => _title; set => Set(ref _title, value); }
+        public bool IsRefreshing
+        {
+            get => _isRefresh;
+            set => Set(ref _isRefresh, value);
+        }
 
         #endregion
 
@@ -45,12 +59,42 @@ namespace Thoughts.UI.MAUI.ViewModels
 
         private async void RefreshDataAsync()
         {
-            Posts.Clear();
+            if (IsBusy)
+                return;
 
-            var posts = await _blogsManager.GetAllInfosAsync();
+            try
+            {
+                if(_connectivity.NetworkAccess != NetworkAccess.Internet)
+                {
+                    _logger.LogError("{Method}: {message}", nameof(RefreshDataAsync), "Check your internet connection");
+                    await Shell.Current.DisplayAlert("Internet connection failed!",
+                        $"Unable to get blogs: Check your internet connection", "OK");
+                }
 
-            foreach (var post in posts)
-                Posts.Add(post);
+                IsBusy = true;
+
+                var posts = await _blogsManager.GetAllInfosAsync();
+
+                //for demonstrate load spinner
+                await Task.Delay(1000);
+                
+                if(posts is { Count: > 0})
+                    Posts.Clear();
+
+                foreach (var post in posts)
+                    Posts.Add(post);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Method}: {message}", nameof(RefreshDataAsync), ex.Message);
+                await Shell.Current.DisplayAlert("Error!",
+                    $"Unable to get blogs: {ex.Message}", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+                IsRefreshing = false;
+            }
         }
 
         #endregion

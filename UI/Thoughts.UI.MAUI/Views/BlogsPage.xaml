@@ -12,7 +12,9 @@
             Command="{Binding RefreshCommand}"/>
     </ContentPage.Behaviors>
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Reload" Command="{Binding RefreshCommand}">
+        <ToolbarItem Text="Reload" 
+                     Command="{Binding RefreshCommand}"
+                     IsEnabled="{Binding IsNotBusy}">
             <ToolbarItem.IconImageSource>
                 <OnPlatform x:TypeArguments="ImageSource">
                     <On Platform="Android, WinUI, iOS" Value="refresh60.svg" />
@@ -20,32 +22,41 @@
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
     </ContentPage.ToolbarItems>
-    <CollectionView IsVisible="{Binding IsNotBusy}"
+    <Grid Padding="15">
+        <RefreshView Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView Background="Transparent"
                     ItemsSource="{Binding Posts}"
                     SelectionMode="None">
-        <CollectionView.ItemTemplate>
-            <DataTemplate x:DataType="model:Post">
-                <Frame Margin="5" Padding="15">
-                    <Frame.GestureRecognizers>
-                        <TapGestureRecognizer 
-                            Command="{Binding GoToPostDetailsCommand, Source={RelativeSource AncestorType={x:Type vm:BlogsViewModel}}}"
-                            CommandParameter="{Binding .}"/>
-                    </Frame.GestureRecognizers>
-                    <VerticalStackLayout Spacing="5">
-                        <Label x:Name="TitleLabel" Text="{Binding Title}"
-                        FontSize="18"
-                        FontAttributes="Bold"
-                        VerticalTextAlignment="Center"/>
-                        <Label x:Name="DateLabel" Text="{Binding Date}"
-                        VerticalTextAlignment="Center"/>
-                        <Label Text="{Binding Body}"
-                            LineBreakMode="TailTruncation"
-                            HorizontalOptions="Center"/>
-                        <Label x:Name="NickNameLabel" Text="{Binding User.NickName}"
-                        VerticalTextAlignment="Center"/>
-                    </VerticalStackLayout>
-                </Frame>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:Post">
+                        <Frame Margin="5" Padding="15">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer CommandParameter="{Binding .}"
+                                Command="{Binding GoToPostDetailsCommand, Source={RelativeSource AncestorType={x:Type vm:BlogsViewModel}}}" />
+                            </Frame.GestureRecognizers>
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="{Binding Title}"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"/>
+                                <Label Text="{Binding Date}"
+                                   VerticalTextAlignment="Center"/>
+                                <Label Text="{Binding Body}"
+                                   LineBreakMode="TailTruncation"
+                                   HorizontalOptions="Center"/>
+                                <Label Text="{Binding User.NickName}"
+                                   VerticalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <ActivityIndicator IsVisible="{Binding IsBusy}"
+                           IsRunning="{Binding IsBusy}"
+                           HorizontalOptions="FillAndExpand"
+                           VerticalOptions="CenterAndExpand"/>
+    </Grid>
 </ContentPage>
