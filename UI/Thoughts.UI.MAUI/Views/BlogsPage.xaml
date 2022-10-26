@@ -6,10 +6,10 @@
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior 
             EventName="Appearing"
-            Command="{Binding LoadDataCommand}"/>
+            Command="{Binding RefreshCommand}"/>
     </ContentPage.Behaviors>
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Reload" Command="{Binding LoadDataCommand}">
+        <ToolbarItem Text="Reload" Command="{Binding RefreshCommand}">
             <ToolbarItem.IconImageSource>
                 <OnPlatform x:TypeArguments="ImageSource">
                     <On Platform="Android, WinUI, iOS" Value="refresh60.svg" />
@@ -23,19 +23,21 @@
                     SelectionMode="None">
         <CollectionView.ItemTemplate>
             <DataTemplate>
-                <VerticalStackLayout>
-                    <Label x:Name="TitleLabel" Text="{Binding Title}"
+                <Frame Margin="5" Padding="15">
+                    <VerticalStackLayout Spacing="5">
+                        <Label x:Name="TitleLabel" Text="{Binding Title}"
                         FontSize="18"
                         FontAttributes="Bold"
                         VerticalTextAlignment="Center"/>
-                    <Label x:Name="DateLabel" Text="{Binding Date}"
+                        <Label x:Name="DateLabel" Text="{Binding Date}"
                         VerticalTextAlignment="Center"/>
-                    <Label Text="{Binding Body}"
+                        <Label Text="{Binding Body}"
                             LineBreakMode="TailTruncation"
                             HorizontalOptions="Center"/>
-                    <Label x:Name="NickNameLabel" Text="{Binding User.NickName}"
+                        <Label x:Name="NickNameLabel" Text="{Binding User.NickName}"
                         VerticalTextAlignment="Center"/>
-                </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
             </DataTemplate>
         </CollectionView.ItemTemplate>
     </CollectionView>

@@ -18,9 +18,9 @@ namespace Thoughts.UI.MAUI.ViewModels
 
         #region Commands
 
-        private ICommand _loadDataCommand;
+        private ICommand _refreshCommand;
 
-        public ICommand LoadDataCommand => _loadDataCommand ??= new Command(LoadData);
+        public ICommand RefreshCommand => _refreshCommand ??= new Command(RefreshData);
 
         #endregion
 
@@ -31,7 +31,7 @@ namespace Thoughts.UI.MAUI.ViewModels
 
         public ObservableCollection<Post> Posts { get; } = new();
 
-        async void LoadData()
+        async void RefreshData()
         {
             Posts.Clear();
 
