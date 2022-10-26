@@ -30,5 +30,38 @@ namespace Thoughts.UI.MAUI.ViewModels.Base
             OnPropertyChanged(propertyName);
             return true;
         }
+
+        #region Bindable properties
+
+        private string _title;
+
+        public string Title
+        {
+            get => _title;
+
+            set => Set(ref _title, value);
+        }
+
+        private bool _isBusy;
+
+        public bool IsBusy
+        {
+            get => _isBusy;
+
+            set
+            {
+                if (_isBusy == value)
+                    return;
+
+                _isBusy = value;
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsNotBusy));
+            }
+        } 
+
+        public bool IsNotBusy => !IsBusy;
+
+        #endregion
     }
 }
