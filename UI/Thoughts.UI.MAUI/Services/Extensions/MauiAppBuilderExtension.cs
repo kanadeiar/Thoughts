@@ -41,26 +41,31 @@ namespace Thoughts.UI.MAUI.Services.Extensions
 #endif
 
             services.AddSingleton(settings);
-            services.AddScoped<IWeatherManager, WeatherManager>();
-            services.AddScoped<IBlogsManager, BlogsManager>();
+            services.AddSingleton<IWeatherManager, WeatherManager>();
+            services.AddSingleton<IBlogsManager, BlogsManager>();
+            services.AddSingleton<IConnectivity>(Connectivity.Current);
 
             return services;
         }
 
         public static IServiceCollection AddMAUIViews(this IServiceCollection services)
         {
-            services.AddTransient<MainPage>();
-            services.AddTransient<WeatherInfosPage>();
-            services.AddTransient<BlogsPage>();
+            services.AddSingleton<MainPage>();
+            services.AddSingleton<WeatherInfosPage>();
+            services.AddSingleton<BlogsPage>();
+
+            services.AddTransient<PostDetailsPage>();
 
             return services;
         }
 
         public static IServiceCollection AddMAUIViewModels(this IServiceCollection services)
         {
-            services.AddTransient<MainViewModel>();
-            services.AddTransient<WeatherViewModel>();
-            services.AddTransient<BlogsViewModel>();
+            services.AddSingleton<MainViewModel>();
+            services.AddSingleton<WeatherViewModel>();
+            services.AddSingleton<BlogsViewModel>();
+
+            services.AddTransient<PostDetailsViewModel>();
 
             return services;
         }

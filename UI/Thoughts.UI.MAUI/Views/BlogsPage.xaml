@@ -1,15 +1,20 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:Thoughts.UI.MAUI.ViewModels"
+             xmlns:model="clr-namespace:Thoughts.Domain.Base.Entities;assembly=Thoughts.Domain.Base"
+             x:DataType="vm:BlogsViewModel"
              x:Class="Thoughts.UI.MAUI.Views.BlogsPage"
              Title="{Binding Title}">
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior 
-            EventName="Appearing"
-            Command="{Binding LoadDataCommand}"/>
+            EventName="NavigatedTo"
+            Command="{Binding RefreshCommand}"/>
     </ContentPage.Behaviors>
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Reload" Command="{Binding LoadDataCommand}">
+        <ToolbarItem Text="Reload" 
+                     Command="{Binding RefreshCommand}"
+                     IsEnabled="{Binding IsNotBusy}">
             <ToolbarItem.IconImageSource>
                 <OnPlatform x:TypeArguments="ImageSource">
                     <On Platform="Android, WinUI, iOS" Value="refresh60.svg" />
@@ -17,29 +22,41 @@
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
     </ContentPage.ToolbarItems>
-    <HorizontalStackLayout>
-        <CollectionView x:Name="weatherInfos"
-                        ItemsSource="{Binding Posts}"
-                        Margin="20"
-                        SelectionMode="None">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <VerticalStackLayout>
-                        <Label x:Name="TitleLabel" Text="{Binding Title}"
-                            FontSize="18"
-                            FontAttributes="Bold"
-                            VerticalTextAlignment="Center"/>
-                        <Label x:Name="DateLabel" Text="{Binding Date}"
-                            VerticalTextAlignment="Center"
-                            LineBreakMode="WordWrap"/>
-                        <Label Text="{Binding Body}"
-                               LineBreakMode="WordWrap"
-                               HorizontalOptions="Center"/>
-                        <Label x:Name="NickNameLabel" Text="{Binding User.NickName}"
-                            VerticalTextAlignment="Center"/>
-                    </VerticalStackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </HorizontalStackLayout>
+    <Grid Padding="15">
+        <RefreshView Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView Background="Transparent"
+                    ItemsSource="{Binding Posts}"
+                    SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:Post">
+                        <Frame Margin="5" Padding="15">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer CommandParameter="{Binding .}"
+                                Command="{Binding GoToPostDetailsCommand, Source={RelativeSource AncestorType={x:Type vm:BlogsViewModel}}}" />
+                            </Frame.GestureRecognizers>
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="{Binding Title}"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"/>
+                                <Label Text="{Binding Date}"
+                                   VerticalTextAlignment="Center"/>
+                                <Label Text="{Binding Body}"
+                                   LineBreakMode="TailTruncation"
+                                   HorizontalOptions="Center"/>
+                                <Label Text="{Binding User.NickName}"
+                                   VerticalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <ActivityIndicator IsVisible="{Binding IsBusy}"
+                           IsRunning="{Binding IsBusy}"
+                           HorizontalOptions="FillAndExpand"
+                           VerticalOptions="CenterAndExpand"/>
+    </Grid>
 </ContentPage>
