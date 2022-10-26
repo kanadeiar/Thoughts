@@ -1,5 +1,6 @@
 ﻿using DTO.Identity;
 using DTO.Thoughts.Identity;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
