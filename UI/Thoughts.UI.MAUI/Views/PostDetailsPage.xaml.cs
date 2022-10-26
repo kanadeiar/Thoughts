@@ -9,4 +9,9 @@ public partial class PostDetailsPage : ContentPage
 		InitializeComponent();
         BindingContext = postDetailsViewModel;
     }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+    }
 }

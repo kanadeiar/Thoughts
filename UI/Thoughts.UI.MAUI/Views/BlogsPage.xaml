@@ -20,9 +20,8 @@
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
     </ContentPage.ToolbarItems>
-    <CollectionView x:Name="weatherInfos"
+    <CollectionView IsVisible="{Binding IsNotBusy}"
                     ItemsSource="{Binding Posts}"
-                    Margin="20"
                     SelectionMode="None">
         <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="model:Post">
