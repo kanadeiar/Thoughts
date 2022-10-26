@@ -25,11 +25,6 @@ namespace Thoughts.UI.WPF.ViewModels
         private UsersView _usersView;
         private object _CurrrentView;
         private AccountsView _AccountView;
-        private AccountClient _AccountClient;
-        private HttpClient _Http = new HttpClient
-        {
-            BaseAddress = new("https://localhost:5011")
-        };
 
 
         public object CurrentView
@@ -44,14 +39,14 @@ namespace Thoughts.UI.WPF.ViewModels
 
         #region Commands
 
-        private ICommand _RecordsButtonCheckedCommand;
+        private ICommand? _RecordsButtonCheckedCommand;
         public ICommand RecordButtonCheckedCommand => _RecordsButtonCheckedCommand ?? new RelayCommand(OnRecordsButtonCheckedCommand, CanRecordsButtonCheckedCommandExecute);
 
         private bool CanRecordsButtonCheckedCommandExecute(object? p) => true;
 
         private void OnRecordsButtonCheckedCommand(object? p) => CurrentView = _recordsView;
 
-        private ICommand _FilesButtonCheckedCommand;
+        private ICommand? _FilesButtonCheckedCommand;
         public ICommand FilesButtonCheckedCommand => _FilesButtonCheckedCommand ?? new RelayCommand(OnFilesButtonCheckedCommand, CanFilesButtonCheckedCommandExecute);
 
         private bool CanFilesButtonCheckedCommandExecute(object? p) => true;
@@ -59,13 +54,13 @@ namespace Thoughts.UI.WPF.ViewModels
         private void OnFilesButtonCheckedCommand(object? p) => CurrentView = _filesView;
 
 
-        private ICommand _UsersButtonCheckedCommand;
+        private ICommand? _UsersButtonCheckedCommand;
         public ICommand UsersButtonCheckedCommand => _UsersButtonCheckedCommand ?? new RelayCommand(OnUsersButtonCheckedCommand, CanUsersButtonCheckedCommandExecute);
         private bool CanUsersButtonCheckedCommandExecute(object? p) => true;
         private void OnUsersButtonCheckedCommand(object? p) => CurrentView = _usersView;
 
 
-        private ICommand _AccountsButtonCheckedCommand;
+        private ICommand? _AccountsButtonCheckedCommand;
         public ICommand AccountsButtonCheckedCommand => _AccountsButtonCheckedCommand ?? new RelayCommand(OnAccountsButtonCheckedCommand, CanAccountsButtonCheckedCommandExecute);
         private bool CanAccountsButtonCheckedCommandExecute(object? p) => true;
         private void OnAccountsButtonCheckedCommand(object? p) => CurrentView = _AccountView;
