@@ -1,5 +1,9 @@
+using Microsoft.AspNetCore.Identity;
+
+using Thoughts.DAL.Entities.Idetity;
 using Thoughts.Identity.DAL.SqlServer;
 using Thoughts.Extensions.Maps;
+using Thoughts.Identity.DAL;
 using Thoughts.Interfaces.Base;
 using Thoughts.Interfaces.Base.Repositories;
 using Thoughts.Services;
@@ -44,6 +48,10 @@ switch (db_type)
         break;
 }
 services.AddIdentityDBSqlServer(configuration.GetConnectionString("IdentitySqlServer"));
+
+services.AddIdentity<IdentUser, IdentRole>()
+   .AddEntityFrameworkStores<IdentityDB>()
+   .AddDefaultTokenProviders();
 
 services.AddTransient<ThoughtsDbInitializer>();
 services.AddTransient<IdentityDbInitializer>();
