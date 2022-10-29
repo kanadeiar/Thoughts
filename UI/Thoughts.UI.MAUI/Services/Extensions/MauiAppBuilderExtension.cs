@@ -22,28 +22,40 @@ namespace Thoughts.UI.MAUI.Services.Extensions
         {
             var settings = configuration.GetSection(nameof(AppSettings)).Get<AppSettings>();
             var webAPI = string.Empty;
+            var mvcWebApi = string.Empty;
 
 #if DEBUG
             webAPI = DeviceInfo.Platform == DevicePlatform.Android
                 ? settings.DebugWebAPIAndroid
                 : settings.DebugWebAPI;
 
+            mvcWebApi = DeviceInfo.Platform == DevicePlatform.Android
+                ? settings.DebugMvcWebAPIAndroid
+                : settings.DebugMvcWebAPI;
+
             services.AddSingleton<IHttpsClientHandlerService, HttpsClientHandlerService>();
+
             services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI))
                 .AddTypedClient<IWeatherService, WeatherClient>()
                 .AddTypedClient<IBlogsService, BlogsClient>()
+                .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpsMessageHandler());
+
+            services.AddHttpClient("MvcWebAPI", client => client.BaseAddress = new Uri(mvcWebApi))
                 .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpsMessageHandler());
 #else
             webAPI = settings.DeviceWebAPI;
             services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI))
                 .AddTypedClient<IWeatherService, WeatherClient>()
                 .AddTypedClient<IBlogsService, BlogsClient>();
+
+            mvcWebApi = settings.DeviceMvcWebAPI;
+            services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(mvcWebApi));
 #endif
 
             services.AddSingleton(settings);
             services.AddSingleton<IWeatherManager, WeatherManager>();
             services.AddSingleton<IBlogsManager, BlogsManager>();
-            services.AddSingleton<IConnectivity>(Connectivity.Current);
+            services.AddSingleton(Connectivity.Current);
 
             return services;
         }
