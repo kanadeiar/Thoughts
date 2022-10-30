@@ -4,12 +4,12 @@ using Thoughts.Interfaces.Base;
 
 namespace Thoughts.WebAPI.Clients.Files
 {
-    public class FilesClient : IFilesService
+    public class FileClient : IFileService
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<FilesClient> _logger;
+        private readonly ILogger<FileClient> _logger;
 
-        public FilesClient(HttpClient httpClient, ILogger<FilesClient> logger)
+        public FileClient(HttpClient httpClient, ILogger<FileClient> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
@@ -17,9 +17,9 @@ namespace Thoughts.WebAPI.Clients.Files
 
         public async Task<bool> UploadFileAsync(Stream stream, CancellationToken token = default)
         {
-            var content = new StreamContent(stream);    
+            var content = new StreamContent(stream);
 
-            var response = await _httpClient.PostAsync($"{WebApiControllersPath.FilesUrl}/upload", content, token);
+            var response = await _httpClient.PostAsync($"{WebApiControllersPath.FileUrl}/upload", content, token);
 
             return response.IsSuccessStatusCode;
         }

@@ -1,6 +1,6 @@
 ﻿namespace Thoughts.WebAPI.Clients.Files
 {
-    public interface IFilesService
+    public interface IFileService
     {
         Task<bool> UploadFileAsync(Stream stream, CancellationToken token = default);
 
