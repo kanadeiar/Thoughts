@@ -10,5 +10,6 @@ namespace Thoughts.Interfaces.Base
     {
         public const string ShortUrl = "api/url";
         public const string BlogsUrl = "v1/blogs";
+        public const string FilesUrl = "fileapi/";
     }
 }
