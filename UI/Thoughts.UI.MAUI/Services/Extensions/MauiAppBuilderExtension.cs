@@ -3,6 +3,7 @@ using Thoughts.UI.MAUI.Services.Interfaces;
 using Thoughts.UI.MAUI.ViewModels;
 using Thoughts.UI.MAUI.Views;
 using Thoughts.WebAPI.Clients.Blogs;
+using Thoughts.WebAPI.Clients.Files;
 using Thoughts.WebAPI.Clients.Test.Weather;
 
 namespace Thoughts.UI.MAUI.Services.Extensions
@@ -41,6 +42,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
                 .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpsMessageHandler());
 
             services.AddHttpClient("MvcWebAPI", client => client.BaseAddress = new Uri(mvcWebApi))
+                .AddTypedClient<IFilesService, FilesClient>()
                 .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpsMessageHandler());
 #else
             webAPI = settings.DeviceWebAPI;
@@ -49,7 +51,8 @@ namespace Thoughts.UI.MAUI.Services.Extensions
                 .AddTypedClient<IBlogsService, BlogsClient>();
 
             mvcWebApi = settings.DeviceMvcWebAPI;
-            services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(mvcWebApi));
+            services.AddHttpClient("MvcWebAPI", client => client.BaseAddress = new Uri(mvcWebApi))
+                .AddTypedClient<IFilesService, FilesClient>();
 #endif
 
             services.AddSingleton(settings);
