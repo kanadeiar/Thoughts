@@ -6,8 +6,15 @@
              x:DataType="vm:FileViewModel"
              Title="{Binding Title}">
     <Grid>
-        <Button Text="Загрузить"
+        <Button Margin="50"
+                Text="Загрузить"
                 VerticalOptions="EndAndExpand"
+                IsEnabled="{Binding IsNotBusy}"
                 Command="{Binding UploadFileCommand}"/>
+
+        <ActivityIndicator IsVisible="{Binding IsBusy}"
+                           IsRunning="{Binding IsBusy}"
+                           HorizontalOptions="FillAndExpand"
+                           VerticalOptions="CenterAndExpand"/>
     </Grid>
 </ContentPage>

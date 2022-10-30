@@ -1,8 +1,6 @@
 ﻿using System.Windows.Input;
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Storage;
 
 using Thoughts.UI.MAUI.Services.Interfaces;
 using Thoughts.UI.MAUI.ViewModels.Base;
@@ -17,6 +15,8 @@ namespace Thoughts.UI.MAUI.ViewModels
         private readonly IConnectivity _connectivity;
         private readonly ILogger<FileViewModel> _logger;
 
+        private readonly PickOptions _pickOptions;
+
         #endregion
 
         #region Constructors
@@ -30,6 +30,12 @@ namespace Thoughts.UI.MAUI.ViewModels
             _logger = logger;
 
             Title = "Файлы";
+
+            _pickOptions = new PickOptions
+            {
+                PickerTitle = "Выберите файл",
+                FileTypes = FilePickerFileType.Images
+            };
         }
 
         #endregion
@@ -54,13 +60,21 @@ namespace Thoughts.UI.MAUI.ViewModels
                     await Shell.Current.DisplayAlert("Internet connection failed!",
                         $"Unable to upload file: Check your internet connection", "OK");
                 }
+
                 IsBusy = true;
 
-                var file = await FilePicker.Default.PickAsync(PickOptions.Images);
+                var file = await FilePicker.Default.PickAsync(_pickOptions);
 
                 if (file is null) return;
 
                 var result = await _fileManager.UploadFileAsync(file);
+
+                _logger?.LogInformation("{Method}: upload is {success}", nameof(OnUploadFileAsync), result);
+
+                var message = result ? "успешно" : "с ошибкой";
+
+                await Shell.Current.DisplayAlert("Загрузка", 
+                    $"Загрузка завершилась {message}", "OK");
             }
             catch (Exception ex)
             {

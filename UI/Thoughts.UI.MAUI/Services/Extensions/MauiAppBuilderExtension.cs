@@ -44,7 +44,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
                 .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpsMessageHandler());
 
             services.AddHttpClient("MvcWebAPI", client => client.BaseAddress = new Uri(mvcWebApi))
-                .AddTypedClient<IFilesService, FilesClient>()
+                .AddTypedClient<IFileService, FileClient>()
                 .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpsMessageHandler());
 #else
             webAPI = settings.DeviceWebAPI;
