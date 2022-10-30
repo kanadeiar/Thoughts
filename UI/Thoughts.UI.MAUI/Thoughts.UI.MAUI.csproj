@@ -97,10 +97,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\FilePage.xaml.cs">
+      <DependentUpon>FilePage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <MauiXaml Update="Views\BlogsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Views\FilesPage.xaml">
+    <MauiXaml Update="Views\FilePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Views\PostDetailsPage.xaml">

@@ -24,13 +24,13 @@ namespace Thoughts.UI.MAUI.ViewModels
 
         public BlogsViewModel(IBlogsManager blogsManager, 
             IConnectivity connectivity, 
-            ILogger<BlogsViewModel> logger)
+            ILogger<BlogsViewModel> logger = default)
         {
             _blogsManager = blogsManager;
             _connectivity = connectivity;
             _logger = logger;
 
-            Title = "Blogs";
+            Title = "Блоги";
         } 
 
         #endregion
@@ -66,7 +66,7 @@ namespace Thoughts.UI.MAUI.ViewModels
             {
                 if(_connectivity.NetworkAccess != NetworkAccess.Internet)
                 {
-                    _logger.LogError("{Method}: {message}", nameof(RefreshDataAsync), "Check your internet connection");
+                    _logger?.LogError("{Method}: {message}", nameof(RefreshDataAsync), "Check your internet connection");
                     await Shell.Current.DisplayAlert("Internet connection failed!",
                         $"Unable to get blogs: Check your internet connection", "OK");
                 }
@@ -83,7 +83,7 @@ namespace Thoughts.UI.MAUI.ViewModels
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Method}: {message}", nameof(RefreshDataAsync), ex.Message);
+                _logger?.LogError(ex, "{Method}: {message}", nameof(RefreshDataAsync), ex.Message);
                 await Shell.Current.DisplayAlert("Error!",
                     $"Unable to get blogs: {ex.Message}", "OK");
             }

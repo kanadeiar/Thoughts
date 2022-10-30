@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using CommunityToolkit.Maui;
+
+using Microsoft.Extensions.Configuration;
 using Thoughts.UI.MAUI.Services.Interfaces;
 using Thoughts.UI.MAUI.ViewModels;
 using Thoughts.UI.MAUI.Views;
@@ -13,8 +15,8 @@ namespace Thoughts.UI.MAUI.Services.Extensions
         public static MauiAppBuilder AddMAUIServices(this MauiAppBuilder builder)
         {
             builder.Services.AddMAUIServices(builder.Configuration);
-            builder.Services.AddMAUIViews();
             builder.Services.AddMAUIViewModels();
+            builder.Services.AddMAUIViews();
 
             return builder;
         }
@@ -58,6 +60,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
             services.AddSingleton(settings);
             services.AddSingleton<IWeatherManager, WeatherManager>();
             services.AddSingleton<IBlogsManager, BlogsManager>();
+            services.AddSingleton<IFileManager, FileManager>();
             services.AddSingleton(Connectivity.Current);
 
             return services;
@@ -68,6 +71,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
             services.AddSingleton<MainPage>();
             services.AddSingleton<WeatherInfosPage>();
             services.AddSingleton<BlogsPage>();
+            services.AddSingleton<FilePage>();
 
             services.AddTransient<PostDetailsPage>();
 
@@ -79,6 +83,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<WeatherViewModel>();
             services.AddSingleton<BlogsViewModel>();
+            services.AddSingleton<FileViewModel>();
 
             services.AddTransient<PostDetailsViewModel>();
 

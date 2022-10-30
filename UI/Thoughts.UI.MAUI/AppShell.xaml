@@ -27,8 +27,8 @@
 
     <FlyoutItem Title="Файлы">
         <ShellContent Title="Файлы"
-                      ContentTemplate="{DataTemplate views:FilesPage}"
-                      Route="FilesPage" />
+                      ContentTemplate="{DataTemplate views:FilePage}"
+                      Route="FilePage" />
 
     </FlyoutItem>
 </Shell>
