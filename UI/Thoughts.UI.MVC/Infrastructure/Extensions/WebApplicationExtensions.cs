@@ -1,4 +1,6 @@
-﻿namespace Thoughts.UI.MVC.Infrastructure.Extensions;
+﻿using Thoughts.DAL;
+
+namespace Thoughts.UI.MVC.Infrastructure.Extensions;
 
 internal static class WebApplicationExtensions
 {
@@ -15,5 +17,10 @@ internal static class WebApplicationExtensions
         await db_initializer.InitializeAsync(
             RemoveBefore: configuration.GetValue("DbRemoveBefore", false),
             InitializeTestData: configuration.GetValue("DbInitializeTestData", false));
+
+        await using var fileDb = services.GetRequiredService<FileStorageDb>();
+
+        if((await fileDb.Database.GetPendingMigrationsAsync()).Any())
+            await fileDb.Database.MigrateAsync();
     }
 }
