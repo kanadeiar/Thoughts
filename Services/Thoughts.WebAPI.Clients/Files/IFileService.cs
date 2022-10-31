@@ -2,8 +2,8 @@
 {
     public interface IFileService
     {
-        Task<bool> UploadFileAsync(Stream stream, CancellationToken token = default);
+        Task<bool> UploadFileAsync(Stream stream, string fileName, string contentType, CancellationToken token = default);
 
-        bool UploadFile(Stream stream);
+        bool UploadFile(Stream stream, string fileName, string contentType);
     }
 }

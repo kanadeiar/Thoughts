@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Net.Http.Headers;
+
+using Microsoft.Extensions.Logging;
 
 using Thoughts.Interfaces.Base;
 
@@ -15,15 +17,19 @@ namespace Thoughts.WebAPI.Clients.Files
             _logger = logger;
         }
 
-        public async Task<bool> UploadFileAsync(Stream stream, CancellationToken token = default)
+        public async Task<bool> UploadFileAsync(Stream stream, string fileName, string contentType, CancellationToken token = default)
         {
-            var content = new StreamContent(stream);
+            var streamContent = new StreamContent(stream);
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
 
-            var response = await _httpClient.PostAsync($"{WebApiControllersPath.FileUrl}/upload", content, token);
+            var form = new MultipartFormDataContent();
+            form.Add(streamContent, fileName[..fileName.IndexOf('.')], fileName);
+
+            var response = await _httpClient.PostAsync($"{WebApiControllersPath.FileUrl}/upload", form, token);
 
             return response.IsSuccessStatusCode;
         }
 
-        public bool UploadFile(Stream stream) => UploadFileAsync(stream).GetAwaiter().GetResult();
+        public bool UploadFile(Stream stream, string fileName, string contentType) => UploadFileAsync(stream, fileName, contentType).GetAwaiter().GetResult();
     }
 }

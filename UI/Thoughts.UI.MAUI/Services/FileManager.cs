@@ -32,7 +32,7 @@ namespace Thoughts.UI.MAUI.Services
 
             if(stream is null) return false;
 
-            var result = await _filesService.UploadFileAsync(stream, token).ConfigureAwait(false);
+            var result = await _filesService.UploadFileAsync(stream, file.FileName, file.ContentType, token).ConfigureAwait(false);
 
             return result;
         }
