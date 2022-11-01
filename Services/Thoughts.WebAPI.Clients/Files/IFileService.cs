@@ -2,8 +2,12 @@
 {
     public interface IFileService
     {
-        Task<bool> UploadFileAsync(Stream stream, string fileName, string contentType, CancellationToken token = default);
+        Task<bool> UploadLimitSizeFileAsync(Stream stream, string fileName, string contentType, CancellationToken token = default);
 
-        bool UploadFile(Stream stream, string fileName, string contentType);
+        bool UploadLimitSizeFile(Stream stream, string fileName, string contentType);
+
+        Task<bool> UploadAnyFileAsync(Stream stream, string fileName, string contentType, CancellationToken token = default);
+
+        bool UploadAnyFile(Stream stream, string fileName, string contentType);
     }
 }

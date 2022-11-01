@@ -26,18 +26,35 @@ namespace Thoughts.UI.MAUI.Services
 
         #region IFileManager implementation
 
-        public async Task<bool> UploadFileAsync(FileResult file, CancellationToken token = default)
+        public async Task<bool> UploadLimitSizeFileAsync(FileResult file, CancellationToken token = default)
         {
             using var stream = await file.OpenReadAsync().ConfigureAwait(false);
 
             if(stream is null) return false;
 
-            var result = await _filesService.UploadFileAsync(stream, file.FileName, file.ContentType, token).ConfigureAwait(false);
+            var result = await _filesService.UploadLimitSizeFileAsync(stream, file.FileName, file.ContentType, token).ConfigureAwait(false);
 
             return result;
         }
 
-        public bool UploadFile(FileResult file) => UploadFileAsync(file).GetAwaiter().GetResult(); 
+        public async Task<bool> UploadAnyFileAsync(FileResult file, CancellationToken token = default)
+        {
+            using var stream = await file.OpenReadAsync().ConfigureAwait(false);
+
+            if (stream is null) return false;
+
+            var result = await _filesService.UploadAnyFileAsync(stream, file.FileName, file.ContentType, token).ConfigureAwait(false);
+
+            return result;
+        }
+
+        #region Sync versions
+
+        public bool UploadLimitSizeFile(FileResult file) => UploadLimitSizeFileAsync(file).GetAwaiter().GetResult();
+
+        public bool UploadAnyFile(FileResult file) => UploadAnyFileAsync(file).GetAwaiter().GetResult();
+
+        #endregion
 
         #endregion
     }

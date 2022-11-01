@@ -2,8 +2,12 @@
 {
     public interface IFileManager
     {
-        Task<bool> UploadFileAsync(FileResult file, CancellationToken token = default);
+        Task<bool> UploadLimitSizeFileAsync(FileResult file, CancellationToken token = default);
 
-        bool UploadFile(FileResult file);
+        Task<bool> UploadAnyFileAsync(FileResult file, CancellationToken token = default);
+
+        bool UploadLimitSizeFile(FileResult file);
+
+        bool UploadAnyFile(FileResult file);
     }
 }
