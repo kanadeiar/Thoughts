@@ -11,7 +11,9 @@
         Background="Transparent"
         Foreground="Black"
         FontFamily="Helvetica"
-        DataContext="{Binding MainWindowModel, Source={StaticResource Locator}}">
+        DataContext="{Binding MainWindowModel, Source={StaticResource Locator}}" 
+        Title="{Binding Title, Mode=OneWay}"
+        x:Name="MainWindows">
     <Window.Resources>
         
     </Window.Resources>

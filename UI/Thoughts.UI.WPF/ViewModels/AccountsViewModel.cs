@@ -1,25 +1,34 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Net.Http;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 using Thoughts.DAL.Entities.Idetity;
 using Thoughts.UI.WPF.Infrastructure.Commands;
 using Thoughts.UI.WPF.ViewModels.Base;
+using Thoughts.UI.WPF.Views;
 using Thoughts.WebAPI.Clients.Identity;
 
 namespace Thoughts.UI.WPF.ViewModels
 {
     public class AccountsViewModel : ViewModel
     {
-        private static HttpClient http = new HttpClient
+        public AccountsViewModel(AccountClient account_client)
         {
-            BaseAddress = new("https://localhost:5011")
-        };
-        private static AccountClient account_client = new AccountClient(http);
+            _account_client = account_client;
+        }
+
+        private static AccountClient _account_client;
 
         private ObservableCollection<IdentUser> _identUserCollection = new ObservableCollection<IdentUser>();
         private ObservableCollection<IdentRole> _identRoleCollection = new ObservableCollection<IdentRole>();
+        private string _title;
+        private string _userName;      // Admin  // AdPAss_123
+        private bool _isAuthorization;
+
 
         public ObservableCollection<IdentUser> IdentUserCollection
         {
@@ -30,6 +39,7 @@ namespace Thoughts.UI.WPF.ViewModels
                 OnPropertyChanged("IdentUserCollection");
             }
         }
+
         public ObservableCollection<IdentRole> IdentRoleCollection
         {
             get => _identRoleCollection;
@@ -37,6 +47,25 @@ namespace Thoughts.UI.WPF.ViewModels
             {
                 _identRoleCollection = value;
                 OnPropertyChanged("IdentRoleCollection");
+            }
+        }
+        public string Title
+        {
+            get => _title;
+            set
+            {
+                _title = value;
+                OnPropertyChanged("Title");
+            }
+        }
+
+        public string UserName
+        {
+            get => _userName;
+            set
+            {
+                _userName = value;
+                OnPropertyChanged("UserName");
             }
         }
 
@@ -49,8 +78,21 @@ namespace Thoughts.UI.WPF.ViewModels
             {
                 return new RelayCommand(async (p) =>
                 {
-                    await account_client.LoginAsync("Admin", "AdPAss_123");
-                }, (p) => true);
+                    try
+                    {
+                        var password = ((PasswordBox)p).Password;
+                        await _account_client.LoginAsync(_userName, password);
+                        ChangeTitle("Admin");
+                        _isAuthorization = true;
+                        MessageBox.Show($"{_userName} добро пожаловать в систему.");
+                    }
+                    catch (System.InvalidOperationException)
+                    {
+                        MessageBox.Show("Авторизация не выполнена.");
+                    }
+
+
+                }, (p) => !_isAuthorization);
             }
         }
 
@@ -63,8 +105,11 @@ namespace Thoughts.UI.WPF.ViewModels
             {
                 return new RelayCommand(async (p) =>
                 {
-                    await account_client.LogoutAsync();
-                }, (p) => true);
+                    await _account_client.LogoutAsync();
+                    ChangeTitle();
+                    _isAuthorization = false;
+                    MessageBox.Show($"{_userName} вышел из системы.");
+                }, (p) => _isAuthorization);
             }
         }
 
@@ -77,16 +122,16 @@ namespace Thoughts.UI.WPF.ViewModels
             {
                 return new RelayCommand(async (p) =>
                 {
-                    var temp = await account_client.GetAllRolessAsync();
+                    var temp = await _account_client.GetAllRolessAsync();
                     if (temp is not null)
                     {
                         IdentRoleCollection = new ObservableCollection<IdentRole>(temp);
                     }
-                    else 
+                    else
                     {
-                        IdentRoleCollection = new ObservableCollection<IdentRole>(); 
+                        IdentRoleCollection = new ObservableCollection<IdentRole>();
                     }
-                }, (p) => true);
+                }, (p) => _isAuthorization);
             }
         }
 
@@ -99,7 +144,7 @@ namespace Thoughts.UI.WPF.ViewModels
             {
                 return new RelayCommand(async (p) =>
                 {
-                    var temp = await account_client.GetAllUsersAsync();
+                    var temp = await _account_client.GetAllUsersAsync();
                     if (temp is not null)
                     {
                         IdentUserCollection = new ObservableCollection<IdentUser>(temp);
@@ -108,8 +153,24 @@ namespace Thoughts.UI.WPF.ViewModels
                     {
                         IdentUserCollection = new ObservableCollection<IdentUser>();
                     }
-                }, (p) => true);
+                }, (p) => _isAuthorization);
             }
         }
+
+        private static void ChangeTitle(string name = "")
+        {
+            foreach (Window window in App.Current.Windows)
+            {
+                if (window is MainWindow)
+                {
+                    if (name != "")
+                        window.Title = $"Hello {name}";
+                    else
+                        window.Title = "Hello";
+                }
+            }
+        }
+
+
     }
 }
