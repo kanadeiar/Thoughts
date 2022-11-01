@@ -322,6 +322,9 @@ public class SqlBlogPostManager : IBlogPostManager
         return tag.Posts.PostToDomain()!;
     }
 
+    public async Task<IEnumerable<Tag>> GetMostPopularTags() => 
+        _DB.Tags.Include(item => item.Posts).OrderBy(item => item.Posts.Count).TagToDomain();
+
     #endregion
 
     #region Редактирование

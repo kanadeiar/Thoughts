@@ -87,6 +87,15 @@ public class BlogController : Controller
         return RedirectToAction("Details", "Blog", new { post.Id });
     }
 
+    public async Task<IActionResult> GetPostByTag(string tagName, CancellationToken cancellation)
+    {
+        var posts = await _postManager.GetPostsByTag(tagName, cancellation);
+        var viewModel = new BlogIndexWebModel
+        {
+            Posts = posts,
+        };
+        return View("Index", viewModel);
+    }
     public async Task<IActionResult> TypeaheadQuery(string query)
     {
         var categories = _context.Categories.Where(item => item.Name.StartsWith(query)).ToList();

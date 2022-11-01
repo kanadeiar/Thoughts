@@ -319,6 +319,9 @@ public class RepositoryBlogPostManager : IBlogPostManager
         return tag is null ? Enumerable.Empty<Post>() : tag.Posts;
     }
 
+    public async Task<IEnumerable<Tag>> GetMostPopularTags() =>
+        await _tagRepo.GetAll();
+
     #endregion
 
     #region Edit
