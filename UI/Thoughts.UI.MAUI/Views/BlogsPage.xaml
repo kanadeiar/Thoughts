@@ -38,7 +38,7 @@
                                HorizontalOptions="CenterAndExpand"
                                VerticalOptions="CenterAndExpand"
                                Aspect="AspectFill"/>
-                        <Label Text="Ñïèñîê áëîãîâ ïóñò..."
+                        <Label Text="Ð¡Ð¿Ð¸ÑÐ¾Ðº Ð±Ð»Ð¾Ð³Ð¾Ð² Ð¿ÑƒÑÑ‚..."
                                HorizontalOptions="CenterAndExpand"
                                VerticalOptions="CenterAndExpand"/>
                     </StackLayout>
