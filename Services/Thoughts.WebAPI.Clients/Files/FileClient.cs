@@ -52,7 +52,7 @@ namespace Thoughts.WebAPI.Clients.Files
         #region Sync versions
 
         public bool UploadLimitSizeFile(Stream stream, string fileName, string contentType) =>
-           UploadLimitSizeFileAsync(stream, fileName, contentType).GetAwaiter().GetResult();
+           UploadLimitSizeFileAsync(stream, fileName, contentType).Result;
 
         public bool UploadAnyFile(Stream stream, string fileName, string contentType) =>
             UploadAnyFileAsync(stream, fileName, contentType).GetAwaiter().GetResult();  
