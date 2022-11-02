@@ -5,14 +5,28 @@
              xmlns:vm="clr-namespace:Thoughts.UI.MAUI.ViewModels"
              x:DataType="vm:FileViewModel"
              Title="{Binding Title}">
-    <Grid>
-        <Button Margin="50"
-                Text="Загрузить"
-                VerticalOptions="EndAndExpand"
-                IsEnabled="{Binding IsNotBusy}"
-                Command="{Binding UploadFileCommand}"/>
+    <ContentPage.Resources>
+        <Style x:Key="ButtonsStyle" TargetType="Button">
+            <Setter Property="FontSize" Value="Caption"/>
+            <Setter Property="VerticalOptions" Value="EndAndExpand"/>
+            <Setter Property="IsEnabled" Value="{Binding IsNotBusy}"/>
+            <Setter Property="Margin" Value="10"/>
+        </Style>
+    </ContentPage.Resources>
+    <Grid ColumnDefinitions="*,*"
+          ColumnSpacing="5">
+        <Button Text="Загрузить изображение"
+                Style="{StaticResource ButtonsStyle}"
+                Command="{Binding UploadImageCommand}"
+                Grid.Column="0"/>
 
-        <ActivityIndicator IsVisible="{Binding IsBusy}"
+        <Button Text="Загрузить любой файл"
+                Style="{StaticResource ButtonsStyle}"
+                Command="{Binding UploadAnyCommand}"
+                Grid.Column="1"/>
+
+        <ActivityIndicator Grid.ColumnSpan="2"
+                           IsVisible="{Binding IsBusy}"
                            IsRunning="{Binding IsBusy}"
                            HorizontalOptions="FillAndExpand"
                            VerticalOptions="CenterAndExpand"/>

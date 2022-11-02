@@ -53,7 +53,7 @@ namespace Thoughts.UI.MAUI.ViewModels
 
             try
             {
-                await CheckInternetConnectionAsync();
+                if (!await CheckInternetConnectionAsync() || !await TryRequestStorageReadPermissions()) return;
 
                 IsBusy = true;
 
@@ -98,7 +98,7 @@ namespace Thoughts.UI.MAUI.ViewModels
 
             try
             {
-                await CheckInternetConnectionAsync();
+                if (!await CheckInternetConnectionAsync() || !await TryRequestStorageReadPermissions()) return;
 
                 IsBusy = true;
 
@@ -135,16 +135,52 @@ namespace Thoughts.UI.MAUI.ViewModels
 
         #region Methods
 
-        private async Task CheckInternetConnectionAsync(CancellationToken token = default)
+        private async Task<bool> CheckInternetConnectionAsync(CancellationToken token = default)
         {
             token.ThrowIfCancellationRequested();
 
-            if (_connectivity.NetworkAccess != NetworkAccess.Internet)
+            if (_connectivity.NetworkAccess == NetworkAccess.Internet) return true;
+
+            _logger?.LogError("{Method}: {message}", nameof(CheckInternetConnectionAsync), "Check your internet connection");
+            await Shell.Current.DisplayAlert("Internet connection failed!",
+                $"Unable to upload file: Check your internet connection", "OK");
+
+            return false;
+        }
+
+        private async Task<bool> TryRequestStorageReadPermissions(CancellationToken token = default) 
+        {
+            //Check current permission status
+            var permissionStatus = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
+
+            if (CheckPermissionsOnGranted(permissionStatus))
             {
-                _logger?.LogError("{Method}: {message}", nameof(CheckInternetConnectionAsync), "Check your internet connection");
-                await Shell.Current.DisplayAlert("Internet connection failed!",
-                    $"Unable to upload file: Check your internet connection", "OK");
+                _logger?.LogInformation("{Method}: Read storage permissions obtained", nameof(TryRequestStorageReadPermissions));
+                return true;
             }
+
+            //Trying to get permission from the user
+            permissionStatus = await Permissions.RequestAsync<Permissions.StorageRead>();
+
+            if (CheckPermissionsOnGranted(permissionStatus))
+            {
+                _logger?.LogInformation("{Method}: Permissions have been obtained", nameof(TryRequestStorageReadPermissions));
+                return true;
+            }
+
+            _logger?.LogWarning("{Method}: Read storage permissions not obtained", nameof(TryRequestStorageReadPermissions));
+
+            await Shell.Current.DisplayAlert("Предупреждение",
+                     "Права на чтение файлов не были получены", "OK");
+
+            return false;
+        }
+
+        private bool CheckPermissionsOnGranted(PermissionStatus permissionStatus)
+        {
+            return permissionStatus != PermissionStatus.Denied
+               && permissionStatus != PermissionStatus.Disabled
+               && permissionStatus != PermissionStatus.Unknown;
         }
 
         #endregion

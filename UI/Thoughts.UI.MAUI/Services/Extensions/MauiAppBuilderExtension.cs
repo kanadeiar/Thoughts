@@ -29,8 +29,8 @@ namespace Thoughts.UI.MAUI.Services.Extensions
 
 #if DEBUG
             webAPI = DeviceInfo.Platform == DevicePlatform.Android
-                ? settings.DebugWebAPIAndroid
-                : settings.DebugWebAPI;
+               ? settings.DebugWebAPIAndroid
+               : settings.DebugWebAPI;
 
             mvcWebApi = DeviceInfo.Platform == DevicePlatform.Android
                 ? settings.DebugMvcWebAPIAndroid
@@ -54,7 +54,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
 
             mvcWebApi = settings.DeviceMvcWebAPI;
             services.AddHttpClient("MvcWebAPI", client => client.BaseAddress = new Uri(mvcWebApi))
-                .AddTypedClient<IFilesService, FilesClient>();
+                .AddTypedClient<IFileService, FileClient>();
 #endif
 
             services.AddSingleton(settings);
