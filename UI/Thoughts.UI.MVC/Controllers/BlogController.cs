@@ -99,7 +99,9 @@ public class BlogController : Controller
     }
     public async Task<IActionResult> TypeaheadQuery(string query)
     {
-        var categories = _context.Categories.Where(item => item.Name.StartsWith(query)).ToList();
+        var categories = await _context.Categories
+            .Where(item => item.Name.StartsWith(query))
+            .ToListAsync();
         return Json(categories.Select(item => new
         {
             item.Name
