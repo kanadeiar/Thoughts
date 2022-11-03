@@ -87,6 +87,7 @@ public class BlogController : Controller
         return RedirectToAction("Details", "Blog", new { post.Id });
     }
 
+    [Route("[controller]/tag/{tagName}")]
     public async Task<IActionResult> GetPostByTag(string tagName, CancellationToken cancellation)
     {
         var posts = await _postManager.GetPostsByTag(tagName, cancellation);
