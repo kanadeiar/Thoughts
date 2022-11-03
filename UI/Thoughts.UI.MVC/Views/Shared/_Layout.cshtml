@@ -13,7 +13,7 @@
     @*  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/m.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Thoughts.UI.MVC.styles.css" asp-append-version="true" />*@
-    
+
     @await RenderSectionAsync("Styles", false)
 </head>
 <body>
@@ -52,5 +52,14 @@
     <!-- Scripts -->
     <partial name="Partial/_Scripts" />
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        $(() => {
+            $(".cloud-tags").prettyTag();
+
+        })
+    
+    </script>
+
 </body>
 </html>

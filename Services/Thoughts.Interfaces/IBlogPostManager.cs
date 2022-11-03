@@ -49,11 +49,12 @@ public interface IBlogPostManager
     Task<IEnumerable<Tag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default);
 
     Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default);
+    Task<IEnumerable<Tag>> GetMostPopularTags();
 
     #endregion
 
     #region Редактирование
-    
+
     Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default);
 
     Task<bool> ChangePostTitleAsync(int PostId, string Title, CancellationToken Cancel = default);

@@ -8,6 +8,7 @@ using Thoughts.Interfaces.Base;
 using Thoughts.Interfaces.Base.Repositories;
 using Thoughts.Services;
 using Thoughts.Services.Mapping;
+using Thoughts.UI.MVC.Infrastructure.AutoMapper;
 using Thoughts.WebAPI.Clients.ShortUrl;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -58,7 +59,7 @@ services.AddTransient<IdentityDbInitializer>();
 services.AddScoped<IBlogPostManager, SqlBlogPostManager>();
 services.AddTransient<IShortUrlManager, ShortUrlClient>();
 services.AddScoped<IFileManager, FileStorageManager>();
-
+services.AddAutoMapper(typeof(BlogDetailsWebModelProfile));
 //services.AddScoped<IRepository<Post>, MappingRepository<Thoughts.DAL.Entities.Post, Post>>();
 //services.AddScoped<IRepository<Category>, MappingRepository<Thoughts.DAL.Entities.Category, Category>>();
 //services.AddScoped<IRepository<Tag>, MappingRepository<Thoughts.DAL.Entities.Tag, Tag>>();

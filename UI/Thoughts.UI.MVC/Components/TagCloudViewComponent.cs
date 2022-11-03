@@ -3,8 +3,12 @@
 [ViewComponent]
 public class TagCloudViewComponent : ViewComponent
 {
+    private readonly IBlogPostManager _blogPostManager;
+    public TagCloudViewComponent(IBlogPostManager blogPostManager) => _blogPostManager = blogPostManager;
+
     public IViewComponentResult Invoke()
     {
-        return View();
+        var tags = _blogPostManager.GetMostPopularTags().Result;
+        return View(tags.ToList());
     }
 }

@@ -37,8 +37,8 @@ public static class Mapper
             User = post.User.UserToDAL()!,
             Status = post.Status.StatusToDAL(),
             Category = post.Category.CategoryToDAL()!,
-            Tags = (ICollection<TagDAL>)post.Tags.TagToDAL(),
-            Comments = (ICollection<CommentDAL>)post.Comments.CommentToDAL(),
+            Tags = post.Tags.TagToDAL().ToList(),
+            Comments = post.Comments.CommentToDAL().ToList(),
             PublicationDate = post.PublicationsDate,
             Date = post.Date
         };

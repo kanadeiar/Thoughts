@@ -1,34 +1,33 @@
 ﻿@model BlogDetailsWebModel
 @{
-    var exists = Model != null && Model.Post.Id != 0;
+    var exists = Model != null && Model.PostId != 0;
     ViewBag.Title = (exists ? "Редактирование" : "Создание") + " поста";
-    var categories = ViewBag.Categoryes as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>();
 }
 
 <div>
-    <a class="button" asp-controller="Blog" asp-action="Details" asp-route-id="@Model?.Post?.Id">
+    <a class="button" asp-controller="Blog" asp-action="Details" asp-route-id="@Model?.PostId">
         Назад к посту
     </a>
 </div>
 
 <div>
     <form method="post" asp-controller="Blog" asp-action="Edit">
-        <input type="hidden" asp-for="Post.Id" />
-        <input type="hidden" asp-for="Post.User.Id"/>
+        <input type="hidden" asp-for="PostId" />
+        <input type="hidden" asp-for="UserId" />
         <div>
             <div class="form-group">
                 <label>Заголовок</label>
-                <input type="text" asp-for="Post.Title" />
+                <input type="text" asp-for="Title" />
             </div>
         </div>
-        <textarea asp-for="Post.Body" id="bodyEditor"></textarea>
+        <textarea asp-for="Body" id="bodyEditor"></textarea>
         <div>
             <label>Категория</label>
-            <select asp-for="Post.Category.Name" asp-items="categories"></select>
+            <input id="categories" type="text" asp-for="CategoryName" />
         </div>
         <div class="row">
             <button class="button p-2" type="submit">@(exists ? "Сохранить" : "Создать")</button>
-            <a class="button p-2" asp-controller="Blog" asp-action="Details" asp-route-id="@Model?.Post?.Id">
+            <a class="button p-2" asp-controller="Blog" asp-action="Details" asp-route-id="@Model?.PostId">
                 Отмена
             </a>
         </div>
@@ -37,7 +36,7 @@
 
 
 @section Styles
-{
+    {
     <style>
         .form-groupt:first-child {
             margin-top: 15px
@@ -45,12 +44,48 @@
     </style>
 }
 
-@section Scripts
-{
+    @section Scripts
+    {
     <script src="~/lib/tinymce/tinymce.min.js"></script>
     <script>
         tinymce.init({
-            selector: '#bodyEditor'
+            selector: '#bodyEditor',
+            height: 480
         });
+    </script>
+    <script src="~/lib/typeahead.js/typeahead.bundle.min.js"></script>
+    <script src="~/lib/typeahead.js/bloodhound.min.js"></script>
+    <script>
+        //init bloodhound
+        var engine = new Bloodhound({
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+            remote: {
+                url: '@Url.Action("TypeaheadQuery", "Blog")' + '?query=%QUERY',
+                wildcard: '%QUERY'
+            },
+        });
+
+        //init typeahead
+        $('#categories').typeahead({
+            minLength: 3,
+            highlight: true,
+
+        },
+            {
+                name: 'categories',
+                source: engine,
+                limit: 5,
+                display: function (item) {
+                    return `${item.name}`;
+                },
+                templates: {
+                    suggestion: function (item) {
+                        console.log(item);
+                        return '<div class="p-3 bg-light hover">' + item.name + '</div>';
+                    }
+                }
+            });
+
     </script>
 }

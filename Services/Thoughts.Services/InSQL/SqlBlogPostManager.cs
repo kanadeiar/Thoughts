@@ -201,18 +201,18 @@ public class SqlBlogPostManager : IBlogPostManager
 
         if (db_category is null) db_category = new DAL.Entities.Category { Name = Category };
 
-        var post = new Post
+        var post = new DAL.Entities.Post
         {
             Title = Title,
             Body = Body,
-            Category = db_category.CategoryToDomain()!,
-            User = _DB.Users.FirstOrDefault(user => user.Id == UserId).UserToDomain()!,
+            Category = db_category,
+            User = await _DB.Users.FindAsync(UserId),
         };
 
-        await _DB.Posts.AddAsync(post.PostToDAL()!, Cancel).ConfigureAwait(false);
+        await _DB.AddAsync(post, Cancel);
         await _DB.SaveChangesAsync(Cancel).ConfigureAwait(false);
 
-        return post;
+        return post.PostToDomain();
     }
 
     /// <summary> Удаление поста </summary>
@@ -321,6 +321,9 @@ public class SqlBlogPostManager : IBlogPostManager
 
         return tag.Posts.PostToDomain()!;
     }
+
+    public async Task<IEnumerable<Tag>> GetMostPopularTags() => 
+        _DB.Tags.Include(item => item.Posts).OrderBy(item => item.Posts.Count).TagToDomain();
 
     #endregion
 

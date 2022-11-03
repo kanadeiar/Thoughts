@@ -1,25 +1,12 @@
-﻿<header class="major">
+﻿@model List<Tag>
+<header class="major">
     <h2>Облако тегов</h2>
 </header>
-<ul class="tag_cloud_list actions">
-    <li>
-        <a href="#" class="badge badge-pill badge-primary tag"><span>tag_1</span>
-        </a>
-    </li>
-    <li>
-        <a href="#" class="badge badge-pill badge-primary tag">tag_2_long 
-        </a>
-    </li>
-    <li>
-        <a href="#" class="badge badge-pill badge-primary tag">tag_3_very_long
-        </a>
-    </li>
-    <li>
-        <a href="#" class="badge badge-pill badge-primary tag">tag_4_very_long 
-        </a>
-    </li>
-    <li>
-        <a href="#" class="badge badge-pill badge-primary tag">tag_5 
-        </a>
-    </li>
+
+
+<ul class="cloud-tags">
+    @foreach (var item in Model)
+    {
+        <li> <a asp-controller="Blog" asp-action="GetPostByTag" asp-route-tagName="@item.Name"> @item.Name </a> </li>
+    }
 </ul>
