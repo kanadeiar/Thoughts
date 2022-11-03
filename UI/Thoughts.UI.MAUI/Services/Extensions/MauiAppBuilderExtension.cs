@@ -1,8 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using CommunityToolkit.Maui;
+
+using Microsoft.Extensions.Configuration;
 using Thoughts.UI.MAUI.Services.Interfaces;
 using Thoughts.UI.MAUI.ViewModels;
 using Thoughts.UI.MAUI.Views;
 using Thoughts.WebAPI.Clients.Blogs;
+using Thoughts.WebAPI.Clients.Files;
 using Thoughts.WebAPI.Clients.Test.Weather;
 
 namespace Thoughts.UI.MAUI.Services.Extensions
@@ -12,8 +15,8 @@ namespace Thoughts.UI.MAUI.Services.Extensions
         public static MauiAppBuilder AddMAUIServices(this MauiAppBuilder builder)
         {
             builder.Services.AddMAUIServices(builder.Configuration);
-            builder.Services.AddMAUIViews();
             builder.Services.AddMAUIViewModels();
+            builder.Services.AddMAUIViews();
 
             return builder;
         }
@@ -22,28 +25,43 @@ namespace Thoughts.UI.MAUI.Services.Extensions
         {
             var settings = configuration.GetSection(nameof(AppSettings)).Get<AppSettings>();
             var webAPI = string.Empty;
+            var mvcWebApi = string.Empty;
 
 #if DEBUG
             webAPI = DeviceInfo.Platform == DevicePlatform.Android
-                ? settings.DebugWebAPIAndroid
-                : settings.DebugWebAPI;
+               ? settings.DebugWebAPIAndroid
+               : settings.DebugWebAPI;
+
+            mvcWebApi = DeviceInfo.Platform == DevicePlatform.Android
+                ? settings.DebugMvcWebAPIAndroid
+                : settings.DebugMvcWebAPI;
 
             services.AddSingleton<IHttpsClientHandlerService, HttpsClientHandlerService>();
+
             services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI))
                 .AddTypedClient<IWeatherService, WeatherClient>()
                 .AddTypedClient<IBlogsService, BlogsClient>()
+                .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpsMessageHandler());
+
+            services.AddHttpClient("MvcWebAPI", client => client.BaseAddress = new Uri(mvcWebApi))
+                .AddTypedClient<IFileService, FileClient>()
                 .ConfigurePrimaryHttpMessageHandler(provider => provider.GetHttpsMessageHandler());
 #else
             webAPI = settings.DeviceWebAPI;
             services.AddHttpClient("WebAPI", client => client.BaseAddress = new Uri(webAPI))
                 .AddTypedClient<IWeatherService, WeatherClient>()
                 .AddTypedClient<IBlogsService, BlogsClient>();
+
+            mvcWebApi = settings.DeviceMvcWebAPI;
+            services.AddHttpClient("MvcWebAPI", client => client.BaseAddress = new Uri(mvcWebApi))
+                .AddTypedClient<IFileService, FileClient>();
 #endif
 
             services.AddSingleton(settings);
             services.AddSingleton<IWeatherManager, WeatherManager>();
             services.AddSingleton<IBlogsManager, BlogsManager>();
-            services.AddSingleton<IConnectivity>(Connectivity.Current);
+            services.AddSingleton<IFileManager, FileManager>();
+            services.AddSingleton(Connectivity.Current);
 
             return services;
         }
@@ -53,6 +71,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
             services.AddSingleton<MainPage>();
             services.AddSingleton<WeatherInfosPage>();
             services.AddSingleton<BlogsPage>();
+            services.AddSingleton<FilePage>();
 
             services.AddTransient<PostDetailsPage>();
 
@@ -64,6 +83,7 @@ namespace Thoughts.UI.MAUI.Services.Extensions
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<WeatherViewModel>();
             services.AddSingleton<BlogsViewModel>();
+            services.AddSingleton<FileViewModel>();
 
             services.AddTransient<PostDetailsViewModel>();
 

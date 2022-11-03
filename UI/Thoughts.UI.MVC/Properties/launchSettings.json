@@ -12,10 +12,11 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:5010;http://localhost:5000",
+      "commandLineArgs": "--urls \"https://*:5010;http://*:5000\"",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:5010;http://localhost:5000"
     },
     "IIS Express": {
       "commandName": "IISExpress",

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Thoughts.UI.MAUI.Views.FilePage"
+             xmlns:vm="clr-namespace:Thoughts.UI.MAUI.ViewModels"
+             x:DataType="vm:FileViewModel"
+             Title="{Binding Title}">
+    <ContentPage.Resources>
+        <Style x:Key="ButtonsStyle" TargetType="Button">
+            <Setter Property="FontSize" Value="Caption"/>
+            <Setter Property="VerticalOptions" Value="EndAndExpand"/>
+            <Setter Property="IsEnabled" Value="{Binding IsNotBusy}"/>
+            <Setter Property="Margin" Value="10"/>
+        </Style>
+    </ContentPage.Resources>
+    <Grid ColumnDefinitions="*,*"
+          ColumnSpacing="5">
+        <Button Text="Загрузить изображение"
+                Style="{StaticResource ButtonsStyle}"
+                Command="{Binding UploadImageCommand}"
+                Grid.Column="0"/>
+
+        <Button Text="Загрузить любой файл"
+                Style="{StaticResource ButtonsStyle}"
+                Command="{Binding UploadAnyCommand}"
+                Grid.Column="1"/>
+
+        <ActivityIndicator Grid.ColumnSpan="2"
+                           IsVisible="{Binding IsBusy}"
+                           IsRunning="{Binding IsBusy}"
+                           HorizontalOptions="FillAndExpand"
+                           VerticalOptions="CenterAndExpand"/>
+    </Grid>
+</ContentPage>

@@ -6,22 +6,29 @@
     xmlns:views="clr-namespace:Thoughts.UI.MAUI.Views"
     Shell.FlyoutBehavior="Flyout">
 
-    <FlyoutItem Title="Home">
-            <ShellContent Title="Home"
+    <FlyoutItem Title="Главная">
+            <ShellContent Title="Главная"
                           ContentTemplate="{DataTemplate views:MainPage}"
                           Route="MainPage" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Weathers">
-            <ShellContent Title="Weathers"
+    <FlyoutItem Title="Погода">
+            <ShellContent Title="Погода"
                           ContentTemplate="{DataTemplate views:WeatherInfosPage}"
                           Route="WeatherInfosPage" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Blogs">
-            <ShellContent Title="Blogs"
+    <FlyoutItem Title="Блоги">
+            <ShellContent Title="Блоги"
                           ContentTemplate="{DataTemplate views:BlogsPage}"
                           Route="BlogsPage" />
+
+    </FlyoutItem>
+
+    <FlyoutItem Title="Файлы">
+        <ShellContent Title="Файлы"
+                      ContentTemplate="{DataTemplate views:FilePage}"
+                      Route="FilePage" />
 
     </FlyoutItem>
 </Shell>

@@ -28,6 +28,21 @@
             <CollectionView Background="Transparent"
                     ItemsSource="{Binding Posts}"
                     SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <StackLayout IsVisible="{Binding IsNotBusy}"
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 WidthRequest="200"
+                                 HeightRequest="200">
+                        <Image Source="not_found64.png"
+                               HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="CenterAndExpand"
+                               Aspect="AspectFill"/>
+                        <Label Text="Список блогов пуст..."
+                               HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                </CollectionView.EmptyView>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="model:Post">
                         <Frame Margin="5" Padding="15">

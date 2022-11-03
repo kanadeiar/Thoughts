@@ -75,6 +75,7 @@
   <ItemGroup>
     <None Remove="appsettings.json" />
     <None Remove="Properties\launchSettings.json" />
+    <None Remove="Resources\Images\not_found64.png" />
     <None Remove="Resources\Images\refresh60.svg" />
   </ItemGroup>
 
@@ -97,7 +98,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\FilePage.xaml.cs">
+      <DependentUpon>FilePage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <MauiXaml Update="Views\BlogsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\FilePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Views\PostDetailsPage.xaml">

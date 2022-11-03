@@ -10,10 +10,6 @@ namespace Thoughts.UI.MAUI.ViewModels
     {
         private readonly IWeatherManager _weatherManager;
 
-        private string _title = "Weather";
-
-        public string Title { get => _title; set => Set(ref _title, value); }
-
         #region Commands
 
         private ICommand _loadDataCommand;
@@ -25,6 +21,7 @@ namespace Thoughts.UI.MAUI.ViewModels
         public WeatherViewModel(IWeatherManager weatherManager)
         {
             _weatherManager = weatherManager;
+            Title = "Погода";
         }
 
         public ObservableCollection<WeatherInfo> WeatherInfos { get; } = new();
