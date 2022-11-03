@@ -49,7 +49,7 @@
             </RadioButton>
             <RadioButton Content="Файлы" Command="{Binding FilesButtonCheckedCommand}"/>
             <RadioButton Content="Пользователи" Command="{Binding UsersButtonCheckedCommand}"/>
-            <RadioButton Content="Сервис"/>            
+            <RadioButton Content="Сервис" Command="{Binding AccountsButtonCheckedCommand}"/>          
         </StackPanel>
         <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentView}"/>
     </Grid>

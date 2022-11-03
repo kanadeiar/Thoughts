@@ -1,13 +1,13 @@
-﻿
+﻿using DTO.Identity;
+using DTO.Thoughts.Identity;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DTO.Identity;
 using Thoughts.DAL.Entities.Idetity;
+using Thoughts.Identity.DAL.Interfaces;
 using WebStore.Interfaces.Services;
-using Identity.DAL.Interfaces;
-using Thoughts.WebAPI.Services;
 
 namespace Thoughts.WebAPI.Controllers.Identity
 {
@@ -77,28 +77,29 @@ namespace Thoughts.WebAPI.Controllers.Identity
 
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<IActionResult> LoginAsync(string login, string password)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginUserDTO loginUserDTO)
         {
             try
             {
-                _logger.LogInformation("Авторизация пользователя {0}", login);
+                _logger.LogInformation("Авторизация пользователя {0}", loginUserDTO.Login);
 
-                var user = await _userManager.FindByNameAsync(login);
+                var user = await _userManager.FindByNameAsync(loginUserDTO.Login);
                 if (user is not null)
                 {
                     var roles = await _userManager.GetRolesAsync(user);
 
                     var signInResult = await _signInManager.PasswordSignInAsync(
-                        userName: login,
-                        password: password,
+                        userName: loginUserDTO.Login,
+                        password: loginUserDTO.Password,
                         isPersistent: true,
                         lockoutOnFailure: false);
 
                     if (signInResult.Succeeded)
                     {
-                        _logger.LogInformation("Авторизация пользователя {0} успешна", login);
+                        _logger.LogInformation("Авторизация пользователя {0} успешна", loginUserDTO.Login);
                         var sessionToken = _authUtils.CreateSessionToken(user, roles);
-                        return Ok($"Ваш токен сессии: {sessionToken}");
+                        Response.Headers.Add("Authorization", sessionToken);
+                        return Ok();
                     }
                 }
             }
@@ -106,11 +107,11 @@ namespace Thoughts.WebAPI.Controllers.Identity
             {
                 if (_logger.IsEnabled(LogLevel.Error))
                 {
-                    _logger.LogError(ex, "Авторизовать пользователя {0} не удалось", login);
+                    _logger.LogError(ex, "Авторизовать пользователя {0} не удалось", loginUserDTO.Login);
                 }
             }
 
-            _logger.LogInformation("Авторизовать пользователя {0} не удалось", login);
+            _logger.LogInformation("Авторизовать пользователя {0} не удалось", loginUserDTO.Login);
 
             return BadRequest("Авторизовать пользователя не удалось");
         }
@@ -208,6 +209,7 @@ namespace Thoughts.WebAPI.Controllers.Identity
         }
 
         [Authorize(Roles = IdentRole.Administrators)]
+        //[AllowAnonymous]
         [HttpGet("GetAllRoles")]
         public async Task<IActionResult> GetAllRolesAsync()
         {
@@ -439,7 +441,7 @@ namespace Thoughts.WebAPI.Controllers.Identity
         }
 
         [Authorize(Roles = IdentRole.Administrators)]
-        [HttpPost("GetUserByLogin")]
+        [HttpGet("GetUserByLogin")]
         public async Task<IActionResult> GetUserByEmailAsync(string login)
         {
             try
@@ -467,7 +469,8 @@ namespace Thoughts.WebAPI.Controllers.Identity
         }
 
         [Authorize(Roles = IdentRole.Administrators)]
-        [HttpPost("GetAllUsers")]
+        //[AllowAnonymous]
+        [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAllUsersAsync()
         {
             try
@@ -475,8 +478,9 @@ namespace Thoughts.WebAPI.Controllers.Identity
                 _logger.LogInformation("Получение всех пользователей");
                 using (_logger.BeginScope("Получение списка ролей"))
                 {
+                    var listOfAllUsers = await _userManager.Users.ToListAsync();
+                    if (listOfAllUsers is not null)
                     {
-                        var listOfAllUsers = await _userManager.Users.ToListAsync();
                         _logger.LogInformation("Cписок пользователей получен");
                         return Ok(listOfAllUsers);
                     }

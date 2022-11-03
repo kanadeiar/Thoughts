@@ -1,5 +1,12 @@
+using Microsoft.AspNetCore.Identity;
+
+using Thoughts.DAL.Entities.Idetity;
+using Thoughts.Identity.DAL.SqlServer;
+using Thoughts.Extensions.Maps;
+using Thoughts.Identity.DAL;
 using Thoughts.Interfaces.Base;
 using Thoughts.Interfaces.Base.Repositories;
+using Thoughts.Services;
 using Thoughts.Services.Mapping;
 using Thoughts.UI.MVC.Infrastructure.AutoMapper;
 using Thoughts.WebAPI.Clients.ShortUrl;
@@ -43,6 +50,10 @@ switch (db_type)
 }
 services.AddIdentityDBSqlServer(configuration.GetConnectionString("IdentitySqlServer"));
 
+services.AddIdentity<IdentUser, IdentRole>()
+   .AddEntityFrameworkStores<IdentityDB>()
+   .AddDefaultTokenProviders();
+
 services.AddTransient<ThoughtsDbInitializer>();
 services.AddTransient<IdentityDbInitializer>();
 services.AddScoped<IBlogPostManager, SqlBlogPostManager>();
@@ -52,9 +63,12 @@ services.AddAutoMapper(typeof(BlogDetailsWebModelProfile));
 //services.AddScoped<IRepository<Post>, MappingRepository<Thoughts.DAL.Entities.Post, Post>>();
 //services.AddScoped<IRepository<Category>, MappingRepository<Thoughts.DAL.Entities.Category, Category>>();
 //services.AddScoped<IRepository<Tag>, MappingRepository<Thoughts.DAL.Entities.Tag, Tag>>();
-//services.AddScoped<IRepository<Comment>, MappingRepository<Thoughts.DAL.Entities.Comment, Comment>>();
+services.AddScoped(typeof(IRepository<>), typeof(DbRepository<>));
 
-//services.AddScoped(typeof(IRepository<>), typeof(DbRepository<>));
+services.AddScoped<IMapper<Thoughts.DAL.Entities.Comment, Comment>, CommentMapper>();
+services.AddScoped<IMapper<Comment, Thoughts.DAL.Entities.Comment>, CommentMapper>();
+services.AddScoped<IRepository<Comment>, MappingRepository<Thoughts.DAL.Entities.Comment, Comment>>();
+
 
 var app = builder.Build();
 

@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace DTO.Identity;
+namespace DTO.Thoughts.Identity;
 
 public class ReplaceClaimDTO : UserDTO
 {

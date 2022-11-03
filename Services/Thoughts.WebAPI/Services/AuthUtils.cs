@@ -2,12 +2,11 @@
 using System.Security.Claims;
 using System.Text;
 
-using Identity.DAL.Interfaces;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 using Thoughts.DAL.Entities.Idetity;
+using Thoughts.Identity.DAL.Interfaces;
 
 namespace Thoughts.WebAPI.Services
 {

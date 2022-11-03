@@ -4,6 +4,7 @@
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
+      "commandLineArgs": "--urls \"https://*:5011;http://*:5001\"",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

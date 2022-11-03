@@ -6,6 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>
+      1701;1702;
+      0649;8618;8604;8602;8603;8604;8625;8618;8632;8669;
+      1998;1573;1572;
+    </NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
@@ -14,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DTO\DTO.csproj" />
     <ProjectReference Include="..\Thoughts.Interfaces\Thoughts.Interfaces.csproj" />
   </ItemGroup>
 

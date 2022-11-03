@@ -6,6 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>
+      1701;1702;
+      0649;8618;8604;8602;8618;
+      1998
+    </NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\Services\Thoughts.Interfaces.Base\Thoughts.Interfaces.Base.csproj" />
   </ItemGroup>

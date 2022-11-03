@@ -27,7 +27,7 @@ public class WeatherClientTests
 
         var client = new WeatherClient(http_client);
 
-        var result = await client.GetAll();
+        var result = await client.GetAllAsync();
     }
 }
 
