@@ -49,6 +49,7 @@ public class InMemoryBlogPostManager : IBlogPostManager
     public Task<IEnumerable<Tag>> GetBlogTagsAsync(int Id, CancellationToken Cancel = default) => throw new NotImplementedException();
 
     public Task<IEnumerable<Post>> GetPostsByTag(string Tag, CancellationToken Cancel = default) => throw new NotImplementedException();
+    public async Task<IEnumerable<Tag>> GetMostPopularTags() => throw new NotImplementedException();
 
     public Task<Category> ChangePostCategoryAsync(int PostId, string CategoryName, CancellationToken Cancel = default) => throw new NotImplementedException();
 

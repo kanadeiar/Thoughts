@@ -63,6 +63,8 @@ namespace Thoughts.WebAPI.Services
             return task;
         }
 
+        public async Task<IEnumerable<Tag>> GetMostPopularTags() => throw new NotImplementedException();
+
         /// <summary>Изменение категории поста</summary>
         /// <param name="PostId">Идентификатор поста</param>
         /// <param name="CategoryName">Новая категория поста</param>
