@@ -68,6 +68,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.Identity.DAL", "Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thoughts.Identity.DAL.SqlServer", "Data\Thoughts.Identity.DAL.SqlServer\Thoughts.Identity.DAL.SqlServer.csproj", "{698756BE-B707-48BE-8AC9-398D1FF69B0F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thoughts.UI.MVCTests", "UI\Thoughts.UI.MVCTests\Thoughts.UI.MVCTests.csproj", "{0D96892D-F790-4C78-B063-14862D3F5B75}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -176,6 +178,10 @@ Global
 		{698756BE-B707-48BE-8AC9-398D1FF69B0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{698756BE-B707-48BE-8AC9-398D1FF69B0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{698756BE-B707-48BE-8AC9-398D1FF69B0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D96892D-F790-4C78-B063-14862D3F5B75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D96892D-F790-4C78-B063-14862D3F5B75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D96892D-F790-4C78-B063-14862D3F5B75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D96892D-F790-4C78-B063-14862D3F5B75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -206,6 +212,7 @@ Global
 		{EC07231A-B243-4644-9E45-C92CA113ED0F} = {91BDAA17-EEF1-455F-BE95-2A82842F0B21}
 		{A31F2C53-785E-46A7-9F8A-224BF61A2CB1} = {C3E1D31B-5256-4501-BF6F-C7BC0617745C}
 		{698756BE-B707-48BE-8AC9-398D1FF69B0F} = {C3E1D31B-5256-4501-BF6F-C7BC0617745C}
+		{0D96892D-F790-4C78-B063-14862D3F5B75} = {91BDAA17-EEF1-455F-BE95-2A82842F0B21}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9394604E-0258-4723-8C8C-7E8546CF09F6}
