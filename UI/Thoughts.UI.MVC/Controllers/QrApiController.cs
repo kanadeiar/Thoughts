@@ -17,10 +17,10 @@ namespace Thoughts.UI.MVC.Controllers
             if (string.IsNullOrEmpty(code)) 
                 return NotFound();
 
-            var qrGenerator = new QRCodeGenerator();
-            var qrCodeData = qrGenerator.CreateQrCode(code,
+            using var qrGenerator = new QRCodeGenerator();
+            using var qrCodeData = qrGenerator.CreateQrCode(code,
                 QRCodeGenerator.ECCLevel.Q);
-            var qrCode = new PngByteQRCode(qrCodeData);
+            using var qrCode = new PngByteQRCode(qrCodeData);
             var result = qrCode.GetGraphic(10);
 
             return File(result, "application/png", "qrcode.png");
