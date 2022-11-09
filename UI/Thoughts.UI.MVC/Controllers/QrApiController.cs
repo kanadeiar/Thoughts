@@ -2,6 +2,7 @@
 
 namespace Thoughts.UI.MVC.Controllers
 {
+    [ApiController, Route("api/qr")]
     public class QrApiController : ControllerBase
     {
         private readonly ILogger<QrApiController> _logger;
