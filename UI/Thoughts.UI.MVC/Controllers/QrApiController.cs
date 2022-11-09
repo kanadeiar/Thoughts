@@ -11,6 +11,7 @@ namespace Thoughts.UI.MVC.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Get(string code)
         {
             if (string.IsNullOrEmpty(code)) 
