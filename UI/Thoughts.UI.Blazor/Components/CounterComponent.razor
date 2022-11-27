@@ -1,0 +1,12 @@
+<p role="status">Current value of counter: @Count</p>
+
+<button class="btn btn-primary" @onclick="Increment">Increment Counter</button>
+
+@code {
+    public int Count = 0;
+
+    private void Increment()
+    {
+        Count++;
+    }
+}
