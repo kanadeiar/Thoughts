@@ -1,0 +1,17 @@
+{
+    "name": "Thoughts",
+    "short_name": "Thoughts",
+    "start_url": ".",
+    "scope": ".",
+    "display": "standalone",
+    "background_color": "#bffff0",
+    "theme_color": "#03173d",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "favicon.png",
+            "type": "image/png",
+            "sizes": "920x920"
+        }
+    ]
+}
